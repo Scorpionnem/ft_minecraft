@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 14:40:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/27 14:51:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -116,11 +116,10 @@ void	Game::drawChar(char c, int x, int y)
 
 void	Game::_render()
 {
-	drawChar('4', 0, 0);
-	drawChar('2', 100, 0);
-
-	drawChar('6', 0, 200);
-	drawChar('7', 100, 200);
+	std::string fps = std::to_string((int)(1.0 / _window.getDeltaTime())) + " fps";
+	int i = 0;
+	for (char c : fps)
+		drawChar(c, i++ * 100, 0);
 
 	_window.frameEnd();
 }
