@@ -1,0 +1,31 @@
+Possible way to store models for blockstates?
+
+face up
+texture path
+uv x1 y1 x2 y2
+cullface true/false
+
+face down
+texture path
+uv x1 y1 x2 y2
+cullface true/false
+
+face east
+texture path
+uv x1 y1 x2 y2
+cullface true/false
+
+face west
+texture path
+uv x1 y1 x2 y2
+cullface true/false
+
+face north
+texture path
+uv x1 y1 x2 y2
+cullface true/false
+
+face south
+texture path
+uv x1 y1 x2 y2
+cullface true/false
