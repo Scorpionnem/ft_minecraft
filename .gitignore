@@ -1,0 +1,6 @@
+ft_minecraft
+obj/
+*.o
+*.d
+GLFW/
+.vscode/
