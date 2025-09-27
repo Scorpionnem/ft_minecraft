@@ -20,7 +20,8 @@ SRCS =	glad/glad.cpp\
 		src/Input.cpp\
 		src/Texture.cpp\
 		src/stb_image.cpp\
-		src/Shader.cpp
+		src/Shader.cpp\
+		src/Camera.cpp
 
 OBJDIR = obj
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)

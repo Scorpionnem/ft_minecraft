@@ -6,34 +6,47 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 14:31:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/27 19:28:10 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Window.hpp"
+#include "Game.hpp"
 
 Window::Window() {}
 Window::~Window() {}
 
-void	Window::open()
+void Window::_resize(GLFWwindow* window, int width, int height)
+{
+	Game	*game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game)
+	{
+		game->getWindow().setWidth(width);
+		game->getWindow().setHeight(height);	
+	}
+	glViewport(0, 0, width, height);
+}
+
+void	Window::open(const std::string &name, int width, int height, bool fullScreen)
 {
 	if (!glfwInit())
 		throw std::runtime_error("Failed to initialize glfw");
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 4);
 	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
 	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	glfwWindowHint(GLFW_RESIZABLE, GLFW_FALSE);
-	this->_width = DEFAULT_WINDOW_WIDTH;
-	this->_height = DEFAULT_WINDOW_HEIGHT;
+
+	this->_width = width;
+	this->_height = height;
 	
 	GLFWmonitor	*monitor = NULL;
-	#if FULL_SCREEN
+	if (fullScreen)
+	{
 		monitor = glfwGetPrimaryMonitor();
 		const GLFWvidmode	*monitorInfos = glfwGetVideoMode(monitor);
 		this->_height = monitorInfos->height;
 		this->_width = monitorInfos->width;
-	#endif
-	_data = glfwCreateWindow(this->_width, this->_height, DEFAULT_WINDOW_NAME, monitor, NULL);
+	}
+	_data = glfwCreateWindow(this->_width, this->_height, name.c_str(), monitor, NULL);
 	if (!_data)
 	{
 		glfwTerminate();
@@ -46,6 +59,8 @@ void	Window::open()
 		throw std::runtime_error("Failed to init GLAD");
 	}
 	glViewport(0, 0, this->_width, this->_height);
+
+	glfwSetFramebufferSizeCallback(_data, _resize);
 
 	glfwSetCursorPos(_data, _width / 2, _height / 2);
 
@@ -62,6 +77,11 @@ void	Window::close()
 {
 	glfwDestroyWindow(_data);
 	glfwTerminate();
+}
+
+void	Window::setWindowPointer(void *ptr)
+{
+	glfwSetWindowUserPointer(_data, ptr);
 }
 
 void	Window::frameStart()
