@@ -1,42 +1,39 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   SettingsScene.cpp                                  :+:      :+:    :+:   */
+/*   GameScene.cpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:02:52 by mbatty           ###   ########.fr       */
+/*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
+/*   Updated: 2025/09/30 17:03:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "SettingsScene.hpp"
+#include "GameScene.hpp"
 #include "Button.hpp"
+#include "Image.hpp"
+#include "Text.hpp"
 #include "Game.hpp"
 
-void	SettingsScene::onEnter()
+void	GameScene::onEnter()
 {
 	TextureManager &textures = _game->getTextures();
 	
-	_quitButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0), glm::vec2(2, 2));
-	static_cast<Button*>(_quitButton)->setClickFunc(
-		[this]()
-		{
-			this->requestScene("title");
-		});
+	_hotbar = new Image(textures.get("hotbar"), glm::vec2(0, 0), glm::vec2(0.5, 1), glm::vec2(1, 1));
+	_hotbarSlot = new Image(textures.get("hotbar_slot"), glm::vec2(-60, 0), glm::vec2(0.5, 1), glm::vec2(1, 1));
 }
 
-void	SettingsScene::onExit()
+void	GameScene::onExit()
 {
-	delete _quitButton;
 }
 
-void	SettingsScene::processInput(float deltaTime)
+void	GameScene::processInput(float deltaTime)
 {
 	(void)deltaTime;
 }
 
-void	SettingsScene::update(float deltaTime)
+void	GameScene::update(float deltaTime)
 {
 	(void)deltaTime;
 	UIEvent	events;
@@ -44,15 +41,18 @@ void	SettingsScene::update(float deltaTime)
 	events.mousePos = _game->getWindow().getMousePos();
 	events.windowSize = _game->getWindow().getSize();
 	events.inputs = &_game->getInput();
-
-	_quitButton->handleEvents(events);
 }
 
-void	SettingsScene::render()
+void	GameScene::render()
 {
 	ShaderManager &shaders = _game->getShaders();
 	Window	&window = _game->getWindow();
 
+	glDisable(GL_DEPTH_TEST);
+
 	shaders.get("image")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-	_quitButton->draw(shaders.get("image"), window.getSize());
+	shaders.get("font")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
+	
+	_hotbar->draw(shaders.get("image"), window.getSize());
+	_hotbarSlot->draw(shaders.get("image"), window.getSize());
 }

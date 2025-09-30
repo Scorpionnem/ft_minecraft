@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 15:04:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 17:19:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,8 +19,8 @@
 # include "Window.hpp"
 # include "Input.hpp"
 
-constexpr float REFERENCE_WIDTH = DEFAULT_WINDOW_WIDTH;
-constexpr float REFERENCE_HEIGHT = DEFAULT_WINDOW_HEIGHT;
+constexpr float REFERENCE_WIDTH = DEFAULT_WINDOW_WIDTH / 2;
+constexpr float REFERENCE_HEIGHT = DEFAULT_WINDOW_HEIGHT / 2;
 
 struct UIEvent
 {

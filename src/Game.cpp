@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 14:43:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 17:10:30 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -14,6 +14,7 @@
 #include "Button.hpp"
 #include "TitleScene.hpp"
 #include "SettingsScene.hpp"
+#include "GameScene.hpp"
 
 Game::Game() {}
 Game::~Game() {}
@@ -42,6 +43,8 @@ void	Game::_swapScene(const std::string &scene)
 		_currentScene = new SettingsScene(this);
 	else if (scene == "title")
 		_currentScene = new TitleScene(this);
+	else if (scene == "game")
+		_currentScene = new GameScene(this);
 
 	_currentScene->onEnter();
 }
@@ -64,6 +67,8 @@ void	Game::_loadTextures()
 	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
 	_textures.load("button", "assets/textures/ui/button.png");
 	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
+	_textures.load("hotbar", "assets/textures/ui/hud/hotbar.png");
+	_textures.load("hotbar_slot", "assets/textures/ui/hud/hotbar_selection.png");
 }
 
 void	Game::_loadShaders()
@@ -88,7 +93,8 @@ void	Game::_processInput()
 
 	_input.update(_window.data());
 
-	if (_input.isKeyPressed(GLFW_KEY_ESCAPE))
+	// Hard exit
+	if (_input.isKeyDown(GLFW_KEY_ESCAPE) && _input.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 		_running = false;
 
 	_currentScene->processInput(_window.getDeltaTime());

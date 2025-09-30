@@ -1,26 +1,26 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   TitleScene.hpp                                     :+:      :+:    :+:   */
+/*   GameScene.hpp                                      :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:13:42 by mbatty           ###   ########.fr       */
+/*   Created: 2025/09/30 17:01:55 by mbatty            #+#    #+#             */
+/*   Updated: 2025/09/30 17:02:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TITLESCENE_HPP
-# define TITLESCENE_HPP
+#ifndef GAMESCENE_HPP
+# define GAMESCENE_HPP
 
 # include "Scene.hpp"
 # include "UIElement.hpp"
 
-class TitleScene : public Scene
+class GameScene : public Scene
 {
 	public:
-		TitleScene(Game *game) : Scene(game) {}
-		~TitleScene() {};
+		GameScene(Game *game) : Scene(game) {}
+		~GameScene() {};
 		
 		void onEnter();
 
@@ -31,17 +31,8 @@ class TitleScene : public Scene
 		void onExit();
 
 	private:
-		UIElement	*_settingsButton;
-		UIElement	*_quitButton;
-		UIElement	*_soloButton;
-		UIElement	*_multiplayerButton;
-		UIElement	*_icon;
-		UIElement	*_textTest;
-		UIElement	*_textTest1;
-		UIElement	*_textTest2;
-		UIElement	*_textTest3;
-		UIElement	*_textAuthor;
-		UIElement	*_fpsText;
+		UIElement	*_hotbar;
+		UIElement	*_hotbarSlot;
 };
 
 #endif
