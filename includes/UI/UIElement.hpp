@@ -1,0 +1,102 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   UIElement.hpp                                      :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
+/*   Updated: 2025/09/30 13:43:18 by mbatty           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef UIELEMENT_HPP
+# define UIELEMENT_HPP
+
+# include "libs.hpp"
+# include "Shader.hpp"
+# include "Texture.hpp"
+# include "Window.hpp"
+# include "Input.hpp"
+
+constexpr float REFERENCE_WIDTH = DEFAULT_WINDOW_WIDTH * 2;
+constexpr float REFERENCE_HEIGHT = DEFAULT_WINDOW_HEIGHT * 2;
+
+struct UIEvent
+{
+	glm::vec2		windowSize = glm::vec2(0.0f);
+	glm::vec2		mousePos = glm::vec2(0.0f);
+	Input			*inputs;
+	int				scroll = 0;
+	unsigned int	charKey = 0;
+};
+
+struct Vertex2D
+{
+	glm::vec2 pos;
+	glm::vec2 uv;
+};
+
+constexpr float quadVertices[] =
+{
+	0.0f, 0.0f,  0.0f, 0.0f,
+	1.0f, 1.0f,  1.0f, 1.0f,
+	0.0f, 1.0f,  0.0f, 1.0f,
+	0.0f, 0.0f,  0.0f, 0.0f,
+	1.0f, 0.0f,  1.0f, 0.0f,
+	1.0f, 1.0f,  1.0f, 1.0f
+};
+
+class UIElement
+{
+	public:
+		UIElement() {}
+		virtual ~UIElement(){}
+
+		/*
+			Updates the given UIElement, could be clicking, scrolling...
+
+			@param events UIEvent struct that holds all kinds of events (mouseScroll, mousePos...)
+		*/
+		virtual void	handleEvents(UIEvent events) = 0;
+		/*
+			Draws the UIElement using the given shader and to scale of the windowSize
+
+			@param shader shader used to draw the UIElement
+			@param windowSize window size to scale the UIElement
+		*/
+		virtual void	draw(Shader *shader, glm::vec2 windowSize) = 0;
+
+		/*
+			Returns the UI scale
+			
+			@param windowSize size of the window
+		*/
+		static float	getUiScale(glm::vec2 windowSize)
+		{
+			float windowWidth  = (float)windowSize.x;
+			float windowHeight = (float)windowSize.y;
+		
+			float scaleX = windowWidth / REFERENCE_WIDTH;
+			float scaleY = windowHeight / REFERENCE_HEIGHT;
+		
+			return (std::min(scaleX, scaleY));
+		}
+	protected:
+		static bool	_isInBounds(glm::vec2 point, glm::vec2 zonePos, glm::vec2 zoneSize)
+		{
+			return (point.x >= zonePos.x && point.x <= zonePos.x + zoneSize.x && point.y >= zonePos.y && point.y <= zonePos.y + zoneSize.y);
+		}
+		static glm::vec2	_getScaledPos(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, glm::vec2 windowSize)
+		{
+			float	scale = UIElement::getUiScale(windowSize);
+			glm::vec2	scaledSize = size * scale;
+			
+			float	x = (anchor.x * windowSize.x) - (anchor.x * scaledSize.x);
+			float	y = (anchor.y * windowSize.y) - (anchor.y * scaledSize.y);
+			
+			return (glm::vec2(x, y) + (offset * scale));
+		}
+};
+
+#endif

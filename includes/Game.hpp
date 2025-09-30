@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 19:32:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 13:48:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 # include "Camera.hpp"
 # include "TextureManager.hpp"
 # include "ShaderManager.hpp"
+# include "UIElement.hpp"
 
 class	Game
 {
@@ -30,6 +31,11 @@ class	Game
 
 		Window	&getWindow() {return (this->_window);}
 		Window	&getCamera() {return (this->_window);}
+
+		void	setRunning(bool state)
+		{
+			_running = state;
+		}
 	private:
 		void	_init();
 		void	_loadTextures();
@@ -51,6 +57,8 @@ class	Game
 
 		TextureManager	_textures;
 		ShaderManager	_shaders;
+
+		UIElement	*testButton;
 };
 
 #endif

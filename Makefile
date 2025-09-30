@@ -11,7 +11,9 @@ INCLUDES =	-I ./includes\
 			-I ./GLFW/include/GLFW\
 			-I glad/\
 			-I ./glm/glm/\
-			-I ./glm/glm/gtc/
+			-I ./glm/glm/gtc/\
+			-I ./includes/UI/\
+			-I ./includes/UI/Elements
 
 SRCS =	glad/glad.cpp\
 		src/main.cpp\

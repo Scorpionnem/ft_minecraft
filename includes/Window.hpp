@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:09 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 19:27:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 13:10:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,8 +34,17 @@ class	Window
 		float	getDeltaTime() {return (this->_deltaTime);}
 		float	getWidth() {return (this->_width);}
 		float	getHeight() {return (this->_height);}
+		glm::vec2	getSize() {return (glm::vec2(_width, _height));}
 		float	getAspectRatio() {return (this->_width / this->_height);}
 		
+		glm::vec2	getMousePos()
+		{
+			double	x, y;
+
+			glfwGetCursorPos(_data, &x, &y);
+			return (glm::vec2(x, y));
+		}
+
 		void	setWindowPointer(void *ptr);
 		void	setWidth(float width) {this->_width = width;}
 		void	setHeight(float height) {this->_height = height;}
