@@ -1,0 +1,41 @@
+/* ************************************************************************** */
+/*                                                                            */
+/*                                                        :::      ::::::::   */
+/*   TitleScene.hpp                                     :+:      :+:    :+:   */
+/*                                                    +:+ +:+         +:+     */
+/*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
+/*                                                +#+#+#+#+#+   +#+           */
+/*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
+/*   Updated: 2025/09/30 14:56:28 by mbatty           ###   ########.fr       */
+/*                                                                            */
+/* ************************************************************************** */
+
+#ifndef TITLESCENE_HPP
+# define TITLESCENE_HPP
+
+# include "Scene.hpp"
+# include "UIElement.hpp"
+
+class TitleScene : public Scene
+{
+	public:
+		TitleScene(Game *game) : Scene(game) {}
+		~TitleScene() {};
+		
+		void onEnter();
+
+		void processInput(float deltaTime);
+		void update(float deltaTime);
+		void render();
+
+		void onExit();
+
+	private:
+		UIElement	*_settingsButton;
+		UIElement	*_quitButton;
+		UIElement	*_soloButton;
+		UIElement	*_multiplayerButton;
+		UIElement	*_icon;
+};
+
+#endif

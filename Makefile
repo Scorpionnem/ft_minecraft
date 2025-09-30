@@ -13,7 +13,9 @@ INCLUDES =	-I ./includes\
 			-I ./glm/glm/\
 			-I ./glm/glm/gtc/\
 			-I ./includes/UI/\
-			-I ./includes/UI/Elements
+			-I ./includes/UI/Elements\
+			-I ./includes/Scene/Scenes\
+			-I ./includes/Scene
 
 SRCS =	glad/glad.cpp\
 		src/main.cpp\
@@ -23,7 +25,9 @@ SRCS =	glad/glad.cpp\
 		src/Texture.cpp\
 		src/stb_image.cpp\
 		src/Shader.cpp\
-		src/Camera.cpp
+		src/Camera.cpp\
+		src/Scene/Scenes/TitleScene.cpp\
+		src/Scene/Scenes/SettingsScene.cpp
 
 OBJDIR = obj
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)

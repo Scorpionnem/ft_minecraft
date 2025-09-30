@@ -6,12 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 13:48:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 14:43:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Game.hpp"
 #include "Button.hpp"
+#include "TitleScene.hpp"
+#include "SettingsScene.hpp"
 
 Game::Game() {}
 Game::~Game() {}
@@ -24,8 +26,24 @@ void	Game::run()
 		_processInput();
 		_update(_window.getDeltaTime());
 		_render();
+
+		if (_currentScene->swapScene())
+			_swapScene(_currentScene->getSceneRequest());
 	}
 	_stop();
+}
+
+void	Game::_swapScene(const std::string &scene)
+{
+	_currentScene->onExit();
+	delete _currentScene;
+	
+	if (scene == "settings")
+		_currentScene = new SettingsScene(this);
+	else if (scene == "title")
+		_currentScene = new TitleScene(this);
+
+	_currentScene->onEnter();
 }
 
 void	Game::_init()
@@ -33,37 +51,34 @@ void	Game::_init()
 	_window.open(WINDOW_NAME, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, false);
 	_window.setWindowPointer(this);
 
-	// These will be used in the "loading screen" so they HAVE to be loaded
-	_shaders.load("font", "shaders/text.vertex", "shaders/text.fragment");
-	_shaders.get("font")->setInt("tex0", 0);
-	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
-	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
-	_textures.load("button", "assets/textures/ui/button.png");
-	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
-	_shaders.load("image", "shaders/image.vertex", "shaders/image.fragment");
-
 	_loadTextures();
 	_loadShaders();
 
-	testButton = new Button(_textures.get("button"), _textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0.5), glm::vec2(4, 4));
-	static_cast<Button*>(testButton)->setClickFunc(
-		[this]()
-		{
-			std::cout << "Closing window!" << std::endl;
-			this->setRunning(false);
-		});
+	_currentScene = new TitleScene(this);
+	_currentScene->onEnter();
 }
 
 void	Game::_loadTextures()
 {
+	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
+	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
+	_textures.load("button", "assets/textures/ui/button.png");
+	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
 }
 
 void	Game::_loadShaders()
 {
+	_shaders.load("font", "shaders/text.vertex", "shaders/text.fragment");
+	_shaders.load("image", "shaders/image.vertex", "shaders/image.fragment");
 }
 
 void	Game::_stop()
 {
+	if (_currentScene)
+	{
+		_currentScene->onExit();
+		delete _currentScene;
+	}
 	_window.close();
 }
 
@@ -75,32 +90,8 @@ void	Game::_processInput()
 
 	if (_input.isKeyPressed(GLFW_KEY_ESCAPE))
 		_running = false;
-}
 
-void	Game::_updateCamera(float deltaTime)
-{
-	float	cameraSpeed = 1 * deltaTime;
-	float	speedBoost = 1.0f;
-
-	if (_input.isKeyDown(GLFW_KEY_LEFT_CONTROL))
-		speedBoost = 20.0f;
-
-	if (_input.isKeyDown(GLFW_KEY_LEFT_ALT))
-		speedBoost *= 15.0f;
-
-	if (_input.isKeyDown(GLFW_KEY_W))
-		_camera.setPos(_camera.getPos() + _camera.getFront() * (cameraSpeed * speedBoost));
-	if (_input.isKeyDown(GLFW_KEY_S))
-		_camera.setPos(_camera.getPos() - _camera.getFront() * (cameraSpeed * speedBoost));
-	if (_input.isKeyDown(GLFW_KEY_SPACE))
-		_camera.setPos(_camera.getPos() + _camera.getUp() * (cameraSpeed * speedBoost));
-	if (_input.isKeyDown(GLFW_KEY_LEFT_SHIFT))
-		_camera.setPos(_camera.getPos() - _camera.getUp() * (cameraSpeed * speedBoost));
-
-	if (_input.isKeyDown(GLFW_KEY_A))
-		_camera.setPos(_camera.getPos() - glm::normalize(glm::cross(_camera.getFront(), _camera.getUp())) * (cameraSpeed * speedBoost));
-	if (_input.isKeyDown(GLFW_KEY_D))
-		_camera.setPos(_camera.getPos() + glm::normalize(glm::cross(_camera.getFront(), _camera.getUp())) * (cameraSpeed * speedBoost));
+	_currentScene->processInput(_window.getDeltaTime());
 }
 
 void	Game::_update(float deltaTime)
@@ -108,24 +99,12 @@ void	Game::_update(float deltaTime)
 	if (!_window.up())
 		_running = false;
 
-	UIEvent	events;
-
-	events.mousePos = _window.getMousePos();
-	events.windowSize = _window.getSize();
-	events.inputs = &_input;
-
-	testButton->handleEvents(events);
-
-	_updateCamera(deltaTime);
+	_currentScene->update(deltaTime);
 }
 
 void	Game::_render()
 {
-	_shaders.get("image")->setMat4("projection", glm::ortho(0.f, _window.getWidth(), _window.getHeight(), 0.f, -1.f, 1.f));
-
-	testButton->draw(_shaders.get("image"), _window.getSize());
-
-	glDisable(GL_DEPTH_TEST);
+	_currentScene->render();
 
 	_window.frameEnd();
 }

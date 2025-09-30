@@ -6,12 +6,12 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 13:47:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 14:57:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef IMAGE_HPP
-# define IMAGE_HPP
+#ifndef BUTTON_HPP
+# define BUTTON_HPP
 
 # include "UIElement.hpp"
 
