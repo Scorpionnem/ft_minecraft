@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:09 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 16:30:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 20:57:20 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@ class	Window
 	public:
 		Window();
 		~Window();
-		
+
 		void	open(const std::string &name, int width, int height, bool fullScreen);
 		void	close();
 
@@ -36,7 +36,7 @@ class	Window
 		float	getHeight() {return (this->_height);}
 		glm::vec2	getSize() {return (glm::vec2(_width, _height));}
 		float	getAspectRatio() {return (this->_width / this->_height);}
-		
+
 		glm::vec2	getMousePos()
 		{
 			double	x, y;
@@ -52,8 +52,9 @@ class	Window
 		bool		up() {return (!glfwWindowShouldClose(_data));}
 		GLFWwindow	*data() {return (_data);}
 	private:
-		static void		_resize(GLFWwindow* window, int width, int height);
-		
+		static void		_resize(GLFWwindow *window, int width, int height);
+		static void		_scroll(GLFWwindow *window, double xoffset, double yoffset);
+
 		float		_deltaTime = 0.0f;
 		float		_currentFrame = 0.0f;
 		float		_lastFrame = 0.0f;

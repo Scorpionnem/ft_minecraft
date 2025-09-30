@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 19:28:10 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:00:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,15 +16,22 @@
 Window::Window() {}
 Window::~Window() {}
 
-void Window::_resize(GLFWwindow* window, int width, int height)
+void Window::_resize(GLFWwindow *window, int width, int height)
 {
 	Game	*game = static_cast<Game*>(glfwGetWindowUserPointer(window));
 	if (game)
 	{
 		game->getWindow().setWidth(width);
-		game->getWindow().setHeight(height);	
+		game->getWindow().setHeight(height);
 	}
 	glViewport(0, 0, width, height);
+}
+
+void	Window::_scroll(GLFWwindow *window, double, double yoffset)
+{
+	Game	*game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game)
+		game->getInput().setScroll(yoffset);
 }
 
 void	Window::open(const std::string &name, int width, int height, bool fullScreen)
@@ -37,7 +44,7 @@ void	Window::open(const std::string &name, int width, int height, bool fullScree
 
 	this->_width = width;
 	this->_height = height;
-	
+
 	GLFWmonitor	*monitor = NULL;
 	if (fullScreen)
 	{
@@ -61,6 +68,7 @@ void	Window::open(const std::string &name, int width, int height, bool fullScree
 	glViewport(0, 0, this->_width, this->_height);
 
 	glfwSetFramebufferSizeCallback(_data, _resize);
+	glfwSetScrollCallback(_data, _scroll);
 
 	glfwSetCursorPos(_data, _width / 2, _height / 2);
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:18:28 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:10:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 20:53:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 void	Input::update(GLFWwindow *window)
 {
 	_previous = _current;
+	_previousMouse = _currentMouse;
 
 	for (int i = 0; i < MAX_KEYS; ++i)
 		_current[i] = glfwGetKey(window, i) == GLFW_PRESS;
@@ -42,3 +43,14 @@ bool	Input::isKeyReleased(int key) const
 {
 	return (!_current[key] && _previous[key]);
 }
+
+bool	Input::isMousePressed(int key) const
+{
+	return (_currentMouse[key] && !_previousMouse[key]);
+}
+
+bool	Input::isMouseReleased(int key) const
+{
+	return (!_currentMouse[key] && _previousMouse[key]);
+}
+

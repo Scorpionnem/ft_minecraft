@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 15:57:09 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 20:58:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,7 @@ class Button : public UIElement
 	public:
 		/*
 			Scale defaults to the default texture
-		
+
 			@param texture default texture
 			@param texture hover texture
 		*/
@@ -55,7 +55,7 @@ class Button : public UIElement
 			else
 				_currentTexture = _texture;
 
-			if (inside && events.inputs->isMouseDown(GLFW_MOUSE_BUTTON_LEFT))
+			if (inside && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
 			{
 				if (!_prevClicked && _onClick)
 					_onClick();
