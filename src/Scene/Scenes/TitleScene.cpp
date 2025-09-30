@@ -6,25 +6,31 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 20:49:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 22:00:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "TitleScene.hpp"
 #include "Button.hpp"
+#include "Checkbox.hpp"
 #include "Image.hpp"
 #include "Text.hpp"
 #include "Game.hpp"
+#include "SettingsScene.hpp"
+#include "GameScene.hpp"
 
 void	TitleScene::onEnter()
 {
+	sleep(3);
+	_loaded = true;
+
 	TextureManager &textures = _game->getTextures();
 
 	_settingsButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(-50, 40), glm::vec2(0.5, 0.5), glm::vec2(0.5, 1));
 	static_cast<Button*>(_settingsButton)->setClickFunc(
 		[this]()
 		{
-			this->requestScene("settings");
+			this->requestScene(new SettingsScene(_game));
 		});
 
 	_quitButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(50, 40), glm::vec2(0.5, 0.5), glm::vec2(0.5, 1));
@@ -38,7 +44,7 @@ void	TitleScene::onEnter()
 	static_cast<Button*>(_soloButton)->setClickFunc(
 		[this]()
 		{
-			this->requestScene("game");
+			this->requestScene(new GameScene(_game));
 		});
 
 	_multiplayerButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0.5));

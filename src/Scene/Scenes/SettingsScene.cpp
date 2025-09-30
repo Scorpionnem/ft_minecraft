@@ -6,23 +6,26 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:02:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:47:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "SettingsScene.hpp"
+#include "TitleScene.hpp"
 #include "Button.hpp"
 #include "Game.hpp"
 
 void	SettingsScene::onEnter()
 {
+	_loaded = true;
+
 	TextureManager &textures = _game->getTextures();
-	
+
 	_quitButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0), glm::vec2(2, 2));
 	static_cast<Button*>(_quitButton)->setClickFunc(
 		[this]()
 		{
-			this->requestScene("title");
+			this->requestScene(new TitleScene(_game));
 		});
 }
 

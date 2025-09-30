@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 20:58:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:39:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,7 +30,6 @@ class Button : public UIElement
 			_offset = offset;
 			_anchor = anchor;
 			_size = glm::vec2(texture->getWidth(), texture->getHeight()) * scale;
-			_upload();
 		}
 		void	setClickFunc(std::function<void(void)> func)
 		{
@@ -56,16 +55,13 @@ class Button : public UIElement
 				_currentTexture = _texture;
 
 			if (inside && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
-			{
-				if (!_prevClicked && _onClick)
+				if (_onClick)
 					_onClick();
-				_prevClicked = true;
-			}
-			else
-				_prevClicked = false;
 		}
 		void	draw(Shader *shader, glm::vec2 windowSize)
 		{
+			_upload();
+
 			float		scale = UIElement::getUiScale(windowSize);
 			glm::vec2	pos = UIElement::_getScaledPos(_size, _anchor, _offset, windowSize);
 
@@ -84,6 +80,9 @@ class Button : public UIElement
 	private:
 		void _upload(void)
 		{
+			if (_VAO != 0)
+				return ;
+
 			glGenVertexArrays(1, &_VAO);
 			glGenBuffers(1, &_VBO);
 
@@ -103,13 +102,12 @@ class Button : public UIElement
 		Texture		*_currentTexture;
 		Texture		*_texture;
 		Texture		*_hoverTexture;
-		uint		_VAO;
+		uint		_VAO = 0;
 		uint		_VBO;
 		glm::vec2	_offset;
 		glm::vec2	_anchor;
 		glm::vec2	_size;
 
-		bool						_prevClicked = false;
 		std::function<void(void)>	_onClick = NULL;
 };
 

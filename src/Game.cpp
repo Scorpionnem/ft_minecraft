@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 18:55:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:45:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 #include "TitleScene.hpp"
 #include "SettingsScene.hpp"
 #include "GameScene.hpp"
+#include "LoadingScene.hpp"
 
 Game::Game() {}
 Game::~Game() {}
@@ -34,19 +35,14 @@ void	Game::run()
 	_stop();
 }
 
-void	Game::_swapScene(const std::string &scene)
+void	Game::_swapScene(Scene *scene)
 {
 	_currentScene->onExit();
 	delete _currentScene;
-	
-	if (scene == "settings")
-		_currentScene = new SettingsScene(this);
-	else if (scene == "title")
-		_currentScene = new TitleScene(this);
-	else if (scene == "game")
-		_currentScene = new GameScene(this);
 
-	_currentScene->onEnter();
+	_currentScene = scene;
+	if (!_currentScene->loaded())
+		_currentScene->onEnter();
 }
 
 void	Game::_init()
@@ -57,7 +53,7 @@ void	Game::_init()
 	_loadTextures();
 	_loadShaders();
 
-	_currentScene = new TitleScene(this);
+	_currentScene = new LoadingScene(this, new TitleScene(this));
 	_currentScene->onEnter();
 }
 
@@ -65,13 +61,13 @@ void	Game::_loadTextures()
 {
 	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
 	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
-	
+
 	_textures.load("button", "assets/textures/ui/button.png");
 	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
 
 	_textures.load("slider_handle_highlighted", "assets/textures/ui/slider_handle_highlighted.png");
 	_textures.load("slider_handle", "assets/textures/ui/slider_handle.png");
-	
+
 	_textures.load("hotbar", "assets/textures/ui/hud/hotbar.png");
 	_textures.load("hotbar_slot", "assets/textures/ui/hud/hotbar_selection.png");
 }

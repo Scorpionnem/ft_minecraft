@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 16:42:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:22:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,10 +48,10 @@ class	Game
 		void	_processInput();
 
 		void	_update(float deltaTime);
-		
+
 		void	_render();
 
-		void	_swapScene(const std::string &scene);
+		void	_swapScene(Scene *scene);
 
 		bool	_running = true;
 		Window	_window;

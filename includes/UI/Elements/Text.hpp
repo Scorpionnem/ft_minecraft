@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:11:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:50:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,6 @@ class Text : public UIElement
 			_offset = offset;
 			_anchor = anchor;
 			_size = glm::vec2(DEFAULT_FONT_SIZE) * scale;
-			_upload();
 		}
 
 		~Text()
@@ -40,10 +39,16 @@ class Text : public UIElement
 		{
 			_text = text;
 		}
+		std::string	getText(void)
+		{
+			return (_text);
+		}
 
 		void	handleEvents(UIEvent) {}
 		void	draw(Shader *shader, glm::vec2 windowSize)
 		{
+			_upload();
+
 			float	scale = UIElement::getUiScale(windowSize);
 			glm::vec2	scaledSize = glm::vec2((_size.x * _text.size()) * scale, _size.y * scale);
 
@@ -70,6 +75,9 @@ class Text : public UIElement
 	private:
 		void _upload(void)
 		{
+			if (_VAO != 0)
+				return ;
+
 			glGenVertexArrays(1, &_VAO);
 			glGenBuffers(1, &_VBO);
 
@@ -88,7 +96,7 @@ class Text : public UIElement
 
 		Texture		*_texture;
 		std::string	_text;
-		uint		_VAO;
+		uint		_VAO = 0;
 		uint		_VBO;
 		glm::vec2	_offset;
 		glm::vec2	_anchor;

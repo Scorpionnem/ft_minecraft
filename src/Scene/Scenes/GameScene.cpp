@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:03:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/09/30 21:47:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,8 +18,10 @@
 
 void	GameScene::onEnter()
 {
+	_loaded = true;
+
 	TextureManager &textures = _game->getTextures();
-	
+
 	_hotbar = new Image(textures.get("hotbar"), glm::vec2(0, 0), glm::vec2(0.5, 1), glm::vec2(1, 1));
 	_hotbarSlot = new Image(textures.get("hotbar_slot"), glm::vec2(-60, 0), glm::vec2(0.5, 1), glm::vec2(1, 1));
 }
@@ -52,7 +54,7 @@ void	GameScene::render()
 
 	shaders.get("image")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
 	shaders.get("font")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-	
+
 	_hotbar->draw(shaders.get("image"), window.getSize());
 	_hotbarSlot->draw(shaders.get("image"), window.getSize());
 }
