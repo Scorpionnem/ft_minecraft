@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:39:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 16:16:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -60,11 +60,14 @@ void	Game::_init()
 void	Game::_loadTextures()
 {
 	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
+	_textures.load("dirt", "assets/textures/block/dirt.png");
 	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
 
 	_textures.load("button", "assets/textures/ui/button.png");
 	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
-
+	_textures.load("button_small", "assets/textures/ui/button_small.png");
+	_textures.load("button_highlighted_small", "assets/textures/ui/button_highlighted_small.png");
+	
 	_textures.load("slider_handle_highlighted", "assets/textures/ui/slider_handle_highlighted.png");
 	_textures.load("slider_handle", "assets/textures/ui/slider_handle.png");
 
@@ -79,6 +82,7 @@ void	Game::_loadShaders()
 {
 	_shaders.load("font", "shaders/text.vertex", "shaders/text.fragment");
 	_shaders.load("image", "shaders/image.vertex", "shaders/image.fragment");
+	_shaders.load("background", "shaders/background.vertex", "shaders/background.fragment");
 }
 
 void	Game::_stop()

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:55:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 15:59:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -65,11 +65,18 @@ class Text : public UIElement
 
 			shader->bind();
 			shader->setInt("tex", 0);
-			shader->setVec3("color", _color);
 			_texture->bind(0);
 
 			for (char c : _text)
 			{
+				shader->setVec3("color", _color / 4.f);
+				shader->setMat4("model", glm::translate(model, glm::vec3(1.f / 8.f, 1.f / 8.f, 0.0f)));
+				shader->setInt("charIndex", c);
+
+				glBindVertexArray(_VAO);
+				glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
+
+				shader->setVec3("color", _color);
 				shader->setMat4("model", model);
 				shader->setInt("charIndex", c);
 
