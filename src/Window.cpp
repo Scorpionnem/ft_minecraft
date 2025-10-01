@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:00:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:10:09 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,13 @@ void	Window::_scroll(GLFWwindow *window, double, double yoffset)
 	Game	*game = static_cast<Game*>(glfwGetWindowUserPointer(window));
 	if (game)
 		game->getInput().setScroll(yoffset);
+}
+
+void	Window::_keyboardChar(GLFWwindow *window, unsigned int key)
+{
+	Game	*game = static_cast<Game*>(glfwGetWindowUserPointer(window));
+	if (game)
+		game->getInput().addCharInput(key);
 }
 
 void	Window::open(const std::string &name, int width, int height, bool fullScreen)
@@ -69,6 +76,7 @@ void	Window::open(const std::string &name, int width, int height, bool fullScree
 
 	glfwSetFramebufferSizeCallback(_data, _resize);
 	glfwSetScrollCallback(_data, _scroll);
+	glfwSetCharCallback(_data, _keyboardChar);
 
 	glfwSetCursorPos(_data, _width / 2, _height / 2);
 

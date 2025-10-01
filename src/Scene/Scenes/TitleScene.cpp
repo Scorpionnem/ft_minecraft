@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 22:00:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:23:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 #include "Checkbox.hpp"
 #include "Image.hpp"
 #include "Text.hpp"
+#include "Toggle.hpp"
+#include "TextField.hpp"
 #include "Game.hpp"
 #include "SettingsScene.hpp"
 #include "GameScene.hpp"
@@ -47,7 +49,7 @@ void	TitleScene::onEnter()
 			this->requestScene(new GameScene(_game));
 		});
 
-	_multiplayerButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0.5));
+	_multiplayerButton = new TextField(textures.get("text_field"), textures.get("text_field_highlighted"), textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5, 0.5), 24);
 	_icon = new Image(textures.get("ft_minecraft"), glm::vec2(0, -80), glm::vec2(0.5, 0.5), glm::vec2(0.25, 0.25));
 	_textTest = new Text("Singleplayer", textures.get("ascii"), glm::vec2(0, -20), glm::vec2(0.5));
 	_textTest1 = new Text("Multiplayer", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5));
@@ -98,10 +100,10 @@ void	TitleScene::render()
 	_settingsButton->draw(shaders.get("image"), window.getSize());
 	_quitButton->draw(shaders.get("image"), window.getSize());
 	_soloButton->draw(shaders.get("image"), window.getSize());
-	_multiplayerButton->draw(shaders.get("image"), window.getSize());
+	static_cast<TextField*>(_multiplayerButton)->draw(shaders.get("image"), shaders.get("font"), window.getSize());
 	_icon->draw(shaders.get("image"), window.getSize());
 	_textTest->draw(shaders.get("font"), window.getSize());
-	_textTest1->draw(shaders.get("font"), window.getSize());
+	// _textTest1->draw(shaders.get("font"), window.getSize());
 	_textTest2->draw(shaders.get("font"), window.getSize());
 	_textTest3->draw(shaders.get("font"), window.getSize());
 	_textAuthor->draw(shaders.get("font"), window.getSize());

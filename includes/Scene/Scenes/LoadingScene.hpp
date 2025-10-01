@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:54:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:22:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,7 @@
 # include "UIElement.hpp"
 # include "Image.hpp"
 # include "Text.hpp"
+# include "LimitedText.hpp"
 
 class LoadingScene : public Scene
 {

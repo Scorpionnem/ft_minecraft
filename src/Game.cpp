@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:45:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:08:28 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -68,6 +68,9 @@ void	Game::_loadTextures()
 	_textures.load("slider_handle_highlighted", "assets/textures/ui/slider_handle_highlighted.png");
 	_textures.load("slider_handle", "assets/textures/ui/slider_handle.png");
 
+	_textures.load("text_field", "assets/textures/ui/text_field.png");
+	_textures.load("text_field_highlighted", "assets/textures/ui/text_field_highlighted.png");
+
 	_textures.load("hotbar", "assets/textures/ui/hud/hotbar.png");
 	_textures.load("hotbar_slot", "assets/textures/ui/hud/hotbar_selection.png");
 }
@@ -90,6 +93,8 @@ void	Game::_stop()
 
 void	Game::_processInput()
 {
+	_input.resetCharInputs();
+
 	_window.frameStart();
 
 	_input.update(_window.data());

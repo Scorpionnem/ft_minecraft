@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:39:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 09:41:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,7 @@ class Image : public UIElement
 			_size = glm::vec2(texture->getWidth(), texture->getHeight()) * scale;
 		}
 
-		~Image()
-		{
-			glDeleteVertexArrays(1, &_VAO);
-			glDeleteBuffers(1, &_VBO);
-		}
+		~Image() {}
 
 		void	handleEvents(UIEvent) {}
 		void	draw(Shader *shader, glm::vec2 windowSize)
@@ -58,30 +54,8 @@ class Image : public UIElement
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
 		}
 	private:
-		void _upload(void)
-		{
-			if (_VAO != 0)
-				return ;
-
-			glGenVertexArrays(1, &_VAO);
-			glGenBuffers(1, &_VBO);
-
-			glBindVertexArray(_VAO);
-			glBindBuffer(GL_ARRAY_BUFFER, _VBO);
-			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
-
-			glEnableVertexAttribArray(0);
-			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
-
-			glEnableVertexAttribArray(1);
-			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
-
-			glBindVertexArray(0);
-		}
 
 		Texture		*_texture;
-		uint		_VAO = 0;
-		uint		_VBO;
 		glm::vec2	_offset;
 		glm::vec2	_anchor;
 		glm::vec2	_size;

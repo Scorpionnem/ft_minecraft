@@ -1,21 +1,21 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   Checkbox.hpp                                       :+:      :+:    :+:   */
+/*   Toggle.hpp                                         :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:41:27 by mbatty           ###   ########.fr       */
+/*   Created: 2025/10/01 09:41:47 by mbatty            #+#    #+#             */
+/*   Updated: 2025/10/01 09:44:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef CHECKBOX_HPP
-# define CHECKBOX_HPP
+#ifndef TOGGLE_HPP
+# define TOGGLE_HPP
 
 # include "UIElement.hpp"
 
-class Checkbox : public UIElement
+class Toggle : public UIElement
 {
 	public:
 		/*
@@ -24,7 +24,7 @@ class Checkbox : public UIElement
 			@param texture default texture
 			@param texture hover texture
 		*/
-		Checkbox(Texture *texture, Texture *hoverTexture, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
+		Toggle(Texture *texture, Texture *hoverTexture, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
 			: _currentTexture(texture), _texture(texture), _hoverTexture(hoverTexture)
 		{
 			_offset = offset;
@@ -35,12 +35,8 @@ class Checkbox : public UIElement
 		{
 			_onClick = func;
 		}
-		void	setChecked(bool state)
-		{
-			_checked = state;
-		}
 
-		~Checkbox() {}
+		~Toggle() {}
 
 		void	handleEvents(UIEvent events)
 		{
@@ -57,6 +53,12 @@ class Checkbox : public UIElement
 			if (inside && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
 			{
 				_checked = !_checked;
+				if (_onClick)
+					_onClick(_checked);
+			}
+			else if (_checked && !inside && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
+			{
+				_checked = false;
 				if (_onClick)
 					_onClick(_checked);
 			}

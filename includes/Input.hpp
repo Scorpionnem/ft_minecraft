@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:16:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:00:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:09:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,12 +31,27 @@ class Input
 
 		void	setScroll(double value) {_scroll = value;}
 		double	getScroll() {return (_scroll);}
+
+		void	resetCharInputs()
+		{
+			_charInputs.clear();
+		}
+		void	addCharInput(uint c)
+		{
+			_charInputs.push_back(c);
+		}
+		std::vector<uint>	getCharInputs()
+		{
+			return (_charInputs);
+		}
 	private:
 		double							_scroll = 0;
 		std::array<bool, MAX_KEYS>	_currentMouse;
 		std::array<bool, MAX_KEYS>	_previousMouse;
 		std::array<bool, MAX_KEYS>	_current;
 		std::array<bool, MAX_KEYS>	_previous;
+		
+		std::vector<uint>			_charInputs;
 };
 
 #endif

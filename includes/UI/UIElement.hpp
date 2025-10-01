@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:19:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 10:11:01 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,7 +28,6 @@ struct UIEvent
 	glm::vec2		mousePos = glm::vec2(0.0f);
 	Input			*inputs;
 	int				scroll = 0;
-	unsigned int	charKey = 0;
 };
 
 struct Vertex2D
@@ -51,7 +50,11 @@ class UIElement
 {
 	public:
 		UIElement() {}
-		virtual ~UIElement(){}
+		virtual ~UIElement()
+		{
+			glDeleteVertexArrays(1, &_VAO);
+			glDeleteBuffers(1, &_VBO);
+		}
 
 		/*
 			Updates the given UIElement, could be clicking, scrolling...
@@ -83,6 +86,29 @@ class UIElement
 			return (std::min(scaleX, scaleY));
 		}
 	protected:
+		void _upload(void)
+		{
+			if (_VAO != 0)
+				return ;
+
+			glGenVertexArrays(1, &_VAO);
+			glGenBuffers(1, &_VBO);
+
+			glBindVertexArray(_VAO);
+			glBindBuffer(GL_ARRAY_BUFFER, _VBO);
+			glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), quadVertices, GL_STATIC_DRAW);
+
+			glEnableVertexAttribArray(0);
+			glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)0);
+
+			glEnableVertexAttribArray(1);
+			glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 4 * sizeof(float), (void*)(2 * sizeof(float)));
+
+			glBindVertexArray(0);
+		}
+		uint		_VAO = 0;
+		uint		_VBO = 0;
+		
 		static bool	_isInBounds(glm::vec2 point, glm::vec2 zonePos, glm::vec2 zoneSize)
 		{
 			return (point.x >= zonePos.x && point.x <= zonePos.x + zoneSize.x && point.y >= zonePos.y && point.y <= zonePos.y + zoneSize.y);
