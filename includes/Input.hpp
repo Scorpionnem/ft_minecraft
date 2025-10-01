@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:16:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:09:44 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:38:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class Input
 		bool	isKeyPressed(int key) const;
 		bool	isKeyReleased(int key) const;
 
+		bool	isKeyRepeating(int key) const;
+
 		void	setScroll(double value) {_scroll = value;}
 		double	getScroll() {return (_scroll);}
 
@@ -44,13 +46,24 @@ class Input
 		{
 			return (_charInputs);
 		}
+		void	setKeyRepeating(int key)
+		{
+			_repeats[key] = true;
+		}
+		void	resetKeyRepeats()
+		{
+			std::array<bool, MAX_KEYS> tmp;
+			_repeats = tmp;
+		}
 	private:
 		double							_scroll = 0;
 		std::array<bool, MAX_KEYS>	_currentMouse;
 		std::array<bool, MAX_KEYS>	_previousMouse;
 		std::array<bool, MAX_KEYS>	_current;
 		std::array<bool, MAX_KEYS>	_previous;
-		
+
+		std::array<bool, MAX_KEYS>	_repeats;
+
 		std::vector<uint>			_charInputs;
 };
 

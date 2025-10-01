@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:41:47 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:44:21 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:50:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,12 @@ class Toggle : public UIElement
 		void	setClickFunc(std::function<void(bool)> func)
 		{
 			_onClick = func;
+		}
+		void	setChecked(bool state)
+		{
+			_checked = state;
+			if (_onClick)
+				_onClick(_checked);
 		}
 
 		~Toggle() {}

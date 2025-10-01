@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:45:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:24:11 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:52:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "LimitedText.hpp"
 # include "Toggle.hpp"
+
+# define CURSOR_BLINK_TIME 0.4
 
 class	TextField : public UIElement
 {
@@ -26,7 +28,7 @@ class	TextField : public UIElement
 			{
 				_selected = state;
 				if (!state && _onClick)
-					_onClick(this->_text.getText());
+					_onClick(_input);
 			});
 		}
 		void	setClickFunc(std::function<void(std::string)> func)
@@ -40,30 +42,51 @@ class	TextField : public UIElement
 		{
 			_toggle.handleEvents(events);
 
-			std::string	str = _text.getText();
-
 			if (_selected)
 			{
 				for (uint key : events.inputs->getCharInputs())
-					_text.setText(_text.getText() + (char)key);
+					_input += key;
 			}
-			if (events.inputs->isKeyPressed(GLFW_KEY_BACKSPACE) && str.size())
-			{
-				_text.setText(str.substr(0, str.size() - 1));
-			}
+			if (_input.size() && (events.inputs->isKeyPressed(GLFW_KEY_BACKSPACE) || events.inputs->isKeyRepeating(GLFW_KEY_BACKSPACE)))
+				_input = _input.substr(0, _input.size() - 1);
+			if (_selected && (events.inputs->isKeyPressed(GLFW_KEY_ESCAPE) || events.inputs->isKeyPressed(GLFW_KEY_ENTER)))
+				_toggle.setChecked(false);
 		}
+		void	draw(Shader *buttonShader, Shader *fontShader, glm::vec2 windowSize)
+		{
+			_handleCursorBlink();
+
+			_toggle.draw(buttonShader, windowSize);
+			_text.draw(fontShader, windowSize);
+		}
+
 		void	draw(Shader *shader, glm::vec2 windowSize)
 		{
 			_toggle.draw(shader, windowSize);
 			_text.draw(shader, windowSize);
 			std::cout << "Dont use this draw call, real one takes 2 shaders (static_cast<TextField*>(this))" << std::endl;
 		}
-		void	draw(Shader *buttonShader, Shader *fontShader, glm::vec2 windowSize)
-		{
-			_toggle.draw(buttonShader, windowSize);
-			_text.draw(fontShader, windowSize);
-		}
 	private:
+		void	_handleCursorBlink()
+		{
+			if (_selected)
+			{
+				if (glfwGetTime() - _cursorLast > CURSOR_BLINK_TIME)
+				{
+					_text.setText(_input + "_");
+					if (glfwGetTime() - _cursorLast > CURSOR_BLINK_TIME * 2)
+						_cursorLast = glfwGetTime();
+				}
+				else
+					_text.setText(_input + " ");
+			}
+			else
+				_text.setText(_input);
+		}
+
+		double		_cursorLast;
+		std::string	_input;
+		
 		bool		_selected = false;
 		LimitedText	_text;
 		Toggle		_toggle;

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:23:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:43:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,6 @@
 
 void	TitleScene::onEnter()
 {
-	sleep(3);
 	_loaded = true;
 
 	TextureManager &textures = _game->getTextures();

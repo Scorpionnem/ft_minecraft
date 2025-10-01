@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:18:28 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:12:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:37:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,4 +52,9 @@ bool	Input::isMousePressed(int key) const
 bool	Input::isMouseReleased(int key) const
 {
 	return (!_currentMouse[key] && _previousMouse[key]);
+}
+
+bool	Input::isKeyRepeating(int key) const
+{
+	return (_repeats[key]);
 }

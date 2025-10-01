@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:09 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:42:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 11:39:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -55,6 +55,7 @@ class	Window
 		static void		_resize(GLFWwindow *window, int width, int height);
 		static void		_scroll(GLFWwindow *window, double xoffset, double yoffset);
 		static void		_keyboardChar(GLFWwindow *, unsigned int key);
+		static void		_keyboardInput(GLFWwindow *window, int key, int, int action, int);
 
 		float		_deltaTime = 0.0f;
 		float		_currentFrame = 0.0f;
