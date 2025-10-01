@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:33:09 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:39:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 12:02:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,6 +48,10 @@ class	Window
 		void	setWindowPointer(void *ptr);
 		void	setWidth(float width) {this->_width = width;}
 		void	setHeight(float height) {this->_height = height;}
+		void	setWindowName(const std::string &name)
+		{
+			glfwSetWindowTitle(_data, name.c_str());
+		}
 
 		bool		up() {return (!glfwWindowShouldClose(_data));}
 		GLFWwindow	*data() {return (_data);}

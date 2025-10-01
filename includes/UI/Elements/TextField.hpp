@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:45:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:52:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 12:04:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,12 @@ class	TextField : public UIElement
 			_toggle.setClickFunc([this](bool state)
 			{
 				_selected = state;
+				_cursorLast = glfwGetTime();
 				if (!state && _onClick)
 					_onClick(_input);
 			});
 		}
-		void	setClickFunc(std::function<void(std::string)> func)
+		void	setClickFunc(std::function<void(const std::string &)> func)
 		{
 			_onClick = func;
 		}
@@ -64,7 +65,7 @@ class	TextField : public UIElement
 		{
 			_toggle.draw(shader, windowSize);
 			_text.draw(shader, windowSize);
-			std::cout << "Dont use this draw call, real one takes 2 shaders (static_cast<TextField*>(this))" << std::endl;
+			std::cout << "WARNING: Wrong draw call called line " << __LINE__ << " in file " << __FILE__ << std::endl;
 		}
 	private:
 		void	_handleCursorBlink()
@@ -73,12 +74,12 @@ class	TextField : public UIElement
 			{
 				if (glfwGetTime() - _cursorLast > CURSOR_BLINK_TIME)
 				{
-					_text.setText(_input + "_");
+					_text.setText(_input + " ");
 					if (glfwGetTime() - _cursorLast > CURSOR_BLINK_TIME * 2)
 						_cursorLast = glfwGetTime();
 				}
 				else
-					_text.setText(_input + " ");
+					_text.setText(_input + "_");
 			}
 			else
 				_text.setText(_input);
@@ -91,7 +92,7 @@ class	TextField : public UIElement
 		LimitedText	_text;
 		Toggle		_toggle;
 		std::string	_defaultLabel;
-		std::function<void(std::string)>	_onClick = NULL;
+		std::function<void(const std::string &)>	_onClick = NULL;
 };
 
 #endif

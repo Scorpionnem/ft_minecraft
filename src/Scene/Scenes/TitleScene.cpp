@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:43:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 12:03:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -49,6 +49,12 @@ void	TitleScene::onEnter()
 		});
 
 	_multiplayerButton = new TextField(textures.get("text_field"), textures.get("text_field_highlighted"), textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5, 0.5), 24);
+	static_cast<TextField*>(_multiplayerButton)->setClickFunc(
+		[this](const std::string &str)
+		{
+			_game->getWindow().setWindowName(str);
+		});
+		
 	_icon = new Image(textures.get("ft_minecraft"), glm::vec2(0, -80), glm::vec2(0.5, 0.5), glm::vec2(0.25, 0.25));
 	_textTest = new Text("Singleplayer", textures.get("ascii"), glm::vec2(0, -20), glm::vec2(0.5));
 	_textTest1 = new Text("Multiplayer", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5));
