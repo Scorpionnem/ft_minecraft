@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:51:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 13:49:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,12 +27,16 @@ class Text : public UIElement
 			_offset = offset;
 			_anchor = anchor;
 			_size = glm::vec2(DEFAULT_FONT_SIZE) * scale;
+			_scale = scale;
 		}
 
 		~Text() {}
 
 		virtual void	setText(const std::string &text) {_text = text;}
+		void	setAngle(float angle) {_angle = angle;}
 		virtual std::string	getText(void) {return (_text);}
+		void	setScale(glm::vec2 scale) {_scale = scale;}
+		void	setColor(glm::vec3 color) {_color = color;}
 
 		void	handleEvents(UIEvent) {}
 		virtual void	draw(Shader *shader, glm::vec2 windowSize)
@@ -40,6 +44,7 @@ class Text : public UIElement
 			_upload();
 
 			float	scale = UIElement::getUiScale(windowSize);
+			_size = glm::vec2(DEFAULT_FONT_SIZE) * _scale;
 			glm::vec2	scaledSize = glm::vec2((_size.x * _text.size()) * scale, _size.y * scale);
 
 			float	x = (_anchor.x * windowSize.x) - (_anchor.x * scaledSize.x);
@@ -47,28 +52,40 @@ class Text : public UIElement
 
 			glm::vec2	pos = glm::vec2(x, y) + (_offset * scale);
 
-			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos.x, pos.y, 0.0f)) * glm::scale(glm::mat4(1.0f), glm::vec3(_size.x * scale, _size.y * scale, 1.0f));
+			glm::mat4 model(1.0f);
+
+			model = glm::translate(model, glm::vec3(pos.x, pos.y, 0.0f));
+			model = glm::translate(model, glm::vec3(((_size.x * _text.size()) * scale) / 2, (_size.y * scale) / 2, 0.0f));
+			model = glm::rotate(model, glm::radians(_angle), glm::vec3(0.0, 0.0, 1.0));
+			model = glm::translate(model, glm::vec3(-((_size.x * _text.size()) * scale) / 2, -(_size.y * scale) / 2, 0.0f));
+			model = glm::scale(model, glm::vec3(_size.x * scale, _size.y * scale, 1.0f));
 
 			shader->bind();
 			shader->setInt("tex", 0);
+			shader->setVec3("color", _color);
 			_texture->bind(0);
 
 			for (char c : _text)
 			{
 				shader->setMat4("model", model);
 				shader->setInt("charIndex", c);
+
 				glBindVertexArray(_VAO);
 				glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
+
 				model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
 			}
 		}
 	protected:
-
 		Texture		*_texture;
 		std::string	_text;
+		
 		glm::vec2	_offset;
 		glm::vec2	_anchor;
 		glm::vec2	_size;
+		glm::vec2	_scale;
+		glm::vec3	_color = glm::vec3(1);
+		float		_angle = 0;
 };
 
 #endif

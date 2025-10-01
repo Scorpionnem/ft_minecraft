@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:13:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 13:28:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -42,6 +42,7 @@ class TitleScene : public Scene
 		UIElement	*_textTest3;
 		UIElement	*_textAuthor;
 		UIElement	*_fpsText;
+		UIElement	*_splashText;
 };
 
 #endif

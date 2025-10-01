@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 12:03:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 13:44:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,19 +48,18 @@ void	TitleScene::onEnter()
 			this->requestScene(new GameScene(_game));
 		});
 
-	_multiplayerButton = new TextField(textures.get("text_field"), textures.get("text_field_highlighted"), textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5, 0.5), 24);
-	static_cast<TextField*>(_multiplayerButton)->setClickFunc(
-		[this](const std::string &str)
-		{
-			_game->getWindow().setWindowName(str);
-		});
+	_multiplayerButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0.5));
 		
-	_icon = new Image(textures.get("ft_minecraft"), glm::vec2(0, -80), glm::vec2(0.5, 0.5), glm::vec2(0.25, 0.25));
+	_icon = new Image(textures.get("ft_minecraft"), glm::vec2(0, -90), glm::vec2(0.5, 0.5), glm::vec2(0.3, 0.3));
 	_textTest = new Text("Singleplayer", textures.get("ascii"), glm::vec2(0, -20), glm::vec2(0.5));
 	_textTest1 = new Text("Multiplayer", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5));
 	_textTest2 = new Text("Options", textures.get("ascii"), glm::vec2(-50, 40), glm::vec2(0.5));
 	_textTest3 = new Text("Quit game", textures.get("ascii"), glm::vec2(50, 40), glm::vec2(0.5));
 	_textAuthor = new Text("By mbatty & mbirou", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(1));
+
+	_splashText = new Text("Also try ft_vox!", textures.get("ascii"), glm::vec2(115, -85), glm::vec2(0.5));
+	static_cast<Text*>(_splashText)->setAngle(-15);
+	static_cast<Text*>(_splashText)->setColor(glm::vec3(1.0, 1.0, 0.0));
 
 	_fpsText = new Text("fps", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0));
 }
@@ -90,6 +89,8 @@ void	TitleScene::update(float deltaTime)
 	_quitButton->handleEvents(events);
 	_soloButton->handleEvents(events);
 	_multiplayerButton->handleEvents(events);
+
+	static_cast<Text*>(_splashText)->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
 }
 
 void	TitleScene::render()
@@ -105,13 +106,15 @@ void	TitleScene::render()
 	_settingsButton->draw(shaders.get("image"), window.getSize());
 	_quitButton->draw(shaders.get("image"), window.getSize());
 	_soloButton->draw(shaders.get("image"), window.getSize());
-	static_cast<TextField*>(_multiplayerButton)->draw(shaders.get("image"), shaders.get("font"), window.getSize());
+	_multiplayerButton->draw(shaders.get("image"), window.getSize());
+	// static_cast<TextField*>(_multiplayerButton)->draw(shaders.get("image"), shaders.get("font"), window.getSize());
 	_icon->draw(shaders.get("image"), window.getSize());
 	_textTest->draw(shaders.get("font"), window.getSize());
-	// _textTest1->draw(shaders.get("font"), window.getSize());
+	_textTest1->draw(shaders.get("font"), window.getSize());
 	_textTest2->draw(shaders.get("font"), window.getSize());
 	_textTest3->draw(shaders.get("font"), window.getSize());
 	_textAuthor->draw(shaders.get("font"), window.getSize());
 
 	_fpsText->draw(shaders.get("font"), window.getSize());
+	_splashText->draw(shaders.get("font"), window.getSize());
 }
