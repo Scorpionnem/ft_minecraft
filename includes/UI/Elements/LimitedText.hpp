@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:22:12 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:37:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 12:30:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ class	LimitedText : public Text
 		}
 		void	draw(Shader *shader, glm::vec2 windowSize)
 		{
-			std::string	str = ".";
+			std::string	str;
 
 			if (_actualText.size() > (_maxCharCount - 1))
 				str += _actualText.substr(_actualText.size() - (_maxCharCount - 1), _actualText.size());
