@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:45:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 12:04:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:55:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,11 @@
 
 # define CURSOR_BLINK_TIME 0.4
 
+/*
+	TextField ui element, when selected it takes input from the keyboard it implements a Toggle and a LimitedText elements
+
+	onClick function takes a string thats the string written by the user
+*/
 class	TextField : public UIElement
 {
 	public:

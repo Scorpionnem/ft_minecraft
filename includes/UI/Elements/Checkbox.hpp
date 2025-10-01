@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:41:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:57:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include "UIElement.hpp"
 
+/*
+	Checkbox ui element, when pressed it will be set as checked, if you click again on it it will be unselected
+
+	onClick function takes a boolean that tells wether the checkbox is clicked or not when its executed
+*/
 class Checkbox : public UIElement
 {
 	public:

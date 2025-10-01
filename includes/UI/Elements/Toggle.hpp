@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:41:47 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:50:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:54:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include "UIElement.hpp"
 
+/*
+	Toggle ui element, when pressed it will be set as checked, if you click again on it or anywhere else on screen it will be unselected
+
+	onClick function takes a boolean that tells wether the toggle is clicked or not when its executed
+*/
 class Toggle : public UIElement
 {
 	public:

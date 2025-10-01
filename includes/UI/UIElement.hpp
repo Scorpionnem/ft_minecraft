@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:11:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:52:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -46,6 +46,9 @@ constexpr float quadVertices[] =
 	1.0f, 1.0f,  1.0f, 1.0f
 };
 
+/*
+	UIElement interface to implement all types of ui elements
+*/
 class UIElement
 {
 	public:

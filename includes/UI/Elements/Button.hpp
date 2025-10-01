@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:41:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:57:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,11 @@
 
 # include "UIElement.hpp"
 
+/*
+	Button ui element, when pressed it will call onClick
+
+	onClick function takes void
+*/
 class Button : public UIElement
 {
 	public:

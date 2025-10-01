@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 13:49:51 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:55:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,6 +17,9 @@
 
 # define DEFAULT_FONT_SIZE 8
 
+/*
+	Text ui element, self explanatory, just text on the screen
+*/
 class Text : public UIElement
 {
 	public:

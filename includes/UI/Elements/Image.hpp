@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 09:41:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:56:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,9 @@
 
 # include "UIElement.hpp"
 
+/*
+	Text ui element, self explanatory, just a texture on the screen
+*/
 class Image : public UIElement
 {
 	public:

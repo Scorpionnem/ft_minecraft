@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:22:12 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 12:30:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/01 14:56:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,10 @@
 
 # include "Text.hpp"
 
+/*
+	LimitedText ui element, extends the Text ui element by having a maxCharCount, it means that if it goes over maxCharCount,
+	the string will only render the end of the string and not grow any longer
+*/
 class	LimitedText : public Text
 {
 	public:
