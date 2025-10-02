@@ -84,7 +84,7 @@ fclean: clean
 	@rm -rf $(NAME)
 
 run: $(NAME)
-	./$(NAME)
+	@./$(NAME)
 
 .PHONY: all clean fclean re run glfw stb_image glm
 
