@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 14:34:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:22:30 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,6 @@ class SettingsScene : public Scene
 		void onExit();
 
 	private:
-		UIElement	*_quitButton;
 };
 
 #endif

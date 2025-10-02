@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:52:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:14:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,7 +71,7 @@ class UIElement
 			@param shader shader used to draw the UIElement
 			@param windowSize window size to scale the UIElement
 		*/
-		virtual void	draw(Shader *shader, glm::vec2 windowSize) = 0;
+		virtual void	draw(glm::vec2 windowSize) = 0;
 
 		/*
 			Returns the UI scale
@@ -111,6 +111,7 @@ class UIElement
 		}
 		uint		_VAO = 0;
 		uint		_VBO = 0;
+		Shader		*_shader = NULL;
 		
 		static bool	_isInBounds(glm::vec2 point, glm::vec2 zonePos, glm::vec2 zoneSize)
 		{

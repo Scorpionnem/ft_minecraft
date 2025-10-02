@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 15:59:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:21:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,7 +23,7 @@
 class Text : public UIElement
 {
 	public:
-		Text(const std::string &text, Texture *texture, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
+		Text(const std::string &text, Texture *texture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
 			: _texture(texture)
 		{
 			_text = text;
@@ -31,6 +31,7 @@ class Text : public UIElement
 			_anchor = anchor;
 			_size = glm::vec2(DEFAULT_FONT_SIZE) * scale;
 			_scale = scale;
+			_shader = shader;
 		}
 
 		~Text() {}
@@ -42,7 +43,7 @@ class Text : public UIElement
 		void	setColor(glm::vec3 color) {_color = color;}
 
 		void	handleEvents(UIEvent) {}
-		virtual void	draw(Shader *shader, glm::vec2 windowSize)
+		virtual void	draw(glm::vec2 windowSize)
 		{
 			_upload();
 
@@ -63,22 +64,23 @@ class Text : public UIElement
 			model = glm::translate(model, glm::vec3(-((_size.x * _text.size()) * scale) / 2, -(_size.y * scale) / 2, 0.0f));
 			model = glm::scale(model, glm::vec3(_size.x * scale, _size.y * scale, 1.0f));
 
-			shader->bind();
-			shader->setInt("tex", 0);
+			_shader->bind();
+			_shader->setInt("tex", 0);
 			_texture->bind(0);
 
 			for (char c : _text)
 			{
-				shader->setVec3("color", _color / 4.f);
-				shader->setMat4("model", glm::translate(model, glm::vec3(1.f / 8.f, 1.f / 8.f, 0.0f)));
-				shader->setInt("charIndex", c);
+				_shader->setVec3("color", _color / 4.f);
+				_shader->setMat4("model", glm::translate(model, glm::vec3(1.f / 8.f, 1.f / 8.f, 0.0f)));
+				_shader->setInt("charIndex", c);
 
 				glBindVertexArray(_VAO);
 				glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
 
-				shader->setVec3("color", _color);
-				shader->setMat4("model", model);
-				shader->setInt("charIndex", c);
+				_shader->setVec3("color", _color);
+				_shader->setMat4("model", model);
+				_shader->setInt("charIndex", c);
+				_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 
 				glBindVertexArray(_VAO);
 				glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));

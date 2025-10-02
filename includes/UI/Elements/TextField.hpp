@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:45:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:55:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:18:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,8 +26,8 @@
 class	TextField : public UIElement
 {
 	public:
-		TextField(Texture *texture, Texture *hoverTexture, Texture *font, glm::vec2 offset, glm::vec2 anchor, uint maxCharCount, glm::vec2 scale = glm::vec2(1))
-			: _text("", font, offset, anchor, maxCharCount, scale), _toggle(texture, hoverTexture, offset, anchor, scale)
+		TextField(Texture *texture, Texture *hoverTexture, Texture *font, Shader *toggleShader, Shader *textShader, glm::vec2 offset, glm::vec2 anchor, uint maxCharCount, glm::vec2 scale = glm::vec2(1))
+			: _text("", font, textShader, offset, anchor, maxCharCount, scale), _toggle(texture, hoverTexture, toggleShader, offset, anchor, scale)
 		{
 			_toggle.setClickFunc([this](bool state)
 			{
@@ -58,19 +58,13 @@ class	TextField : public UIElement
 			if (_selected && (events.inputs->isKeyPressed(GLFW_KEY_ESCAPE) || events.inputs->isKeyPressed(GLFW_KEY_ENTER)))
 				_toggle.setChecked(false);
 		}
-		void	draw(Shader *buttonShader, Shader *fontShader, glm::vec2 windowSize)
+
+		void	draw(glm::vec2 windowSize)
 		{
 			_handleCursorBlink();
 
-			_toggle.draw(buttonShader, windowSize);
-			_text.draw(fontShader, windowSize);
-		}
-
-		void	draw(Shader *shader, glm::vec2 windowSize)
-		{
-			_toggle.draw(shader, windowSize);
-			_text.draw(shader, windowSize);
-			std::cout << "WARNING: Wrong draw call called line " << __LINE__ << " in file " << __FILE__ << std::endl;
+			_toggle.draw(windowSize);
+			_text.draw(windowSize);
 		}
 	private:
 		void	_handleCursorBlink()

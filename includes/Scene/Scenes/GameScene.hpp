@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:01:55 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 17:02:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:37:40 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,8 +31,6 @@ class GameScene : public Scene
 		void onExit();
 
 	private:
-		UIElement	*_hotbar;
-		UIElement	*_hotbarSlot;
 };
 
 #endif

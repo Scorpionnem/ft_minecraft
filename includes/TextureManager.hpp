@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:47:28 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 14:45:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:46:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,6 +35,7 @@ class	TextureManager
 		}
 		Texture	*get(const std::string &id)
 		{
+			load(id);
 			if (_textures.find(id) == _textures.end())
 				return (NULL);
 			

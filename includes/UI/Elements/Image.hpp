@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:56:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:21:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,18 +21,19 @@
 class Image : public UIElement
 {
 	public:
-		Image(Texture *texture, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
+		Image(Texture *texture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
 			: _texture(texture)
 		{
 			_offset = offset;
 			_anchor = anchor;
 			_size = glm::vec2(texture->getWidth(), texture->getHeight()) * scale;
+			_shader = shader;
 		}
 
 		~Image() {}
 
 		void	handleEvents(UIEvent) {}
-		void	draw(Shader *shader, glm::vec2 windowSize)
+		void	draw(glm::vec2 windowSize)
 		{
 			_upload();
 
@@ -47,9 +48,10 @@ class Image : public UIElement
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0.0f))
 							* glm::scale(glm::mat4(1.0f), glm::vec3(_size.x * scale, _size.y * scale, 1.0f));
 
-			shader->bind();
-			shader->setMat4("model", model);
-			shader->setInt("tex", 0);
+			_shader->bind();
+			_shader->setMat4("model", model);
+			_shader->setInt("tex", 0);
+			_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 
 			_texture->bind(0);
 

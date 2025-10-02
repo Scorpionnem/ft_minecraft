@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 15:52:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:12:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,8 @@
 
 # include "Scene.hpp"
 # include "UIElement.hpp"
+
+# include "Panel.hpp"
 
 class TitleScene : public Scene
 {
@@ -31,19 +33,7 @@ class TitleScene : public Scene
 		void onExit();
 
 	private:
-		UIElement	*_settingsButton;
-		UIElement	*_quitButton;
-		UIElement	*_soloButton;
-		UIElement	*_multiplayerButton;
-		UIElement	*_icon;
-		UIElement	*_textTest;
-		UIElement	*_textTest1;
-		UIElement	*_textTest2;
-		UIElement	*_textTest3;
-		UIElement	*_textAuthor;
-		UIElement	*_fpsText;
-		UIElement	*_splashText;
-		UIElement	*_backgroundImage;
+		Panel		_titlePanel;
 };
 
 #endif

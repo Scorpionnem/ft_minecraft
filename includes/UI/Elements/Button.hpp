@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:57:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:21:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,12 +29,13 @@ class Button : public UIElement
 			@param texture default texture
 			@param texture hover texture
 		*/
-		Button(Texture *texture, Texture *hoverTexture, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
+		Button(Texture *texture, Texture *hoverTexture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
 			: _currentTexture(texture), _texture(texture), _hoverTexture(hoverTexture)
 		{
 			_offset = offset;
 			_anchor = anchor;
 			_size = glm::vec2(texture->getWidth(), texture->getHeight()) * scale;
+			_shader = shader;
 		}
 		void	setClickFunc(std::function<void(void)> func)
 		{
@@ -59,7 +60,7 @@ class Button : public UIElement
 				if (_onClick)
 					_onClick();
 		}
-		void	draw(Shader *shader, glm::vec2 windowSize)
+		void	draw(glm::vec2 windowSize)
 		{
 			_upload();
 
@@ -69,9 +70,10 @@ class Button : public UIElement
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0.0f))
 							* glm::scale(glm::mat4(1.0f), glm::vec3(_size.x * scale, _size.y * scale, 1.0f));
 
-			shader->bind();
-			shader->setMat4("model", model);
-			shader->setInt("tex", 0);
+			_shader->bind();
+			_shader->setMat4("model", model);
+			_shader->setInt("tex", 0);
+			_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 
 			_currentTexture->bind(0);
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:22:12 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 14:56:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:16:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,13 +22,13 @@
 class	LimitedText : public Text
 {
 	public:
-		LimitedText(const std::string &text, Texture *texture, glm::vec2 offset, glm::vec2 anchor, uint maxCharCount, glm::vec2 scale = glm::vec2(1))
-			: Text(text, texture, offset, anchor, scale)
+		LimitedText(const std::string &text, Texture *texture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, uint maxCharCount, glm::vec2 scale = glm::vec2(1))
+			: Text(text, texture, shader, offset, anchor, scale)
 		{
 			_maxCharCount = maxCharCount;
 			_actualText = text;
 		}
-		void	draw(Shader *shader, glm::vec2 windowSize)
+		void	draw(glm::vec2 windowSize)
 		{
 			std::string	str;
 
@@ -37,7 +37,7 @@ class	LimitedText : public Text
 			else
 				str = _actualText;
 			this->_text = str;
-			Text::draw(shader, windowSize);
+			Text::draw(windowSize);
 		}
 		void	setText(const std::string &text) {_actualText = text;}
 		std::string	getText(void) {return (_actualText);}

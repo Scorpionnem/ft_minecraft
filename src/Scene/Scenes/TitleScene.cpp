@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 16:03:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:40:00 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,52 +24,52 @@
 
 void	TitleScene::onEnter()
 {
+	sleep(3);
 	_loaded = true;
 
 	TextureManager &textures = _game->getTextures();
+	ShaderManager &shaders = _game->getShaders();
 
-	_settingsButton = new Button(textures.get("button_small"), textures.get("button_highlighted_small"), glm::vec2(-50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1));
-	static_cast<Button*>(_settingsButton)->setClickFunc(
+	_titlePanel.add("background", new BackgroundImage(textures.get("dirt"), shaders.get("background")));
+
+	UIElement *tmp = _titlePanel.add("options", new Button(textures.get("button_small"), textures.get("button_highlighted_small"), shaders.get("image"),
+													glm::vec2(-50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1)));
+	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->requestScene(new SettingsScene(_game));
 		});
+	_titlePanel.add("options_text", new Text("Options", textures.get("ascii"), shaders.get("font"), glm::vec2(-50, 40), glm::vec2(0.5)));
 
-	_quitButton = new Button(textures.get("button_small"), textures.get("button_highlighted_small"), glm::vec2(50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1));
-	static_cast<Button*>(_quitButton)->setClickFunc(
+	tmp = _titlePanel.add("quit", new Button(textures.get("button_small"), textures.get("button_highlighted_small"), shaders.get("image"),
+										glm::vec2(50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1)));
+	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			_game->setRunning(false);
 		});
+	_titlePanel.add("quit_text", new Text("Quit game", textures.get("ascii"), shaders.get("font"), glm::vec2(50, 40), glm::vec2(0.5)));
 
-	_soloButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, -20), glm::vec2(0.5, 0.5));
-	static_cast<Button*>(_soloButton)->setClickFunc(
-		[this]()
-		{
-			this->requestScene(new GameScene(_game));
-		});
+	_titlePanel.add("singpleplayer", new Button(textures.get("button"), textures.get("button_highlighted"), shaders.get("image"),
+											glm::vec2(0, -20), glm::vec2(0.5, 0.5)));
+	_titlePanel.add("singleplayer_text", new Text("Singleplayer", textures.get("ascii"), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
 
-	_multiplayerButton = new Button(textures.get("button"), textures.get("button_highlighted"), glm::vec2(0, 0), glm::vec2(0.5, 0.5));
-		
-	_icon = new Image(textures.get("ft_minecraft"), glm::vec2(0, -90), glm::vec2(0.5, 0.5), glm::vec2(0.3, 0.3));
-	_textTest = new Text("Singleplayer", textures.get("ascii"), glm::vec2(0, -20), glm::vec2(0.5));
-	_textTest1 = new Text("Multiplayer", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5));
-	_textTest2 = new Text("Options", textures.get("ascii"), glm::vec2(-50, 40), glm::vec2(0.5));
-	_textTest3 = new Text("Quit game", textures.get("ascii"), glm::vec2(50, 40), glm::vec2(0.5));
-	_textAuthor = new Text("By mbatty & mbirou", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(1));
+	_titlePanel.add("multiplayer", new Button(textures.get("button"), textures.get("button_highlighted"), shaders.get("image"),
+									glm::vec2(0, 0), glm::vec2(0.5, 0.5)));
+	_titlePanel.add("multiplayer_text", new Text("Multiplayer", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
 
-	_splashText = new Text("Also try ft_vox!", textures.get("ascii"), glm::vec2(115, -85), glm::vec2(0.5));
-	static_cast<Text*>(_splashText)->setAngle(-15);
-	static_cast<Text*>(_splashText)->setColor(glm::vec3(1.0, 1.0, 0.0));
+	_titlePanel.add("icon", new Image(textures.get("ft_minecraft"), shaders.get("image"),
+							glm::vec2(0, -90), glm::vec2(0.5, 0.5), glm::vec2(0.3, 0.3)));
 
-	_backgroundImage = new BackgroundImage(textures.get("dirt"));
+	_titlePanel.add("credits", new Text("By mbatty & mbirou", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
 
-	_fpsText = new Text("fps", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0));
+	tmp = _titlePanel.add("splash_text", new Text("Also try ft_vox!", textures.get("ascii"), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
+	static_cast<Text*>(tmp)->setAngle(-15);
+	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
 }
 
 void	TitleScene::onExit()
 {
-	delete _settingsButton;
 }
 
 void	TitleScene::processInput(float deltaTime)
@@ -86,41 +86,16 @@ void	TitleScene::update(float deltaTime)
 	events.windowSize = _game->getWindow().getSize();
 	events.inputs = &_game->getInput();
 
-	static_cast<Text*>(_fpsText)->setText(std::to_string((int)(1.0f / deltaTime)) + " fps");
+	_titlePanel.handleEvents(events);
 
-	_settingsButton->handleEvents(events);
-	_quitButton->handleEvents(events);
-	_soloButton->handleEvents(events);
-	_multiplayerButton->handleEvents(events);
-
-	static_cast<Text*>(_splashText)->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
+	static_cast<Text*>(_titlePanel.get("splash_text"))->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
 }
 
 void	TitleScene::render()
 {
-	ShaderManager &shaders = _game->getShaders();
 	Window	&window = _game->getWindow();
 
 	glDisable(GL_DEPTH_TEST);
 
-	shaders.get("image")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-	shaders.get("font")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-	shaders.get("background")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-
-	_backgroundImage->draw(shaders.get("background"), window.getSize());
-
-	_settingsButton->draw(shaders.get("image"), window.getSize());
-	_quitButton->draw(shaders.get("image"), window.getSize());
-	_soloButton->draw(shaders.get("image"), window.getSize());
-	_multiplayerButton->draw(shaders.get("image"), window.getSize());
-	// static_cast<TextField*>(_multiplayerButton)->draw(shaders.get("image"), shaders.get("font"), window.getSize());
-	_icon->draw(shaders.get("image"), window.getSize());
-	_textTest->draw(shaders.get("font"), window.getSize());
-	_textTest1->draw(shaders.get("font"), window.getSize());
-	_textTest2->draw(shaders.get("font"), window.getSize());
-	_textTest3->draw(shaders.get("font"), window.getSize());
-	_textAuthor->draw(shaders.get("font"), window.getSize());
-
-	_fpsText->draw(shaders.get("font"), window.getSize());
-	_splashText->draw(shaders.get("font"), window.getSize());
+	_titlePanel.draw(window.getSize());
 }

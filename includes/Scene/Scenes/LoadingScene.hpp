@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 10:22:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:47:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,7 @@
 # include "Image.hpp"
 # include "Text.hpp"
 # include "LimitedText.hpp"
+# include "BackgroundImage.hpp"
 
 class LoadingScene : public Scene
 {
@@ -31,9 +32,11 @@ class LoadingScene : public Scene
 		void onEnter()
 		{
 			TextureManager &textures = _game->getTextures();
+			ShaderManager &shaders = _game->getShaders();
 
-			_loadingScreen = new Image(textures.get("ft_minecraft"), glm::vec2(0, -32), glm::vec2(0.5, 0.5), glm::vec2(0.25));
-			_loadingScreenText = new Text("Loading", textures.get("ascii"), glm::vec2(0, 0), glm::vec2(0.5));
+			_panel.add("background", new BackgroundImage(textures.get("dirt"), shaders.get("background")));
+			_panel.add("icon", new Image(textures.get("ft_minecraft"), shaders.get("image"), glm::vec2(0, -32), glm::vec2(0.5, 0.5), glm::vec2(0.25)));
+			_panel.add("loading_text", new Text("Loading", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
 
 			_thread = std::thread([this]()
 				{
@@ -51,7 +54,7 @@ class LoadingScene : public Scene
 				requestScene(_loading);
 			}
 
-			Text	*loadingScreenText = static_cast<Text*>(_loadingScreenText);
+			Text	*loadingScreenText = static_cast<Text*>(_panel.get("loading_text"));
 
 			static double last = 0;
 			if (glfwGetTime() - last > 0.3)
@@ -67,23 +70,17 @@ class LoadingScene : public Scene
 		}
 		void render()
 		{
-			ShaderManager &shaders = _game->getShaders();
 			Window	&window = _game->getWindow();
 
 			glDisable(GL_DEPTH_TEST);
 
-			shaders.get("image")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-			shaders.get("font")->setMat4("projection", glm::ortho(0.f, window.getWidth(), window.getHeight(), 0.f, -1.f, 1.f));
-
-			_loadingScreen->draw(shaders.get("image"), window.getSize());
-			_loadingScreenText->draw(shaders.get("font"), window.getSize());
+			_panel.draw(window.getSize());
 		}
 
 		void onExit() {}
 
 	private:
-		UIElement			*_loadingScreen;
-		UIElement			*_loadingScreenText;
+		Panel				_panel;
 
 		std::atomic<bool>	_loadingDone;
 		std::thread			_thread;
