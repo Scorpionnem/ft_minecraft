@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:47:01 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 14:56:27 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -30,9 +30,9 @@ class SingleplayerScene : public Scene
 		void render();
 
 		void onExit();
-
 	private:
-		Panel	_panel;
+		uint64_t	_timesClicked = 0;
+		Panel		_panel;
 };
 
 #endif

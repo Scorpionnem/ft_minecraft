@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 12:00:12 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 14:59:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,6 +40,16 @@ void	SingleplayerScene::onEnter()
 		});
 	_panel.add("back_text", new Text("Back", textures.get("ascii"), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
 
+	tmp = _panel.add("cookie_button", new Button(textures.get("button_small"), textures.get("button_highlighted_small"), shaders.get("image"),
+										glm::vec2(0, 0), glm::vec2(0.5)));
+	static_cast<Button*>(tmp)->setClickFunc(
+		[this]()
+		{
+			this->_timesClicked++;
+		});
+	_panel.add("cookie_button_text", new Text("Click me!", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
+	_panel.add("cookie_count_text", new Text("0", textures.get("ascii"), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
+
 	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
 }
 
@@ -61,6 +71,8 @@ void	SingleplayerScene::update(float deltaTime)
 	events.windowSize = _game->getWindow().getSize();
 	events.inputs = &_game->getInput();
 
+	static_cast<Text*>(_panel.get("cookie_count_text"))->setText(std::to_string(_timesClicked));
+	
 	_panel.handleEvents(events);
 }
 
