@@ -6,14 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:14:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 11:52:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "Game.hpp"
 #include "Button.hpp"
 #include "TitleScene.hpp"
-#include "SettingsScene.hpp"
+#include "OptionsScene.hpp"
 #include "GameScene.hpp"
 #include "LoadingScene.hpp"
 

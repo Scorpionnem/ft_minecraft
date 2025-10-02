@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:49:45 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 12:08:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,10 @@
 # include "Text.hpp"
 # include "LimitedText.hpp"
 # include "BackgroundImage.hpp"
+
+# include "ShaderManager.hpp"
+# include "TextureManager.hpp"
+# include "Game.hpp"
 
 class LoadingScene : public Scene
 {
@@ -41,6 +45,7 @@ class LoadingScene : public Scene
 			_thread = std::thread([this]()
 				{
 					_loading->onEnter();
+
 					_loadingDone = true;
 				});
 			_thread.detach();

@@ -27,8 +27,10 @@ SRCS =	glad/glad.cpp\
 		src/Shader.cpp\
 		src/Camera.cpp\
 		src/Scene/Scenes/TitleScene.cpp\
-		src/Scene/Scenes/SettingsScene.cpp\
-		src/Scene/Scenes/GameScene.cpp
+		src/Scene/Scenes/OptionsScene.cpp\
+		src/Scene/Scenes/GameScene.cpp\
+		src/Scene/Scenes/MultiplayerScene.cpp\
+		src/Scene/Scenes/SingleplayerScene.cpp
 
 OBJDIR = obj
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)

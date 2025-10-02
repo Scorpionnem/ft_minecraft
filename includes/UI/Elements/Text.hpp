@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:21:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 11:55:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -70,7 +70,7 @@ class Text : public UIElement
 
 			for (char c : _text)
 			{
-				_shader->setVec3("color", _color / 4.f);
+				_shader->setVec3("color", _color / 5.f);
 				_shader->setMat4("model", glm::translate(model, glm::vec3(1.f / 8.f, 1.f / 8.f, 0.0f)));
 				_shader->setInt("charIndex", c);
 

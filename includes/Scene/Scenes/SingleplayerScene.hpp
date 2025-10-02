@@ -1,28 +1,27 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   TitleScene.hpp                                     :+:      :+:    :+:   */
+/*   SingleplayerScene.hpp                              :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:28:01 by mbatty           ###   ########.fr       */
+/*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
+/*   Updated: 2025/10/02 11:47:01 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef TITLESCENE_HPP
-# define TITLESCENE_HPP
+#ifndef SINGLEPLAYERSCENE_HPP
+# define SINGLEPLAYERSCENE_HPP
 
+# include "Panel.hpp"
 # include "Scene.hpp"
 # include "UIElement.hpp"
 
-# include "Panel.hpp"
-
-class TitleScene : public Scene
+class SingleplayerScene : public Scene
 {
 	public:
-		TitleScene(Game *game) : Scene(game) {}
-		~TitleScene() {};
+		SingleplayerScene(Game *game) : Scene(game) {}
+		~SingleplayerScene() {};
 		
 		void onEnter();
 
@@ -33,7 +32,7 @@ class TitleScene : public Scene
 		void onExit();
 
 	private:
-		Panel		_panel;
+		Panel	_panel;
 };
 
 #endif
