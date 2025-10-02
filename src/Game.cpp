@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:48:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 11:14:23 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,7 +29,7 @@ void	Game::run()
 		_update(_window.getDeltaTime());
 		_render();
 
-		if (_currentScene->swapScene())
+		if (_currentScene->requestedScene())
 			_swapScene(_currentScene->getSceneRequest());
 	}
 	_stop();

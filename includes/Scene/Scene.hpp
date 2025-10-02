@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:03:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:24:34 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:53:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,7 +35,7 @@ class Scene
 		virtual void onExit() {};
 
 		bool	loaded() {return (this->_loaded);}
-		bool	swapScene() {return (_sceneRequest != NULL);}
+		bool	requestedScene() {return (_sceneRequest != NULL);}
 		Scene		*getSceneRequest() {return (_sceneRequest);}
 	protected:
 		void	requestScene(Scene *scene)

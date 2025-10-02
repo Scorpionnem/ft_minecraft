@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:40:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 10:52:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,6 @@
 
 void	TitleScene::onEnter()
 {
-	sleep(3);
 	_loaded = true;
 
 	TextureManager &textures = _game->getTextures();
@@ -66,6 +65,8 @@ void	TitleScene::onEnter()
 	tmp = _titlePanel.add("splash_text", new Text("Also try ft_vox!", textures.get("ascii"), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setAngle(-15);
 	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
+
+	sleep(1);
 }
 
 void	TitleScene::onExit()
