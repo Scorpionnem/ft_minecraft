@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:16:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/01 11:38:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 20:01:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,8 +52,7 @@ class Input
 		}
 		void	resetKeyRepeats()
 		{
-			std::array<bool, MAX_KEYS> tmp;
-			_repeats = tmp;
+			_repeats.fill(0);
 		}
 	private:
 		double							_scroll = 0;

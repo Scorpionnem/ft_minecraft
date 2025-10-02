@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 12:25:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 20:03:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -48,7 +48,7 @@ void	Game::_swapScene(Scene *scene)
 void	Game::_init()
 {
 	srand(std::time(NULL));
-	
+
 	_window.open(WINDOW_NAME, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, false);
 	_window.setWindowPointer(this);
 
@@ -61,6 +61,8 @@ void	Game::_init()
 
 void	Game::_loadTextures()
 {
+	_textures.load("missing");
+
 	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
 	_textures.load("dirt", "assets/textures/block/dirt.png");
 	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
@@ -69,7 +71,7 @@ void	Game::_loadTextures()
 	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
 	_textures.load("button_small", "assets/textures/ui/button_small.png");
 	_textures.load("button_highlighted_small", "assets/textures/ui/button_highlighted_small.png");
-	
+
 	_textures.load("slider_handle_highlighted", "assets/textures/ui/slider_handle_highlighted.png");
 	_textures.load("slider_handle", "assets/textures/ui/slider_handle.png");
 
