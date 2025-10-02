@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:51:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 12:50:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -23,6 +23,34 @@
 #include "Text.hpp"
 #include "Toggle.hpp"
 #include "TextField.hpp"
+
+constexpr uint SPLASH_TEXT_COUNT = 13;
+constexpr double SPLASH_TEXT_INTERVAL = 10.0;
+
+/*
+	Thanks #world_random! :)
+
+	Logins of people that inspired/gave some of these:
+	- aroma
+	- thivan-d
+	- scraeyme
+*/
+constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
+{
+	"By mbatty and mbirou!",
+	"42 Angouleme",
+	"Outstanding project!",
+	"Is this ft_vox?",
+	"Nice so_long!",
+	"Also try cub3d!",
+	"Chicken jockey!",
+	"Dont forget to git push",
+	"Better than the original",
+	"Core dumped. Segmentation fault.",
+	"C++ > all",
+	"sudo rm -rf /",
+	":(){ :|:& };:",
+};
 
 void	TitleScene::onEnter()
 {
@@ -74,7 +102,7 @@ void	TitleScene::onEnter()
 
 	_panel.add("credits", new Text("By mbatty & mbirou", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
 
-	tmp = _panel.add("splash_text", new Text("Also try ft_vox!", textures.get("ascii"), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
+	tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get("ascii"), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setAngle(-15);
 	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
 }
@@ -99,7 +127,15 @@ void	TitleScene::update(float deltaTime)
 
 	_panel.handleEvents(events);
 
-	static_cast<Text*>(_panel.get("splash_text"))->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
+	Text *splashText = static_cast<Text*>(_panel.get("splash_text"));
+
+	splashText->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
+	if (glfwGetTime() - _lastSplashTextUpdate > SPLASH_TEXT_INTERVAL)
+	{
+		splashText->setText(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT]);
+
+		_lastSplashTextUpdate = glfwGetTime();
+	}
 }
 
 void	TitleScene::render()

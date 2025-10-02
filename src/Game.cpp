@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:52:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 12:25:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,6 +47,8 @@ void	Game::_swapScene(Scene *scene)
 
 void	Game::_init()
 {
+	srand(std::time(NULL));
+	
 	_window.open(WINDOW_NAME, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, false);
 	_window.setWindowPointer(this);
 
