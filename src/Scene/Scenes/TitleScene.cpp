@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 13:16:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/02 13:44:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "Toggle.hpp"
 #include "TextField.hpp"
 
-constexpr uint SPLASH_TEXT_COUNT = 20;
+constexpr uint SPLASH_TEXT_COUNT = 22;
 constexpr double SPLASH_TEXT_INTERVAL = 10.0;
 
 /*
@@ -38,6 +38,7 @@ constexpr double SPLASH_TEXT_INTERVAL = 10.0;
 	- bdehais
 	- jroseiro
 	- cczerwin
+	- pchojka
 	- scraeyme
 */
 constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
@@ -58,10 +59,12 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 	"Minecraft 2.0",
 	"Including lava chicken",
 	"42. It's in the game",
+	"Bogos binted?",
 	"Aww man",
 	"It's not a bug, it's a feature",
 	"Is it all c++? Always has been.",
 	"Don't launch with valgrind!",
+	"Technoblade Never Dies!",
 };
 
 void	TitleScene::onEnter()
