@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:14:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 14:38:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -80,13 +80,21 @@ class UIElement
 		*/
 		static float	getUiScale(glm::vec2 windowSize)
 		{
-			float windowWidth  = (float)windowSize.x;
-			float windowHeight = (float)windowSize.y;
+			float windowWidth  = windowSize.x;
+			float windowHeight = windowSize.y;
 		
 			float scaleX = windowWidth / REFERENCE_WIDTH;
 			float scaleY = windowHeight / REFERENCE_HEIGHT;
 		
 			return (std::min(scaleX, scaleY));
+		}
+		static float	getUIScaleX(float windowSizeX)
+		{
+			return (windowSizeX / REFERENCE_WIDTH);
+		}
+		static float	getUIScaleY(float windowSizeY)
+		{
+			return (windowSizeY / REFERENCE_HEIGHT);
 		}
 	protected:
 		void _upload(void)

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:22:45 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 13:51:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,7 @@ class SingleplayerScene : public Scene
 	private:
 		uint64_t	_timesClicked = 0;
 		Panel		_panel;
+		Panel		_worldsPanel;
 };
 
 #endif

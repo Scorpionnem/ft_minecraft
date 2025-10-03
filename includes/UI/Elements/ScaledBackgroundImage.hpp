@@ -1,43 +1,49 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   BackgroundImage.hpp                                :+:      :+:    :+:   */
+/*   ScaledBackgroundImage.hpp                          :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 14:08:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 14:51:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef BACKGROUNDIMAGE_HPP
-# define BACKGROUNDIMAGE_HPP
+#ifndef SCALEDBACKGROUNDIMAGE_HPP
+# define SCALEDBACKGROUNDIMAGE_HPP
 
 # include "UIElement.hpp"
 
-/*
-	Text ui element, self explanatory, just a texture on the screen
-*/
-class BackgroundImage : public UIElement
+class ScaledBackgroundImage : public UIElement
 {
 	public:
-		BackgroundImage(Texture *texture, Shader *shader, float darknessFactor)
+		ScaledBackgroundImage(Texture *texture, Shader *shader, float darknessFactor, glm::vec2 offset, glm::vec2 anchor, glm::vec2 size)
 			: _texture(texture)
 		{
-			_size = glm::vec2(0);
 			_shader = shader;
 			_darknessFactor = darknessFactor;
+			_size = size;
+			_offset = offset;
+			_anchor = anchor;
 		}
 
-		~BackgroundImage() {}
+		~ScaledBackgroundImage() {}
 
 		void	handleEvents(UIEvent) {}
 		void	draw(glm::vec2 windowSize)
 		{
 			_upload();
-			
-			_size = windowSize;
-			glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(_size.x, _size.y, 1.0f));
+			float	scale = UIElement::getUiScale(windowSize);
+			glm::vec2	scaledSize = glm::vec2(_size.x * windowSize.x * scale, _size.y * scale);
+
+			float	x = (_anchor.x * windowSize.x) - (_anchor.x * scaledSize.x);
+			float	y = (_anchor.y * windowSize.y) - (_anchor.y * scaledSize.y);
+
+			glm::vec2	pos = glm::vec2(x, y) + (_offset * scale);
+
+			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0.0f))
+							* glm::scale(glm::mat4(1.0f), glm::vec3(scaledSize.x, scaledSize.y, 1.0f));
 
 			_shader->bind();
 			_shader->setMat4("model", model);
@@ -51,10 +57,17 @@ class BackgroundImage : public UIElement
 			glBindVertexArray(_VAO);
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
 		}
+
+		void	setSize(glm::vec2 size)
+		{
+			_size = size;
+		}
 	private:
 
 		Texture		*_texture;
 		glm::vec2	_size;
+		glm::vec2	_offset;
+		glm::vec2	_anchor;
 		float		_darknessFactor = 1;
 };
 

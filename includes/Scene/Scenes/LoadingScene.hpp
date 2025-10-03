@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:21:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 14:07:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ class LoadingScene : public Scene
 			TextureManager &textures = _game->getTextures();
 			ShaderManager &shaders = _game->getShaders();
 
-			_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background")));
+			_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
 			_panel.add("loading_text", new Text("Loading", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
 
 			_loadingDone = false;
