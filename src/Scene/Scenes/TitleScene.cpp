@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 14:07:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 16:51:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -86,7 +86,7 @@ void	TitleScene::onEnter()
 
 	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
 
-	UIElement *tmp = _panel.add("options", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
+	UIElement *tmp = _panel.add("options", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 													glm::vec2(-51, 40), glm::vec2(0.5), glm::vec2(0.98, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
@@ -95,7 +95,7 @@ void	TitleScene::onEnter()
 		});
 	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-51, 40), glm::vec2(0.5)));
 
-	tmp = _panel.add("quit", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("quit", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 										glm::vec2(51, 40), glm::vec2(0.5), glm::vec2(0.98, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
@@ -104,7 +104,7 @@ void	TitleScene::onEnter()
 		});
 	_panel.add("quit_text", new Text("Quit game", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(51, 40), glm::vec2(0.5)));
 
-	tmp = _panel.add("singpleplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("singpleplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 											glm::vec2(0, -22), glm::vec2(0.5)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
@@ -113,7 +113,7 @@ void	TitleScene::onEnter()
 		});
 	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -22), glm::vec2(0.5)));
 
-	tmp = _panel.add("multiplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("multiplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 									glm::vec2(0, 0), glm::vec2(0.5)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()

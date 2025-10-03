@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:21:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 16:49:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,8 +29,8 @@ class Button : public UIElement
 			@param texture default texture
 			@param texture hover texture
 		*/
-		Button(Texture *texture, Texture *hoverTexture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
-			: _currentTexture(texture), _texture(texture), _hoverTexture(hoverTexture)
+		Button(Texture *texture, Texture *hoverTexture, Texture *disabledTexture, Shader *shader, glm::vec2 offset, glm::vec2 anchor, glm::vec2 scale = glm::vec2(1))
+			: _currentTexture(texture), _texture(texture), _hoverTexture(hoverTexture), _disabledTexture(disabledTexture)
 		{
 			_offset = offset;
 			_anchor = anchor;
@@ -51,7 +51,12 @@ class Button : public UIElement
 
 			bool	inside = _isInBounds(events.mousePos, pos, this->_size * scale);
 
-			if (inside)
+			if (_disabled)
+			{
+				_currentTexture = _disabledTexture;
+				return ;
+			}
+			else if (inside)
 				_currentTexture = _hoverTexture;
 			else
 				_currentTexture = _texture;
@@ -80,11 +85,17 @@ class Button : public UIElement
 			glBindVertexArray(_VAO);
 			glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
 		}
+		void	setDisabled(bool state)
+		{
+			_disabled = state;
+		}
 	private:
 
 		Texture		*_currentTexture;
 		Texture		*_texture;
 		Texture		*_hoverTexture;
+		bool		_disabled = false;
+		Texture		*_disabledTexture;
 		glm::vec2	_offset;
 		glm::vec2	_anchor;
 		glm::vec2	_size;

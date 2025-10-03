@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 14:51:40 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 16:53:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -38,7 +38,7 @@ void	SingleplayerScene::onEnter()
 	_panel.add("background1", new ScaledBackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5, glm::vec2(0), glm::vec2(0, 1), glm::vec2(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT * 0.0875)));
 	_panel.add("background1", new ScaledBackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5, glm::vec2(0), glm::vec2(0, 0), glm::vec2(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT * 0.05)));
 
-	UIElement *tmp = _panel.add("back", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
+	UIElement *tmp = _panel.add("back", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 										glm::vec2(102, -8), glm::vec2(0.5, 1), glm::vec2(1, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
@@ -47,33 +47,28 @@ void	SingleplayerScene::onEnter()
 		});
 	_panel.add("back_text", new Text("Back", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -14), glm::vec2(0.5, 1.0)));
 
-	tmp = _panel.add("create_world", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("create_world", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 										glm::vec2(102, -30), glm::vec2(0.5, 1), glm::vec2(1, 1)));
 	_panel.add("create_world_text", new Text("Create New World", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -36), glm::vec2(0.5, 1.0)));
 
-	tmp = _panel.add("play_world", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("play_world", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 										glm::vec2(-102, -30), glm::vec2(0.5, 1), glm::vec2(1, 1)));
+	static_cast<Button*>(tmp)->setDisabled(true);
+
 	_panel.add("play_world_text", new Text("Play Selected World", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-102, -36), glm::vec2(0.5, 1.0)));
 	
 
-	tmp = _panel.add("edit_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("edit_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 										glm::vec2(-153, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
+	static_cast<Button*>(tmp)->setDisabled(true);
+
 	_panel.add("edit_world_text", new Text("Edit", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-153, -14), glm::vec2(0.5, 1.0)));
 
-	tmp = _panel.add("delete_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
+	tmp = _panel.add("delete_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 										glm::vec2(-51, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
+	static_cast<Button*>(tmp)->setDisabled(true);
+	
 	_panel.add("delete_world_text", new Text("Delete", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-51, -14), glm::vec2(0.5, 1.0)));
-
-
-	tmp = _panel.add("cookie_button", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
-										glm::vec2(0, 0), glm::vec2(0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
-		[this]()
-		{
-			this->_timesClicked++;
-		});
-	_panel.add("cookie_button_text", new Text("Click me!", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
-	_panel.add("cookie_count_text", new Text("0", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
 
 	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
 }
@@ -96,8 +91,6 @@ void	SingleplayerScene::update(float deltaTime)
 	events.windowSize = _game->getWindow().getSize();
 	events.inputs = &_game->getInput();
 
-	static_cast<Text*>(_panel.get("cookie_count_text"))->setText(std::to_string(_timesClicked));
-	
 	_worldsPanel.handleEvents(events);
 	_panel.handleEvents(events);
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:45:19 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:18:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 16:32:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -53,7 +53,7 @@ class	TextField : public UIElement
 				for (uint key : events.inputs->getCharInputs())
 					_input += key;
 			}
-			if (_input.size() && (events.inputs->isKeyPressed(GLFW_KEY_BACKSPACE) || events.inputs->isKeyRepeating(GLFW_KEY_BACKSPACE)))
+			if (_selected && _input.size() && (events.inputs->isKeyPressed(GLFW_KEY_BACKSPACE) || events.inputs->isKeyRepeating(GLFW_KEY_BACKSPACE)))
 				_input = _input.substr(0, _input.size() - 1);
 			if (_selected && (events.inputs->isKeyPressed(GLFW_KEY_ESCAPE) || events.inputs->isKeyPressed(GLFW_KEY_ENTER)))
 				_toggle.setChecked(false);

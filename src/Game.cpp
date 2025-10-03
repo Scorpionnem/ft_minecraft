@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 12:56:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 15:16:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -59,7 +59,10 @@ void	Game::_swapScene(Scene *scene)
 		delete scene;
 	}
 	else
+	{
 		_currentScene = scene;
+		_scenes.insert({_currentScene->id(), _currentScene});
+	}
 
 	_currentScene->onEnter();
 	_textures.upload();
@@ -116,7 +119,7 @@ void	Game::_stop()
 {
 	for (auto &scene : _scenes)
 	{
-		_currentScene->onExit();
+		scene.second->onExit();
 		delete scene.second;
 	}
 	_window.close();

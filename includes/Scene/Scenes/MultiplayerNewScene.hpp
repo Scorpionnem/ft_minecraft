@@ -1,31 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   SingleplayerScene.hpp                              :+:      :+:    :+:   */
+/*   MultiplayerNewScene.hpp                            :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:14:10 by mbatty           ###   ########.fr       */
+/*   Created: 2025/10/03 16:01:48 by mbatty            #+#    #+#             */
+/*   Updated: 2025/10/03 16:04:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#ifndef SINGLEPLAYERSCENE_HPP
-# define SINGLEPLAYERSCENE_HPP
+#ifndef MULTIPLAYERNEWSCENE_HPP
+# define MULTIPLAYERNEWSCENE_HPP
+
 
 # include "Panel.hpp"
 # include "Scene.hpp"
 # include "UIElement.hpp"
 
-class SingleplayerScene : public Scene
+class	MultiplayerNewScene : public Scene
 {
 	public:
-		SingleplayerScene(Game *game) : Scene(game)
+		MultiplayerNewScene(Game *game) : Scene(game)
 		{
-			_id = "SingleplayerScene";
-			_keepAlive = true;
+			_id = "MultiplayerNewScene";
 		}
-		~SingleplayerScene() {};
+		~MultiplayerNewScene() {};
 		
 		void onEnter();
 
@@ -34,9 +34,9 @@ class SingleplayerScene : public Scene
 		void render();
 
 		void onExit();
+
 	private:
-		Panel		_panel;
-		Panel		_worldsPanel;
+		Panel	_panel;
 };
 
 #endif
