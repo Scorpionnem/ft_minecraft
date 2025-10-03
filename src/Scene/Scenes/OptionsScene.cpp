@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 10:35:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:55:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,9 @@ void	OptionsScene::onEnter()
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
 	
+	if (_loaded)
+		return ;
+
 	_loaded = true;
 
 	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background")));

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:44:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:50:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@
 class MultiplayerScene : public Scene
 {
 	public:
-		MultiplayerScene(Game *game) : Scene(game) {}
+		MultiplayerScene(Game *game) : Scene(game)
+		{
+			_id = "MultiplayerScene";
+			_keepAlive = true;
+		}
 		~MultiplayerScene() {};
 		
 		void onEnter();

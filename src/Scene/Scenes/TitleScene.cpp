@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:12:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:55:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -76,10 +76,13 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 };
 
 void	TitleScene::onEnter()
-{
-	sleep(3);
-	_loaded = true;
+{	
+	if (_loaded)
+		return ;
 
+	sleep(3);
+
+	_loaded = true;
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
 

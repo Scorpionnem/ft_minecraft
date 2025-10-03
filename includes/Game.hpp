@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:22:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:51:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -61,6 +61,7 @@ class	Game
 		ShaderManager	_shaders;
 
 		Scene	*_currentScene;
+		std::map<std::string, Scene*>	_scenes;
 };
 
 #endif

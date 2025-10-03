@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 14:56:27 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:22:45 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@
 class SingleplayerScene : public Scene
 {
 	public:
-		SingleplayerScene(Game *game) : Scene(game) {}
+		SingleplayerScene(Game *game) : Scene(game)
+		{
+			_id = "SingleplayerScene";
+			_keepAlive = true;
+		}
 		~SingleplayerScene() {};
 		
 		void onEnter();

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:12:38 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:56:16 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,12 +37,31 @@ void	Game::run()
 
 void	Game::_swapScene(Scene *scene)
 {
+	std::string	oldId = _currentScene->id();
+	_currentScene->resetRequest();
 	_currentScene->onExit();
-	delete _currentScene;
 
-	_currentScene = scene;
-	if (!_currentScene->loaded())
-		_currentScene->onEnter();
+	if (_currentScene->keepAlive())
+	{
+		if (_scenes.find(_currentScene->id()) == _scenes.end())
+			_scenes.insert({_currentScene->id(), _currentScene});
+	}
+	else
+	{
+		if (_scenes.find(_currentScene->id()) != _scenes.end())
+			_scenes.erase(_scenes.find(_currentScene->id()));
+		delete _currentScene;
+	}
+
+	if (_scenes.find(scene->id()) != _scenes.end())
+	{
+		_currentScene = _scenes.find(scene->id())->second;
+		delete scene;
+	}
+	else
+		_currentScene = scene;
+
+	_currentScene->onEnter();
 	_textures.upload();
 }
 
@@ -57,6 +76,7 @@ void	Game::_init()
 	_loadShaders();
 
 	_currentScene = new LoadingScene(this, new TitleScene(this));
+	_scenes.insert({_currentScene->id(), _currentScene});
 	_currentScene->onEnter();
 }
 
@@ -94,10 +114,10 @@ void	Game::_loadShaders()
 
 void	Game::_stop()
 {
-	if (_currentScene)
+	for (auto &scene : _scenes)
 	{
 		_currentScene->onExit();
-		delete _currentScene;
+		delete scene.second;
 	}
 	_window.close();
 }

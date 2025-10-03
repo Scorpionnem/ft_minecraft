@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 12:30:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:22:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,7 +21,11 @@
 class TitleScene : public Scene
 {
 	public:
-		TitleScene(Game *game) : Scene(game) {}
+		TitleScene(Game *game) : Scene(game)
+		{
+			_id = "TitleScene";
+			_keepAlive = true;
+		}
 		~TitleScene() {};
 		
 		void onEnter();

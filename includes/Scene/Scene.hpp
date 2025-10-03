@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:03:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:05:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:48:54 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -37,6 +37,9 @@ class Scene
 		bool	loaded() {return (this->_loaded);}
 		bool	requestedScene() {return (_sceneRequest != NULL);}
 		Scene		*getSceneRequest() {return (_sceneRequest);}
+		void	resetRequest() {_sceneRequest = NULL;}
+		std::string	id() {return (_id);}
+		bool	keepAlive() {return (_keepAlive);}
 	protected:
 		void	requestScene(Scene *scene)
 		{
@@ -46,6 +49,8 @@ class Scene
 		std::atomic<bool>	_loaded = false;
 		Scene		*_sceneRequest = NULL;
 		Game		*_game;
+		std::string	_id;
+		bool		_keepAlive = false;
 };
 
 #endif

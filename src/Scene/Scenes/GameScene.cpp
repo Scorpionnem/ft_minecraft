@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:38:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 12:55:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -18,6 +18,9 @@
 
 void	GameScene::onEnter()
 {
+	if (_loaded)
+		return ;
+
 	_loaded = true;
 }
 

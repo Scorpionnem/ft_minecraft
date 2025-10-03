@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:51:46 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:22:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -20,7 +20,11 @@
 class OptionsScene : public Scene
 {
 	public:
-		OptionsScene(Game *game) : Scene(game) {}
+		OptionsScene(Game *game) : Scene(game)
+		{
+			_id = "OptionsScene";
+			_keepAlive = true;
+		}
 		~OptionsScene() {};
 		
 		void onEnter();

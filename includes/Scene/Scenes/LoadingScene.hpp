@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:13:41 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:21:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,7 @@ class LoadingScene : public Scene
 	public:
 		LoadingScene(Game *game, Scene *scene) : Scene(game)
 		{
+			_id = "LoadingScene";
 			_loading = scene;
 		}
 		~LoadingScene() {};
