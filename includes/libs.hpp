@@ -6,12 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 11:29:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/30 21:32:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 10:31:10 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef LIBS_HPP
 # define LIBS_HPP
+
+# include "strings.hpp"
 
 # include <iostream>
 # include <iomanip>

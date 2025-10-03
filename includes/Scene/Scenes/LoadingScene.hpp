@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 12:08:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:13:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@
 class LoadingScene : public Scene
 {
 	public:
-		LoadingScene(Game *game, Scene *scene) : Scene(game), _loadingDone(false)
+		LoadingScene(Game *game, Scene *scene) : Scene(game)
 		{
 			_loading = scene;
 		}
@@ -38,17 +38,16 @@ class LoadingScene : public Scene
 			TextureManager &textures = _game->getTextures();
 			ShaderManager &shaders = _game->getShaders();
 
-			_panel.add("background", new BackgroundImage(textures.get("dirt"), shaders.get("background")));
-			_panel.add("loading_text", new Text("Loading", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
-			_panel.add("icon", new Image(textures.get("ft_minecraft"), shaders.get("image"), glm::vec2(0, -32), glm::vec2(0.5, 0.5), glm::vec2(0.25)));
+			_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background")));
+			_panel.add("loading_text", new Text("Loading", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
 
+			_loadingDone = false;
 			_thread = std::thread([this]()
 				{
 					_loading->onEnter();
 
 					_loadingDone = true;
 				});
-			_thread.detach();
 		}
 
 		void processInput(float ) {}
@@ -56,7 +55,9 @@ class LoadingScene : public Scene
 		{
 			if (_loadingDone)
 			{
+				_thread.join();
 				requestScene(_loading);
+				return ;
 			}
 
 			Text	*loadingScreenText = static_cast<Text*>(_panel.get("loading_text"));

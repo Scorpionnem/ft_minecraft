@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 20:03:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:12:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -43,6 +43,7 @@ void	Game::_swapScene(Scene *scene)
 	_currentScene = scene;
 	if (!_currentScene->loaded())
 		_currentScene->onEnter();
+	_textures.upload();
 }
 
 void	Game::_init()
@@ -61,25 +62,27 @@ void	Game::_init()
 
 void	Game::_loadTextures()
 {
-	_textures.load("missing");
+	/*
 
-	_textures.load("ascii", "assets/textures/ui/font/ascii.png");
-	_textures.load("dirt", "assets/textures/block/dirt.png");
-	_textures.load("ft_minecraft", "assets/textures/ui/ft_minecraft.png");
+		Load textures that always need to be loaded!
 
-	_textures.load("button", "assets/textures/ui/button.png");
-	_textures.load("button_highlighted", "assets/textures/ui/button_highlighted.png");
-	_textures.load("button_small", "assets/textures/ui/button_small.png");
-	_textures.load("button_highlighted_small", "assets/textures/ui/button_highlighted_small.png");
+	*/
+	_textures.get(TX_PATH_ASCII);
+	_textures.get(TX_PATH_DIRT);
+	_textures.get(TX_PATH_FT_MINECRAFT);
 
-	_textures.load("slider_handle_highlighted", "assets/textures/ui/slider_handle_highlighted.png");
-	_textures.load("slider_handle", "assets/textures/ui/slider_handle.png");
+	_textures.get(TX_PATH_BUTTON);
+	_textures.get(TX_PATH_BUTTON_HIGHLIGHTED);
+	_textures.get(TX_PATH_BUTTON_SMALL);
+	_textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED);
 
-	_textures.load("text_field", "assets/textures/ui/text_field.png");
-	_textures.load("text_field_highlighted", "assets/textures/ui/text_field_highlighted.png");
+	_textures.get(TX_PATH_SLIDER_HANDLE_HIGHLIGHTED);
+	_textures.get(TX_PATH_SLIDER_HANDLE);
 
-	_textures.load("hotbar", "assets/textures/ui/hud/hotbar.png");
-	_textures.load("hotbar_slot", "assets/textures/ui/hud/hotbar_selection.png");
+	_textures.get(TX_PATH_TEXT_FIELD);
+	_textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED);
+
+	_textures.upload();
 }
 
 void	Game::_loadShaders()

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 13:44:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:12:56 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,7 +24,7 @@
 #include "Toggle.hpp"
 #include "TextField.hpp"
 
-constexpr uint SPLASH_TEXT_COUNT = 22;
+constexpr uint SPLASH_TEXT_COUNT = 26;
 constexpr double SPLASH_TEXT_INTERVAL = 10.0;
 
 /*
@@ -39,6 +39,10 @@ constexpr double SPLASH_TEXT_INTERVAL = 10.0;
 	- jroseiro
 	- cczerwin
 	- pchojka
+	- vivaz-ca
+	- anboisve
+	- bkarabab
+	- akozin
 	- scraeyme
 */
 constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
@@ -65,59 +69,64 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 	"Is it all c++? Always has been.",
 	"Don't launch with valgrind!",
 	"Technoblade Never Dies!",
+	"Linux",
+	"minecra_ft",
+	"42 Angouleme > all",
+	"No, it's not in rust..."
 };
 
 void	TitleScene::onEnter()
 {
+	sleep(3);
 	_loaded = true;
 
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
 
-	_panel.add("background", new BackgroundImage(textures.get("dirt"), shaders.get("background")));
+	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background")));
 
-	UIElement *tmp = _panel.add("options", new Button(textures.get("button_small"), textures.get("button_highlighted_small"), shaders.get("image"),
+	UIElement *tmp = _panel.add("options", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
 													glm::vec2(-50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->requestScene(new OptionsScene(_game));
 		});
-	_panel.add("options_text", new Text("Options", textures.get("ascii"), shaders.get("font"), glm::vec2(-50, 40), glm::vec2(0.5)));
+	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-50, 40), glm::vec2(0.5)));
 
-	tmp = _panel.add("quit", new Button(textures.get("button_small"), textures.get("button_highlighted_small"), shaders.get("image"),
+	tmp = _panel.add("quit", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), shaders.get("image"),
 										glm::vec2(50, 40), glm::vec2(0.5, 0.5), glm::vec2(1, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			_game->setRunning(false);
 		});
-	_panel.add("quit_text", new Text("Quit game", textures.get("ascii"), shaders.get("font"), glm::vec2(50, 40), glm::vec2(0.5)));
+	_panel.add("quit_text", new Text("Quit game", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(50, 40), glm::vec2(0.5)));
 
-	tmp = _panel.add("singpleplayer", new Button(textures.get("button"), textures.get("button_highlighted"), shaders.get("image"),
+	tmp = _panel.add("singpleplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
 											glm::vec2(0, -20), glm::vec2(0.5, 0.5)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->requestScene(new SingleplayerScene(_game));
 		});
-	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get("ascii"), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
+	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
 
-	tmp = _panel.add("multiplayer", new Button(textures.get("button"), textures.get("button_highlighted"), shaders.get("image"),
+	tmp = _panel.add("multiplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
 									glm::vec2(0, 0), glm::vec2(0.5, 0.5)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->requestScene(new MultiplayerScene(_game));
 		});
-	_panel.add("multiplayer_text", new Text("Multiplayer", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
+	_panel.add("multiplayer_text", new Text("Multiplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
 
-	_panel.add("icon", new Image(textures.get("ft_minecraft"), shaders.get("image"),
+	_panel.add("icon", new Image(textures.get(TX_PATH_FT_MINECRAFT), shaders.get("image"),
 							glm::vec2(0, -90), glm::vec2(0.5, 0.5), glm::vec2(0.3, 0.3)));
 
-	_panel.add("credits", new Text("By mbatty & mbirou", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
+	_panel.add("credits", new Text("By mbatty & mbirou", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
 
-	tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get("ascii"), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
+	tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setAngle(-15);
 	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
 }

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 12:00:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 10:35:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,18 +29,18 @@ void	OptionsScene::onEnter()
 	
 	_loaded = true;
 
-	_panel.add("background", new BackgroundImage(textures.get("dirt"), shaders.get("background")));
+	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background")));
 
-	UIElement *tmp = _panel.add("done", new Button(textures.get("button"), textures.get("button_highlighted"), shaders.get("image"),
+	UIElement *tmp = _panel.add("done", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
 										glm::vec2(0, -8), glm::vec2(0.5, 1), glm::vec2(1, 1)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->requestScene(new TitleScene(_game));
 		});
-	_panel.add("done_text", new Text("Done", textures.get("ascii"), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
+	_panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
 	
-	_panel.add("options_text", new Text("Options", textures.get("ascii"), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
+	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
 }
 
 void	OptionsScene::onExit()

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:47:28 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 20:04:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 11:00:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,29 +21,35 @@ class	TextureManager
 		TextureManager() {}
 		~TextureManager() {}
 
-		void	load(const std::string &id, const std::string &path)
+		Texture	*get(const std::string &path)
 		{
-			if (_textures.find(id) != _textures.end())
+			std::lock_guard<std::mutex> lock(_mutex);
+
+			_load(path);
+
+			return (&_textures[path]);
+		}
+		void	upload()
+		{
+			std::lock_guard<std::mutex> lock(_mutex);
+			
+			for (auto &texture : _textures)
+				if (!texture.second.uploaded())
+					texture.second.upload();
+		}
+	private:
+		void	_load(const std::string &path)
+		{
+			if (_textures.find(path) != _textures.end())
 				return ;
 
 			Texture	texture;
 
 			texture.load(path);
-			_textures.insert({id, texture});
+			_textures.insert({path, texture});
 		}
-		void	load(const std::string &path)
-		{
-			load(path, path);
-		}
-		Texture	*get(const std::string &id)
-		{
-			if (id != "missing" && _textures.find(id) == _textures.end())
-				return (get("missing"));
-
-			return (&_textures[id]);
-		}
-	private:
 		std::map<std::string, Texture>	_textures;
+		std::mutex						_mutex;
 };
 
 #endif
