@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:04:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 18:13:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,6 +36,8 @@ class	MultiplayerNewScene : public Scene
 		void onExit();
 
 	private:
+		std::string	_ip;
+		std::string	_name;
 		Panel	_panel;
 };
 

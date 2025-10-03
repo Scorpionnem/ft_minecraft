@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:52:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/03 18:21:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -64,13 +64,23 @@ void	MultiplayerNewScene::onEnter()
 		});
 	_panel.add("cancel_text", new Text("Cancel", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 84), glm::vec2(0.5, 0.5)));
 
-	_panel.add("ip_text_field", new TextField(textures.get(TX_PATH_TEXT_FIELD), textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED), textures.get(TX_PATH_ASCII), shaders.get("image"), shaders.get("font"),
+	tmp = _panel.add("ip_text_field", new TextField(textures.get(TX_PATH_TEXT_FIELD), textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED), textures.get(TX_PATH_ASCII), shaders.get("image"), shaders.get("font"),
 									glm::vec2(0), glm::vec2(0.5), 24));
+	static_cast<TextField*>(tmp)->setClickFunc(
+	[this](std::string str)
+	{
+		this->_ip = str;
+	});
 	tmp = _panel.add("ip_text_field_text", new Text("Select Adress", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -20), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setColor(glm::vec3(0.7));
 	
-	_panel.add("name_text_field", new TextField(textures.get(TX_PATH_TEXT_FIELD), textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED), textures.get(TX_PATH_ASCII), shaders.get("image"), shaders.get("font"),
+	tmp = _panel.add("name_text_field", new TextField(textures.get(TX_PATH_TEXT_FIELD), textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED), textures.get(TX_PATH_ASCII), shaders.get("image"), shaders.get("font"),
 									glm::vec2(0, -42), glm::vec2(0.5), 24));
+	static_cast<TextField*>(tmp)->setClickFunc(
+	[this](std::string str)
+	{
+		this->_name = str;
+	});
 	tmp = _panel.add("name_text_field_text", new Text("Server Name", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -62), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setColor(glm::vec3(0.7));
 }
@@ -94,6 +104,11 @@ void	MultiplayerNewScene::update(float deltaTime)
 	events.inputs = &_game->getInput();
 
 	_panel.handleEvents(events);
+
+	if (!_ip.empty() != 0 && !_name.empty() != 0)
+		static_cast<Button*>(_panel.get("done"))->setDisabled(false);
+	else
+		static_cast<Button*>(_panel.get("done"))->setDisabled(true);
 }
 
 void	MultiplayerNewScene::render()
