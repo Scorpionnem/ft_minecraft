@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 22:41:57 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 23:46:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -94,7 +94,7 @@ void	TitleScene::onEnter()
 
 	_panel.add("credits", new Text("By mbatty & mbirou", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
 
-	UIElement *tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(115, -85), glm::vec2(0.5)));
+	UIElement *tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(140, -80), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setAngle(-15);
 	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
 
