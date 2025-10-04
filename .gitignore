@@ -4,3 +4,4 @@ obj/
 *.d
 GLFW/
 .vscode/
+server_list.txt
