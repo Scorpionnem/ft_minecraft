@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 15:16:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 11:19:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -122,6 +122,7 @@ void	Game::_stop()
 		scene.second->onExit();
 		delete scene.second;
 	}
+	exportServerList();
 	_window.close();
 }
 

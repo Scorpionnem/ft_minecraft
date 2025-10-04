@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 18:21:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 10:51:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,17 +45,7 @@ void	MultiplayerNewScene::onEnter()
 	
 	_panel.add("background_dark", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
 
-	UIElement *tmp = _panel.add("done", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
-										glm::vec2(0, 62), glm::vec2(0.5, 0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
-		[this]()
-		{
-			this->requestScene(new MultiplayerScene(_game));
-		});
-	static_cast<Button*>(tmp)->setDisabled(true);
-	tmp = _panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 62), glm::vec2(0.5, 0.5)));
-
-	tmp = _panel.add("cancel", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
+	UIElement *tmp = _panel.add("cancel", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
 										glm::vec2(0, 84), glm::vec2(0.5, 0.5)));
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
@@ -83,6 +73,17 @@ void	MultiplayerNewScene::onEnter()
 	});
 	tmp = _panel.add("name_text_field_text", new Text("Server Name", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -62), glm::vec2(0.5)));
 	static_cast<Text*>(tmp)->setColor(glm::vec3(0.7));
+
+	tmp = _panel.add("done", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
+										glm::vec2(0, 62), glm::vec2(0.5, 0.5)));
+	static_cast<Button*>(tmp)->setClickFunc(
+		[this]()
+		{
+			_game->addServerInfo(ServerInfo(_name, _ip));
+			this->requestScene(new MultiplayerScene(_game));
+		});
+	static_cast<Button*>(tmp)->setDisabled(true);
+	tmp = _panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 62), glm::vec2(0.5, 0.5)));
 }
 
 void	MultiplayerNewScene::onExit()

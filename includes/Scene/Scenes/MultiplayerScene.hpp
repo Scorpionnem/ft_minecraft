@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 12:50:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 10:39:12 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class MultiplayerScene : public Scene
 		
 		void onEnter();
 
+		void	refreshServerList();
+
 		void processInput(float deltaTime);
 		void update(float deltaTime);
 		void render();
@@ -37,6 +39,7 @@ class MultiplayerScene : public Scene
 
 	private:
 		Panel	_panel;
+		Panel	_serversPanel;
 };
 
 #endif

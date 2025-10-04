@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 12:51:03 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 11:19:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -21,6 +21,17 @@
 # include "ShaderManager.hpp"
 # include "UIElement.hpp"
 # include "Scene.hpp"
+
+struct	ServerInfo
+{
+	ServerInfo(const std::string &name, const std::string &ip)
+	{
+		this->name = name;
+		this->ip = ip;
+	}
+	std::string	name;
+	std::string	ip;
+};
 
 class	Game
 {
@@ -38,6 +49,47 @@ class	Game
 		void	setRunning(bool state)
 		{
 			_running = state;
+		}
+		
+		std::vector<ServerInfo>	&getServerInfos()
+		{
+			return (_serverInfos);
+		}
+		void	addServerInfo(ServerInfo info)
+		{
+			_serverInfos.push_back(info);
+		}
+		ServerInfo	*getCurrentServer()
+		{
+			return (_currentServer);
+		}
+		void	setCurrentServer(ServerInfo *info)
+		{
+			this->_currentServer = info;
+		}
+		void	deleteServer(ServerInfo *info)
+		{
+			_currentServer = NULL;
+			for (std::vector<ServerInfo>::iterator server = _serverInfos.begin(); server != _serverInfos.end(); server++)
+			{
+				if (&*server == info)
+				{
+					server = _serverInfos.erase(server);
+					return ;
+				}
+			}
+		}
+		# define SERVER_LIST_EXPORT_FILE "server_list.txt"
+		void	exportServerList()
+		{
+			std::ofstream	file;
+
+			file.open(SERVER_LIST_EXPORT_FILE);
+			if (!file.is_open())
+				return ;
+				
+			for (ServerInfo &server : _serverInfos)
+				file << server.name << " " << server.ip << std::endl;
 		}
 	private:
 		void	_init();
@@ -62,6 +114,8 @@ class	Game
 
 		Scene	*_currentScene;
 		std::map<std::string, Scene*>	_scenes;
+		std::vector<ServerInfo>			_serverInfos;
+		ServerInfo						*_currentServer = NULL;
 };
 
 #endif
