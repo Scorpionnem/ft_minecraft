@@ -6,10 +6,9 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:43:35 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 13:43:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 22:32:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #define STB_IMAGE_IMPLEMENTATION
 #include "stb_image.h"
-

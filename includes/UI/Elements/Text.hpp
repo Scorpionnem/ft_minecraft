@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:31:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 21:27:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,10 +47,10 @@ class Text : public UIElement
 		{
 			if (!_texture || !_shader)
 				return ;
-				
+
 			_upload();
 
-			float	scale = UIElement::getUiScale(windowSize);
+			float	scale = UIElement::_getUiScale(windowSize);
 			_size = glm::vec2(DEFAULT_FONT_SIZE) * _scale;
 			glm::vec2	scaledSize = glm::vec2((_size.x * _text.size()) * scale, _size.y * scale);
 
@@ -94,7 +94,7 @@ class Text : public UIElement
 	protected:
 		Texture		*_texture;
 		std::string	_text;
-		
+
 		glm::vec2	_offset;
 		glm::vec2	_anchor;
 		glm::vec2	_size;

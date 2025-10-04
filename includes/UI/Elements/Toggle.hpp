@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:41:47 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:32:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 21:27:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class Toggle : public UIElement
 
 		void	handleEvents(UIEvent events)
 		{
-			float		scale = UIElement::getUiScale(events.windowSize);
+			float		scale = UIElement::_getUiScale(events.windowSize);
 			glm::vec2	pos = UIElement::_getScaledPos(_size, _anchor, _offset, events.windowSize);
 
 			bool	inside = _isInBounds(events.mousePos, pos, this->_size * scale);
@@ -82,7 +82,7 @@ class Toggle : public UIElement
 
 			_upload();
 
-			float		scale = UIElement::getUiScale(windowSize);
+			float		scale = UIElement::_getUiScale(windowSize);
 			glm::vec2	pos = UIElement::_getScaledPos(_size, _anchor, _offset, windowSize);
 
 			glm::mat4 model = glm::translate(glm::mat4(1.0f), glm::vec3(pos, 0.0f))

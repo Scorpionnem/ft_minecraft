@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 19:08:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 22:41:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -74,6 +74,9 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 	"42 Angouleme > all",
 	"No, it's not in rust..."
 };
+
+#include "ImprovedButton.hpp"
+#include "ImprovedText.hpp"
 
 void	TitleScene::onEnter()
 {

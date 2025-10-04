@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:30:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 21:27:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,16 +36,16 @@ class BackgroundImage : public UIElement
 		{
 			if (!_texture || !_shader)
 				return ;
-				
+
 			_upload();
-			
+
 			_size = windowSize;
 			glm::mat4 model = glm::scale(glm::mat4(1.0f), glm::vec3(_size.x, _size.y, 1.0f));
 
 			_shader->bind();
 			_shader->setMat4("model", model);
 			_shader->setInt("tex", 0);
-			_shader->setFloat("scale", UIElement::getUiScale(windowSize));
+			_shader->setFloat("scale", UIElement::_getUiScale(windowSize));
 			_shader->setFloat("darknessFactor", _darknessFactor);
 			_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 

@@ -2,6 +2,7 @@ ft_minecraft
 obj/
 *.o
 *.d
-GLFW/
+external/
+external/stb_image.h
 .vscode/
 server_list.txt

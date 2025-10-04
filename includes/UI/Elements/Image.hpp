@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:31:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 21:27:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -40,7 +40,7 @@ class Image : public UIElement
 
 			_upload();
 
-			float	scale = UIElement::getUiScale(windowSize);
+			float	scale = UIElement::_getUiScale(windowSize);
 			glm::vec2	scaledSize = _size * scale;
 
 			float	x = (_anchor.x * windowSize.x) - (_anchor.x * scaledSize.x);
