@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 14:08:15 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:30:20 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -34,6 +34,9 @@ class BackgroundImage : public UIElement
 		void	handleEvents(UIEvent) {}
 		void	draw(glm::vec2 windowSize)
 		{
+			if (!_texture || !_shader)
+				return ;
+				
 			_upload();
 			
 			_size = windowSize;

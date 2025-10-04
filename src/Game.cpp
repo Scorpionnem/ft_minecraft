@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 11:43:11 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:42:14 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -140,6 +140,8 @@ void	Game::_processInput()
 	// Hard exit
 	if (_input.isKeyDown(GLFW_KEY_ESCAPE) && _input.isKeyDown(GLFW_KEY_LEFT_CONTROL))
 		_running = false;
+	if (_input.isKeyPressed(GLFW_KEY_R) && _input.isKeyDown(GLFW_KEY_LEFT_CONTROL))
+		_shaders.reload();
 
 	_currentScene->processInput(_window.getDeltaTime());
 }

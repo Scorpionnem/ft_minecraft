@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/01 09:41:47 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:21:33 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:32:05 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,9 @@ class Toggle : public UIElement
 		}
 		void	draw(glm::vec2 windowSize)
 		{
+			if (!_currentTexture || !_texture || !_hoverTexture)
+				return ;
+
 			_upload();
 
 			float		scale = UIElement::getUiScale(windowSize);

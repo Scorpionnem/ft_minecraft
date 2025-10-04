@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 15:23:37 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 11:55:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:31:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -45,6 +45,9 @@ class Text : public UIElement
 		void	handleEvents(UIEvent) {}
 		virtual void	draw(glm::vec2 windowSize)
 		{
+			if (!_texture || !_shader)
+				return ;
+				
 			_upload();
 
 			float	scale = UIElement::getUiScale(windowSize);

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:54:52 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 14:00:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:34:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -84,6 +84,9 @@ static int	loadShaderProgram(const char *vertex, const char *fragment)
 
 void Shader::load(const std::string &vertexPath, const std::string &fragmentPath)
 {
+	_vertexPath = vertexPath;
+	_fragmentPath = fragmentPath;
+	
 	std::string	vertexCode;
 	std::string	fragmentCode;
 	std::ifstream	vShaderFile;
@@ -114,6 +117,12 @@ void Shader::load(const std::string &vertexPath, const std::string &fragmentPath
 	_id = loadShaderProgram(vShaderCode, fShaderCode);
 	if (!_id)
 		throw std::runtime_error("Failed to load shader program");
+}
+
+void	Shader::reload()
+{
+	unload();
+	load(_vertexPath, _fragmentPath);
 }
 
 void	Shader::unload()

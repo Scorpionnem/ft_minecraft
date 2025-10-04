@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 01:29:34 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:21:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:31:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,6 +69,9 @@ class Checkbox : public UIElement
 		}
 		void	draw(glm::vec2 windowSize)
 		{
+			if (!_currentTexture || !_texture || !_hoverTexture || !_shader)
+				return ;
+				
 			_upload();
 
 			float		scale = UIElement::getUiScale(windowSize);

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 14:01:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/09/27 14:14:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 14:50:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,15 +25,44 @@ class	ShaderManager
 		{
 			if (_shaders.find(id) != _shaders.end())
 				return ;
-			_shaders.insert(std::make_pair(id, Shader()));
-			_shaders[id].load(vertpath, fragpath);
+			
+			Shader	shader;
+
+			shader.setValid(true);
+
+			try {
+				shader.load(vertpath, fragpath);
+			} catch(const std::exception& e) {
+				std::cerr << e.what() << '\n';
+				shader.setValid(false);
+			}
+
+			_shaders.insert(std::make_pair(id, shader));
+		}
+		void	reload()
+		{
+			for (auto &shader : _shaders)
+			{
+				try {
+					shader.second.reload();
+				} catch(const std::exception& e) {
+					std::cerr << e.what() << '\n';
+					shader.second.setValid(false);
+					continue ;
+				}
+				shader.second.setValid(true);
+			}
 		}
 		Shader	*get(const std::string &id)
 		{
 			if (_shaders.find(id) == _shaders.end())
 				return (NULL);
-			
-			return (&_shaders[id]);
+
+			Shader	*ret = &_shaders[id];
+			if (!ret->getValid())
+				return (NULL);
+
+			return (ret);
 		}
 	private:
 		std::map<std::string, Shader>	_shaders;
