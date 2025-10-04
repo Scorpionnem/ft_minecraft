@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 11:19:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 11:43:11 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ void	Game::_init()
 
 	_loadTextures();
 	_loadShaders();
+
+	importServerList();
 
 	_currentScene = new LoadingScene(this, new TitleScene(this));
 	_scenes.insert({_currentScene->id(), _currentScene});
@@ -155,4 +157,48 @@ void	Game::_render()
 	_currentScene->render();
 
 	_window.frameEnd();
+}
+
+void	Game::exportServerList()
+{
+	std::ofstream	file;
+
+	file.open(SERVER_LIST_EXPORT_FILE);
+	if (!file.is_open())
+		return ;
+		
+	for (ServerInfo &server : _serverInfos)
+		file << server.name << " " << server.ip << std::endl;
+}
+
+void	Game::importServerList()
+{
+	std::ifstream	file;
+	std::string		fileLine;
+
+	file.open(SERVER_LIST_EXPORT_FILE);
+	if (!file.is_open())
+		return ;
+
+	while (std::getline(file, fileLine))
+	{
+		ServerInfo			server;
+		std::istringstream	line(fileLine);
+
+		if (line >> server.name >> server.ip)
+			_serverInfos.push_back(server);
+	}
+}
+
+void	Game::deleteServer(ServerInfo *info)
+{
+	_currentServer = NULL;
+	for (std::vector<ServerInfo>::iterator server = _serverInfos.begin(); server != _serverInfos.end(); server++)
+	{
+		if (&*server == info)
+		{
+			server = _serverInfos.erase(server);
+			return ;
+		}
+	}
 }
