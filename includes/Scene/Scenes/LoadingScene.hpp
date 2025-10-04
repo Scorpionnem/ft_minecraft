@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 14:07:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -52,7 +52,7 @@ class LoadingScene : public Scene
 		}
 
 		void processInput(float ) {}
-		void update(float )
+		void update(UIEvent, float)
 		{
 			if (_loadingDone)
 			{

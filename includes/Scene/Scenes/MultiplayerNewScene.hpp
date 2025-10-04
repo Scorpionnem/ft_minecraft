@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:48 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 18:13:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ class	MultiplayerNewScene : public Scene
 			_id = "MultiplayerNewScene";
 		}
 		~MultiplayerNewScene() {};
-		
+
 		void onEnter();
 
 		void processInput(float deltaTime);
-		void update(float deltaTime);
+		void update(UIEvent events, float deltaTime);
 		void render();
 
 		void onExit();

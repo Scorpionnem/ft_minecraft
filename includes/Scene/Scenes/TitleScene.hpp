@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:11:46 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:22:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,11 +27,11 @@ class TitleScene : public Scene
 			_keepAlive = true;
 		}
 		~TitleScene() {};
-		
+
 		void onEnter();
 
 		void processInput(float deltaTime);
-		void update(float deltaTime);
+		void update(UIEvent events, float deltaTime);
 		void render();
 
 		void onExit();

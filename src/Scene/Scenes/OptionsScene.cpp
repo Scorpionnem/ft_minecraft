@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:50:23 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:35:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ void	OptionsScene::onEnter()
 {
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
-	
+
 	if (_loaded)
 		return ;
 
@@ -42,7 +42,7 @@ void	OptionsScene::onEnter()
 			this->requestScene(new TitleScene(_game));
 		});
 	_panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
-	
+
 	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
 }
 
@@ -55,15 +55,10 @@ void	OptionsScene::processInput(float deltaTime)
 	(void)deltaTime;
 }
 
-void	OptionsScene::update(float deltaTime)
+void	OptionsScene::update(UIEvent events, float deltaTime)
 {
 	(void)deltaTime;
-	UIEvent	events;
-
-	events.mousePos = _game->getWindow().getMousePos();
-	events.windowSize = _game->getWindow().getSize();
-	events.inputs = &_game->getInput();
-
+	
 	_panel.handleEvents(events);
 }
 

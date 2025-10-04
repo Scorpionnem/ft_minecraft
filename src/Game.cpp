@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:42:14 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:35:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -151,7 +151,13 @@ void	Game::_update(float deltaTime)
 	if (!_window.up())
 		_running = false;
 
-	_currentScene->update(deltaTime);
+	UIEvent	events;
+
+	events.mousePos = _window.getMousePos();
+	events.windowSize = _window.getSize();
+	events.inputs = &_input;
+
+	_currentScene->update(events, deltaTime);
 }
 
 void	Game::_render()
@@ -168,7 +174,7 @@ void	Game::exportServerList()
 	file.open(SERVER_LIST_EXPORT_FILE);
 	if (!file.is_open())
 		return ;
-		
+
 	for (ServerInfo &server : _serverInfos)
 		file << server.name << " " << server.ip << std::endl;
 }

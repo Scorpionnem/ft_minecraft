@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 12:55:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:38:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,14 +33,10 @@ void	GameScene::processInput(float deltaTime)
 	(void)deltaTime;
 }
 
-void	GameScene::update(float deltaTime)
+void	GameScene::update(UIEvent events, float deltaTime)
 {
 	(void)deltaTime;
-	UIEvent	events;
-
-	events.mousePos = _game->getWindow().getMousePos();
-	events.windowSize = _game->getWindow().getSize();
-	events.inputs = &_game->getInput();
+	(void)events;
 }
 
 void	GameScene::render()

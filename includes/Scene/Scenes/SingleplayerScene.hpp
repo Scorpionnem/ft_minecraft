@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:14:10 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:50 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,11 +26,11 @@ class SingleplayerScene : public Scene
 			_keepAlive = true;
 		}
 		~SingleplayerScene() {};
-		
+
 		void onEnter();
 
 		void processInput(float deltaTime);
-		void update(float deltaTime);
+		void update(UIEvent events, float deltaTime);
 		void render();
 
 		void onExit();

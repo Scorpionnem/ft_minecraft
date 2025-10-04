@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:53:43 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:01 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,7 +27,7 @@ void	SingleplayerScene::onEnter()
 {
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
-	
+
 	if (_loaded)
 		return ;
 
@@ -56,7 +56,7 @@ void	SingleplayerScene::onEnter()
 	static_cast<Button*>(tmp)->setDisabled(true);
 
 	_panel.add("play_world_text", new Text("Play Selected World", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-102, -36), glm::vec2(0.5, 1.0)));
-	
+
 
 	tmp = _panel.add("edit_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 										glm::vec2(-153, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
@@ -67,7 +67,7 @@ void	SingleplayerScene::onEnter()
 	tmp = _panel.add("delete_world", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"),
 										glm::vec2(-51, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
 	static_cast<Button*>(tmp)->setDisabled(true);
-	
+
 	_panel.add("delete_world_text", new Text("Delete", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-51, -14), glm::vec2(0.5, 1.0)));
 
 	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
@@ -82,14 +82,9 @@ void	SingleplayerScene::processInput(float deltaTime)
 	(void)deltaTime;
 }
 
-void	SingleplayerScene::update(float deltaTime)
+void	SingleplayerScene::update(UIEvent events, float deltaTime)
 {
 	(void)deltaTime;
-	UIEvent	events;
-
-	events.mousePos = _game->getWindow().getMousePos();
-	events.windowSize = _game->getWindow().getSize();
-	events.inputs = &_game->getInput();
 
 	_worldsPanel.handleEvents(events);
 	_panel.handleEvents(events);

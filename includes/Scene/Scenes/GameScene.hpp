@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:01:55 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 11:21:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:36:35 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -24,11 +24,11 @@ class GameScene : public Scene
 			_id = "GameScene";
 		}
 		~GameScene() {};
-		
+
 		void onEnter();
 
 		void processInput(float deltaTime);
-		void update(float deltaTime);
+		void update(UIEvent events, float deltaTime);
 		void render();
 
 		void onExit();

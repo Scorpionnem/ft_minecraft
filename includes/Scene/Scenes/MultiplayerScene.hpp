@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:44:26 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 10:39:12 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/04 18:44:41 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,13 +26,15 @@ class MultiplayerScene : public Scene
 			_keepAlive = true;
 		}
 		~MultiplayerScene() {};
-		
+
 		void onEnter();
 
 		void	refreshServerList();
+		void	createPanels();
+		void	createServerHandling();
 
 		void processInput(float deltaTime);
-		void update(float deltaTime);
+		void update(UIEvent events, float deltaTime);
 		void render();
 
 		void onExit();
