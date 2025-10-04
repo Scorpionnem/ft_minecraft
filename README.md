@@ -2,6 +2,10 @@
 
 42 ft_minecraft project.
 
+This project is part of the 42 advanced curriculum. It will make us learn about advanced rendering techniques, procedural generation and networking.
+This project comes after [ft_vox](https://github.com/Manualouest/ft_vox) (Beware my code wasnt the best back then!) and is pretty much about upgrading it.
+It also allows us to discover how to create a "basic" game engine.
+
 <img width="1150" height="650" alt="image" src="https://github.com/user-attachments/assets/9d6d1943-58d6-40e1-898a-a8cfa3ff664a" />
 
 # TODO
