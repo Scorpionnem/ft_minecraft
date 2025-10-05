@@ -10,6 +10,8 @@ It also allows us to discover how to create a "basic" game engine.
 
 # TODO
 
+(I am currently only working on seting up the "Engine" so when we actually start the project we can go fast (This is why rn there is only UI and scenes stuff))
+
 Renderer class so we will be able to easily switch to vulkan/else if we want to
 
 fix glad install script
