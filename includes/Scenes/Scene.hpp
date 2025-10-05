@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:03:51 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 18:38:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -35,14 +35,15 @@ class Scene
 
 		virtual void onExit() {};
 
-		bool	loaded() {return (this->_loaded);}
-		bool	requestedScene() {return (_sceneRequest != NULL);}
+		void		resetRequest() {_sceneRequest = NULL;}
+		bool		requestedScene() {return (_sceneRequest != NULL);}
 		Scene		*getSceneRequest() {return (_sceneRequest);}
-		void	resetRequest() {_sceneRequest = NULL;}
+		
 		std::string	id() {return (_id);}
-		bool	keepAlive() {return (_keepAlive);}
+		bool		keepAlive() {return (_keepAlive);}
+		bool		loaded() {return (this->_loaded);}
 	protected:
-		void	requestScene(Scene *scene)
+		void	_requestScene(Scene *scene)
 		{
 			_sceneRequest = scene;
 		}

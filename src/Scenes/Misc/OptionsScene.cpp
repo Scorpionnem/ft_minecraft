@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 18:35:50 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -39,7 +39,7 @@ void	OptionsScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new TitleScene(_game));
+			this->_requestScene(new TitleScene(_game));
 		});
 	_panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
 

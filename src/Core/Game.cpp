@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 11:37:25 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:36:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -114,9 +114,9 @@ void	Game::_loadTextures()
 
 void	Game::_loadShaders()
 {
-	_shaders.load("font", "shaders/text.vertex", "shaders/text.fragment");
-	_shaders.load("image", "shaders/image.vertex", "shaders/image.fragment");
-	_shaders.load("background", "shaders/background.vertex", "shaders/background.fragment");
+	_shaders.load("font", "assets/shaders/text.vertex", "assets/shaders/text.fragment");
+	_shaders.load("image", "assets/shaders/image.vertex", "assets/shaders/image.fragment");
+	_shaders.load("background", "assets/shaders/background.vertex", "assets/shaders/background.fragment");
 }
 
 void	Game::_stop()

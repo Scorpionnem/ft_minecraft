@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:13:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -81,7 +81,7 @@ void	MultiplayerScene::createPanels()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new TitleScene(_game));
+			this->_requestScene(new TitleScene(_game));
 		});
 
 	createServerHandling();
@@ -98,7 +98,7 @@ void	MultiplayerScene::createServerHandling()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new MultiplayerNewScene(_game));
+			this->_requestScene(new MultiplayerNewScene(_game));
 		});
 
 	// Play selected server button

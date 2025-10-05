@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 19:05:12 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -44,7 +44,7 @@ void	MultiplayerNewScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new MultiplayerScene(_game));
+			this->_requestScene(new MultiplayerScene(_game));
 		});
 
 	// Text field to enter the server's ip
@@ -74,7 +74,7 @@ void	MultiplayerNewScene::onEnter()
 		[this]()
 		{
 			_game->addServerInfo(ServerInfo(_name, _ip));
-			this->requestScene(new MultiplayerScene(_game));
+			this->_requestScene(new MultiplayerScene(_game));
 		});
 	static_cast<Button*>(tmp)->setDisabled(true);
 }

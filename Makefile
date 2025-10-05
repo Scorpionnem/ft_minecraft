@@ -15,31 +15,35 @@ INCLUDES =	-I ./includes\
 			-I ./external/GLM/glm/gtc/\
 			-I ./includes/UI/\
 			-I ./includes/UI/Elements\
-			-I ./includes/Scene/Scenes\
-			-I ./includes/Scene\
-			-I ./includes/Renderer
+			-I ./includes/Scenes\
+			-I ./includes/Scenes/Game\
+			-I ./includes/Scenes/Title\
+			-I ./includes/Scenes/Misc\
+			-I ./includes/Renderer\
+			-I ./includes/Core\
+			-I ./includes/Managers\
+			-I ./includes/Utils
 
 SRCS =	external/glad/glad.cpp\
 		src/stb_image.cpp\
 		src/main.cpp\
-		src/Game.cpp\
-		src/Window.cpp\
-		src/Input.cpp\
+		src/Core/Game.cpp\
+		src/Core/Window.cpp\
+		src/Core/Input.cpp\
+		src/Core/Camera.cpp\
 		src/Renderer/Shader.cpp\
 		src/Renderer/Texture.cpp\
-		src/Camera.cpp\
-		src/Scenes/TitleScene.cpp\
-		src/Scenes/OptionsScene.cpp\
-		src/Scenes/GameScene.cpp\
-		src/Scenes/MultiplayerScene.cpp\
-		src/Scenes/SingleplayerScene.cpp\
-		src/Scenes/MultiplayerNewScene.cpp\
+		src/Scenes/Title/TitleScene.cpp\
+		src/Scenes/Misc/OptionsScene.cpp\
+		src/Scenes/Game/GameScene.cpp\
+		src/Scenes/Title/MultiplayerScene.cpp\
+		src/Scenes/Title/SingleplayerScene.cpp\
+		src/Scenes/Title/MultiplayerNewScene.cpp\
 		src/UI/UIElement.cpp\
 		src/UI/Elements/ImprovedButton.cpp\
 		src/UI/Elements/ImprovedText.cpp\
 		src/UI/Elements/ImprovedBackgroundImage.cpp\
 		src/UI/Elements/ImprovedImage.cpp
-		
 
 OBJDIR = obj
 EXTERNALDIR = external

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 18:36:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -57,7 +57,7 @@ class LoadingScene : public Scene
 			if (_loadingDone)
 			{
 				_thread.join();
-				requestScene(_loading);
+				_requestScene(_loading);
 				return ;
 			}
 

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:16:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -112,7 +112,7 @@ void	TitleScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new OptionsScene(_game));
+			this->_requestScene(new OptionsScene(_game));
 		});
 
 	// Quit button to leave the game
@@ -130,7 +130,7 @@ void	TitleScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new SingleplayerScene(_game));
+			this->_requestScene(new SingleplayerScene(_game));
 		});
 
 	// Button to go to the multiplayer server selection scene
@@ -139,7 +139,7 @@ void	TitleScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			this->requestScene(new MultiplayerScene(_game));
+			this->_requestScene(new MultiplayerScene(_game));
 		});
 }
 
