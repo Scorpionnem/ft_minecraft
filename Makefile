@@ -39,10 +39,14 @@ SRCS =	external/glad/glad.cpp\
 		src/UI/Elements/ImprovedText.cpp
 
 OBJDIR = obj
+EXTERNALDIR = external
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(OBJDIR)/%.d)
 
-all: stb_image glfw glm $(NAME)
+all: $(EXTERNALDIR) stb_image glfw glm $(NAME)
+
+$(EXTERNALDIR):
+	@mkdir external
 
 glfw:
 	@if ls external | grep -q "GLFW"; then \
@@ -88,9 +92,7 @@ clean:
 
 dclean: fclean
 	@echo Cleaning external libraries
-	@rm -rf external/GLFW
-	@rm -rf external/GLM
-	@rm -rf external/stb_image.h
+	@rm -rf external/
 
 fclean: clean
 	@echo Cleaning $(NAME)

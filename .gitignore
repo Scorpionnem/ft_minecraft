@@ -3,6 +3,5 @@ obj/
 *.o
 *.d
 external/
-external/stb_image.h
 .vscode/
 server_list.txt
