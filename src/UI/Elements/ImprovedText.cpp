@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:27:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 22:28:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 16:40:29 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 
 	float uiScale = UIElement::_getUiScale(windowSize);
 
-	_size = glm::vec2(DEFAULT_FONT_SIZE) * _scale;
-	glm::vec2	scaledSize = glm::vec2((_size.x) * uiScale, _size.y * uiScale);
+	_size = glm::vec2(DEFAULT_FONT_SIZE * _text.size(), DEFAULT_FONT_SIZE) * _scale;
+	glm::vec2	scaledSize = glm::vec2(_size.x * uiScale, _size.y * uiScale);
 
 	float	x = (_anchor.x * windowSize.x) - (_anchor.x * scaledSize.x);
 	float	y = (_anchor.y * windowSize.y) - (_anchor.y * scaledSize.y);
@@ -47,7 +47,7 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 	model = glm::translate(model, glm::vec3(scaledSize.x / 2, scaledSize.y / 2, 0.0f));
 	model = glm::rotate(model, glm::radians(_angle), glm::vec3(0.0, 0.0, 1.0));
 	model = glm::translate(model, glm::vec3(-scaledSize.x / 2, -scaledSize.y / 2, 0.0f));
-	model = glm::scale(model, glm::vec3(scaledSize.x, scaledSize.y, 1.0f));
+	model = glm::scale(model, glm::vec3(scaledSize.x / _text.size(), scaledSize.y, 1.0f));
 
 	_shader->bind();
 	_shader->setInt("tex", 0);

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:55:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 22:28:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 16:36:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,6 +31,7 @@ class	ImprovedText : public UIElement
 
 		void		setColor(const glm::vec4 &color) {_color = color;}
 		void		setAngle(float angle) {_angle = angle;}
+		void		setScale(float scale) {_scale = scale;}
 	private:
 		Texture	*_texture = NULL;
 

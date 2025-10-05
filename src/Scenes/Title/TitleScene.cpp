@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 16:55:08 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,6 @@
 #include "MultiplayerScene.hpp"
 #include "SingleplayerScene.hpp"
 #include "GameScene.hpp"
-#include "Button.hpp"
-#include "Checkbox.hpp"
-#include "Image.hpp"
-#include "BackgroundImage.hpp"
-#include "Text.hpp"
-#include "Toggle.hpp"
-#include "TextField.hpp"
 
 constexpr uint SPLASH_TEXT_COUNT = 26;
 constexpr double SPLASH_TEXT_INTERVAL = 10.0;
@@ -90,53 +83,49 @@ void	TitleScene::onEnter()
 	ShaderManager &shaders = _game->getShaders();
 
 	// Scene decoration
-	// _panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
-
-	// ImprovedBackgroundImage(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, float darknessFactor, Shader *shader, Texture *texture)
-
 	_panel.add("background", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, REFERENCE_HEIGHT), glm::vec2(0), glm::vec2(0), glm::vec2(1), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
 
 	_panel.add("icon", new ImprovedImage(
 		glm::vec2(textures.get(TX_PATH_FT_MINECRAFT)->getWidth() * 0.3, textures.get(TX_PATH_FT_MINECRAFT)->getHeight() * 0.3),
 		glm::vec2(0.5, 0.5), glm::vec2(0, -90), shaders.get("image"), textures.get(TX_PATH_FT_MINECRAFT)));
 
-	_panel.add("credits", new Text("By mbatty & mbirou", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
+	_panel.add("credits", new ImprovedText("By mbatty & mbirou", 1, glm::vec2(1), glm::vec2(0), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
-	UIElement *tmp = _panel.add("splash_text", new Text(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(140, -80), glm::vec2(0.5)));
-	static_cast<Text*>(tmp)->setAngle(-15);
-	static_cast<Text*>(tmp)->setColor(glm::vec3(1.0, 1.0, 0.0));
+	UIElement *tmp = _panel.add("splash_text", new ImprovedText(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], 1, glm::vec2(0.5), glm::vec2(140, -80), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedText*>(tmp)->setAngle(-15);
+	static_cast<ImprovedText*>(tmp)->setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
 
 	// Options button to access options scene
-	tmp = _panel.add("options", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"), glm::vec2(-51, 40), glm::vec2(0.5), glm::vec2(0.98, 1)));
-	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-51, 40), glm::vec2(0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	tmp = _panel.add("options", new ImprovedButton(glm::vec2(98, 20), glm::vec2(0.5), glm::vec2(-51, 40), shaders.get("image"), textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED)));
+	_panel.add("options_text", new ImprovedText("Options", 1, glm::vec2(0.5), glm::vec2(-51, 40), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new OptionsScene(_game));
 		});
 
 	// Quit button to leave the game
-	tmp = _panel.add("quit", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"), glm::vec2(51, 40), glm::vec2(0.5), glm::vec2(0.98, 1)));
-	_panel.add("quit_text", new Text("Quit game", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(51, 40), glm::vec2(0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	tmp = _panel.add("quit", new ImprovedButton(glm::vec2(98, 20), glm::vec2(0.5), glm::vec2(51, 40), shaders.get("image"), textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED)));
+	_panel.add("quit_text", new ImprovedText("Quit game", 1, glm::vec2(0.5), glm::vec2(51, 40), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			_game->setRunning(false);
 		});
 
 	// Button to go to the singleplayer world selection scene
-	tmp = _panel.add("singpleplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"), glm::vec2(0, -22), glm::vec2(0.5)));
-	_panel.add("singleplayer_text", new Text("Singleplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -22), glm::vec2(0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	tmp = _panel.add("singpleplayer", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5), glm::vec2(0, -22), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	_panel.add("singleplayer_text", new ImprovedText("Singleplayer", 1, glm::vec2(0.5), glm::vec2(0, -22), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new SingleplayerScene(_game));
 		});
 
 	// Button to go to the multiplayer server selection scene
-	tmp = _panel.add("multiplayer", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"), glm::vec2(0, 0), glm::vec2(0.5)));
-	_panel.add("multiplayer_text", new Text("Multiplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	tmp = _panel.add("multiplayer", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5), glm::vec2(0), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	_panel.add("multiplayer_text", new ImprovedText("Multiplayer", 1, glm::vec2(0.5), glm::vec2(0), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new MultiplayerScene(_game));
@@ -159,8 +148,8 @@ void	TitleScene::update(UIEvent events, float deltaTime)
 	_panel.handleEvents(events);
 
 	// Update splash text
-	Text *splashText = static_cast<Text*>(_panel.get("splash_text"));
-	splashText->setScale(glm::vec2(1.0 + abs(cos(glfwGetTime() * 4) / 6)));
+	ImprovedText *splashText = static_cast<ImprovedText*>(_panel.get("splash_text"));
+	splashText->setScale(1.0 + abs(cos(glfwGetTime() * 4) / 6));
 	if (glfwGetTime() - _lastSplashTextUpdate > SPLASH_TEXT_INTERVAL)
 	{
 		splashText->setText(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT]);
