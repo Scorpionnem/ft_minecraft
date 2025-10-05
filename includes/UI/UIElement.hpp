@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 11:05:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 22:22:16 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 11:43:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -91,6 +91,7 @@ class UIElement
 		static bool			_isInBounds(glm::vec2 point, glm::vec2 zonePos, glm::vec2 zoneSize);
 		static glm::vec2	_getScaledPos(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, glm::vec2 windowSize);
 		static float		_getUiScale(glm::vec2 windowSize);
+		static glm::vec2	_getUiScaleXY(glm::vec2 windowSize);
 };
 
 #endif

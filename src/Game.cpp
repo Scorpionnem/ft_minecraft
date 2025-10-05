@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 18:35:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 11:37:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -71,6 +71,8 @@ void	Game::_swapScene(Scene *scene)
 void	Game::_init()
 {
 	srand(std::time(NULL));
+
+	std::filesystem::create_directory("saves");
 
 	_window.open(WINDOW_NAME, DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT, false);
 	_window.setWindowPointer(this);

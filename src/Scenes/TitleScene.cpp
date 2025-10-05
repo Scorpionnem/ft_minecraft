@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 23:46:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:16:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -77,6 +77,8 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 
 #include "ImprovedButton.hpp"
 #include "ImprovedText.hpp"
+#include "ImprovedBackgroundImage.hpp"
+#include "ImprovedImage.hpp"
 
 void	TitleScene::onEnter()
 {
@@ -88,9 +90,15 @@ void	TitleScene::onEnter()
 	ShaderManager &shaders = _game->getShaders();
 
 	// Scene decoration
-	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
-	_panel.add("icon", new Image(textures.get(TX_PATH_FT_MINECRAFT), shaders.get("image"),
-							glm::vec2(0, -90), glm::vec2(0.5, 0.5), glm::vec2(0.3, 0.3)));
+	// _panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
+
+	// ImprovedBackgroundImage(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, float darknessFactor, Shader *shader, Texture *texture)
+
+	_panel.add("background", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, REFERENCE_HEIGHT), glm::vec2(0), glm::vec2(0), glm::vec2(1), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
+
+	_panel.add("icon", new ImprovedImage(
+		glm::vec2(textures.get(TX_PATH_FT_MINECRAFT)->getWidth() * 0.3, textures.get(TX_PATH_FT_MINECRAFT)->getHeight() * 0.3),
+		glm::vec2(0.5, 0.5), glm::vec2(0, -90), shaders.get("image"), textures.get(TX_PATH_FT_MINECRAFT)));
 
 	_panel.add("credits", new Text("By mbatty & mbirou", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(1)));
 

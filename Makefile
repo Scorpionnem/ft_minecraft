@@ -36,7 +36,10 @@ SRCS =	external/glad/glad.cpp\
 		src/Scenes/MultiplayerNewScene.cpp\
 		src/UI/UIElement.cpp\
 		src/UI/Elements/ImprovedButton.cpp\
-		src/UI/Elements/ImprovedText.cpp
+		src/UI/Elements/ImprovedText.cpp\
+		src/UI/Elements/ImprovedBackgroundImage.cpp\
+		src/UI/Elements/ImprovedImage.cpp
+		
 
 OBJDIR = obj
 EXTERNALDIR = external

@@ -1,35 +1,31 @@
 /* ************************************************************************** */
 /*                                                                            */
 /*                                                        :::      ::::::::   */
-/*   ImprovedButton.cpp                                 :+:      :+:    :+:   */
+/*   ImprovedImage.cpp                                  :+:      :+:    :+:   */
 /*                                                    +:+ +:+         +:+     */
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
-/*   Created: 2025/10/04 22:24:13 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:17:24 by mbatty           ###   ########.fr       */
+/*   Created: 2025/10/05 11:51:15 by mbatty            #+#    #+#             */
+/*   Updated: 2025/10/05 12:17:55 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
-#include "ImprovedButton.hpp"
+#include "ImprovedImage.hpp"
 
-ImprovedButton::ImprovedButton(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, Shader *shader, Texture *defaultTexture, Texture *hoverTexture, Texture *disabledTexture)
+ImprovedImage::ImprovedImage(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, Shader *shader, Texture *texture)
 {
-	_defaultTexture = defaultTexture;
-	_hoverTexture = hoverTexture;
-	_disabledTexture = disabledTexture;
-
-	_activeTexture = _defaultTexture;
-
+	_texture = texture;
+		
 	_shader = shader;
-
+		
 	_size = size;
 	_anchor = anchor;
 	_offset = offset;
 }
 
-void	ImprovedButton::draw(glm::vec2 windowSize)
+void	ImprovedImage::draw(glm::vec2 windowSize)
 {
-	if (!_activeTexture || !_shader)
+	if (!_texture || !_shader)
 		return ;
 
 	_upload();
@@ -45,29 +41,8 @@ void	ImprovedButton::draw(glm::vec2 windowSize)
 	_shader->setInt("tex", 0);
 	_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 
-	_activeTexture->bind(0);
+	_texture->bind(0);
 
 	glBindVertexArray(_VAO);
 	glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
-}
-
-void	ImprovedButton::handleEvents(UIEvent events)
-{
-	if (_disabled)
-	{
-		_activeTexture = _disabledTexture;
-		return ;
-	}
-
-	_scale = UIElement::_getUiScale(events.windowSize);
-	_pos = UIElement::_getScaledPos(_size, _anchor, _offset, events.windowSize);
-	bool		inside = _isInBounds(events.mousePos, _pos, this->_size * _scale);
-
-	if (inside)
-		_activeTexture = _hoverTexture;
-	else
-		_activeTexture = _defaultTexture;
-
-	if (inside && _onClick && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
-		_onClick();
 }

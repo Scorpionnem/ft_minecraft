@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 10:00:12 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 10:22:06 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 11:40:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -41,7 +41,8 @@ class	Panel
 			for (auto elem : _elements)
 				elem.second->handleEvents(events);
 		}
-		UIElement	*add(const std::string &id, UIElement *element)
+		template <typename T>
+		T	*add(const std::string &id, T *element)
 		{
 			_elements.push_back({id, element});
 			return (element);

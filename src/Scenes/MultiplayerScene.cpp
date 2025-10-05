@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 19:02:36 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 12:13:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -62,14 +62,17 @@ void	MultiplayerScene::refreshServerList()
 	}
 }
 
+#include "ImprovedBackgroundImage.hpp"
+
 void	MultiplayerScene::createPanels()
 {
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
 
 	// Background/Decoration of the scene
-	_panel.add("background1", new ScaledBackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5, glm::vec2(0), glm::vec2(0, 1), glm::vec2(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT * 0.0875)));
-	_panel.add("background1", new ScaledBackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5, glm::vec2(0), glm::vec2(0, 0), glm::vec2(DEFAULT_WINDOW_WIDTH, DEFAULT_WINDOW_HEIGHT * 0.05)));
+	_panel.add("background1", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, 58), glm::vec2(0, 1), glm::vec2(0), glm::vec2(1, 0), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
+	_panel.add("background2", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, 29), glm::vec2(0, 0), glm::vec2(0), glm::vec2(1, 0), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
+
 	_panel.add("multiplayer_text", new Text("Multiplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
 
 	// Back button to go back to the TitleScene

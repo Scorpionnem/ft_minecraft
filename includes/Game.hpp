@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 11:43:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 11:33:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "UIElement.hpp"
 # include "Scene.hpp"
 
-# define SERVER_LIST_EXPORT_FILE "server_list.txt"
+# define SERVER_LIST_EXPORT_FILE "saves/server_list.txt"
 
 struct	ServerInfo
 {

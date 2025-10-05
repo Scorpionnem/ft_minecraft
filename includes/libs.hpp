@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 11:29:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 10:31:10 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 11:35:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,7 @@
 # include <cmath>
 # include <functional>
 # include <algorithm>
+# include <filesystem>
 
 # include <thread>
 # include <mutex>
