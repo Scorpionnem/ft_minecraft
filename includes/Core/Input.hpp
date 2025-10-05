@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:16:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/02 20:01:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 22:09:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,6 +33,13 @@ class Input
 
 		void	setScroll(double value) {_scroll = value;}
 		double	getScroll() {return (_scroll);}
+
+		void	reset()
+		{
+			resetCharInputs();
+			resetKeyRepeats();
+			setScroll(0);
+		}
 
 		void	resetCharInputs()
 		{

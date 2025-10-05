@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:44:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/05 22:09:19 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -132,8 +132,7 @@ void	Game::_stop()
 
 void	Game::_processInput()
 {
-	_input.resetCharInputs();
-	_input.resetKeyRepeats();
+	_input.reset();
 
 	_window.frameStart();
 
