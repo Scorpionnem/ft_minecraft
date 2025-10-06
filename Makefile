@@ -23,7 +23,8 @@ INCLUDES =	-I ./includes\
 			-I ./includes/Core\
 			-I ./includes/Managers\
 			-I ./includes/Utils\
-			-I ./includes/Generation/Noise
+			-I ./includes/Generation/Noise\
+			-I ./includes/Generation/
 
 SRCS =	external/glad/glad.cpp\
 		src/stb_image.cpp\
@@ -45,7 +46,8 @@ SRCS =	external/glad/glad.cpp\
 		src/UI/Elements/ImprovedText.cpp\
 		src/UI/Elements/ImprovedBackgroundImage.cpp\
 		src/UI/Elements/ImprovedImage.cpp\
-		src/Generation/Noise/Perlin2D.cpp
+		src/Generation/Noise/Perlin2D.cpp\
+		src/Generation/Spline.cpp
 
 OBJDIR = obj
 EXTERNALDIR = external
