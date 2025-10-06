@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 11:54:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 12:10:22 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -69,7 +69,7 @@ class LoadingScene : public Scene
 
 			_panel.add("loading_text", new ImprovedText("Loading", 1, glm::vec2(0.5), glm::vec2(0), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
-			ImprovedText *funText = _panel.add("fun_text", new ImprovedText(FUN_TEXT_TITLES[0], 1, glm::vec2(0.5), glm::vec2(0, 16), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+			ImprovedText *funText = _panel.add("fun_text", new ImprovedText(FUN_TEXT_TITLES[0], 1, glm::vec2(0.5), glm::vec2(0, 13.6), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 			funText->setColor(glm::vec4(0.7, 0.7, 0.7, 1.0));
 			funText->setScale(0.7);
 
