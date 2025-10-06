@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:54:52 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 14:34:02 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 13:22:06 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -163,4 +163,10 @@ void	Shader::setVec3(const std::string &name, glm::vec3 value) const
 {
 	bind();
 	glUniform3fv(glGetUniformLocation(_id, name.c_str()), 1, glm::value_ptr(value));
+}
+
+void	Shader::setVec4(const std::string &name, glm::vec4 value) const
+{
+	bind();
+	glUniform4fv(glGetUniformLocation(_id, name.c_str()), 1, glm::value_ptr(value));
 }

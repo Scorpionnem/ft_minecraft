@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 17:03:08 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 13:25:03 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,7 @@
 #include "Toggle.hpp"
 #include "ScaledBackgroundImage.hpp"
 #include "TextField.hpp"
+#include "GameScene.hpp"
 
 #include "ImprovedBackgroundImage.hpp"
 #include "ImprovedButton.hpp"
@@ -51,7 +52,13 @@ void	SingleplayerScene::onEnter()
 		});
 	_panel.add("back_text", new Text("Back", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -14), glm::vec2(0.5, 1.0)));
 
-	_panel.add("create_world", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(102, -30), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	tmp = _panel.add("create_world", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(102, -30), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
+	[this]()
+	{
+		this->_requestScene(new GameScene(_game));
+	});
+	
 	_panel.add("create_world_text", new Text("Create New World", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -36), glm::vec2(0.5, 1.0)));
 
 	tmp = _panel.add("play_world", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(-102, -30), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));

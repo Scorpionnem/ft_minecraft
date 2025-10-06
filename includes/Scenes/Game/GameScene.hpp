@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:01:55 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/04 18:36:35 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 13:55:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 
 # include "Scene.hpp"
 # include "UIElement.hpp"
+# include "Panel.hpp"
 
 class GameScene : public Scene
 {
@@ -34,6 +35,9 @@ class GameScene : public Scene
 		void onExit();
 
 	private:
+		void	_generateMap();
+		Panel	_panel;
+		Panel	_mapPanel;
 };
 
 #endif

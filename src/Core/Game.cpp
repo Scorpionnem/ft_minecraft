@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 11:17:18 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 13:41:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	Game::_init()
 
 	importServerList();
 
-	_currentScene = new LoadingScene(this, new TitleScene(this));
+	_currentScene = new LoadingScene(this, new GameScene(this));
 	_scenes.insert({_currentScene->id(), _currentScene});
 	_currentScene->onEnter();
 }
@@ -118,6 +118,7 @@ void	Game::_loadShaders()
 	_shaders.load("font", "assets/shaders/text.vert", "assets/shaders/text.frag");
 	_shaders.load("image", "assets/shaders/image.vert", "assets/shaders/image.frag");
 	_shaders.load("background", "assets/shaders/background.vert", "assets/shaders/background.frag");
+	_shaders.load("quad", "assets/shaders/quad.vert", "assets/shaders/quad.frag");
 }
 
 void	Game::_stop()
