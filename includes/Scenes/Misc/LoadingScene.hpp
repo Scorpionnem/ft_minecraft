@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 11:54:24 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,13 +16,29 @@
 # include "Scene.hpp"
 # include "UIElement.hpp"
 # include "Image.hpp"
-# include "Text.hpp"
-# include "LimitedText.hpp"
-# include "BackgroundImage.hpp"
+# include "ImprovedText.hpp"
+# include "ImprovedBackgroundImage.hpp"
 
 # include "ShaderManager.hpp"
 # include "TextureManager.hpp"
 # include "Game.hpp"
+
+constexpr uint FUN_TEXT_COUNT = 11;
+constexpr double FUN_TEXT_INTERVAL = 2.5;
+constexpr const char	*FUN_TEXT_TITLES[FUN_TEXT_COUNT] =
+{
+	"Starting game!",
+	"Loading textures.",
+	"Compiling shaders...",
+	"Probably creating the UI elements",
+	"The scene should be ready soon",
+	"Must be getting closer...",
+	"Okay, its taking a bit too much time now!",
+	"Hum, where is the scene?",
+	"Hey! Please load the scene now!",
+	"Bro how long is this going to take?!",
+	"This took way too long, I had to stop it from crashing",
+};
 
 class LoadingScene : public Scene
 {
@@ -32,15 +48,30 @@ class LoadingScene : public Scene
 			_id = "LoadingScene";
 			_loading = scene;
 		}
-		~LoadingScene() {};
+		~LoadingScene()
+		{
+			if (!_joined)
+				_thread.join();
+		};
 
 		void onEnter()
 		{
 			TextureManager &textures = _game->getTextures();
 			ShaderManager &shaders = _game->getShaders();
 
-			_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
-			_panel.add("loading_text", new Text("Loading", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0.5)));
+			Texture	*bgTex;
+			if (rand() % 2)
+				bgTex = textures.get("assets/textures/fun/mbirou.png");
+			else
+				bgTex = textures.get("assets/textures/fun/mbatty.png");
+
+			_panel.add("background", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, REFERENCE_HEIGHT), glm::vec2(0), glm::vec2(0), glm::vec2(1), 0.5, shaders.get("background"), bgTex));
+
+			_panel.add("loading_text", new ImprovedText("Loading", 1, glm::vec2(0.5), glm::vec2(0), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+
+			ImprovedText *funText = _panel.add("fun_text", new ImprovedText(FUN_TEXT_TITLES[0], 1, glm::vec2(0.5), glm::vec2(0, 16), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+			funText->setColor(glm::vec4(0.7, 0.7, 0.7, 1.0));
+			funText->setScale(0.7);
 
 			_loadingDone = false;
 			_thread = std::thread([this]()
@@ -57,12 +88,12 @@ class LoadingScene : public Scene
 			if (_loadingDone)
 			{
 				_thread.join();
+				_joined = true;
 				_requestScene(_loading);
 				return ;
 			}
 
-			Text	*loadingScreenText = static_cast<Text*>(_panel.get("loading_text"));
-
+			ImprovedText	*loadingScreenText = static_cast<ImprovedText*>(_panel.get("loading_text"));
 			static double last = 0;
 			if (glfwGetTime() - last > 0.3)
 			{
@@ -73,6 +104,15 @@ class LoadingScene : public Scene
 				loadingScreenText->setText(str);
 
 				last = glfwGetTime();
+			}
+
+			ImprovedText *funText = static_cast<ImprovedText*>(_panel.get("fun_text"));
+			if (glfwGetTime() - _lastFunTextUpdate > FUN_TEXT_INTERVAL)
+			{
+				if (_FunTextIt + 1 <= FUN_TEXT_COUNT)
+					funText->setText(FUN_TEXT_TITLES[_FunTextIt++]);
+
+				_lastFunTextUpdate = glfwGetTime();
 			}
 		}
 		void render()
@@ -87,6 +127,9 @@ class LoadingScene : public Scene
 		void onExit() {}
 
 	private:
+		double				_lastFunTextUpdate = 0;
+		uint				_FunTextIt = 1;
+		bool				_joined = false;
 		Panel				_panel;
 
 		std::atomic<bool>	_loadingDone;

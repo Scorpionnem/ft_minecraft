@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 22:09:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/06 11:17:18 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -25,6 +25,8 @@ void	Game::run()
 	_init();
 	while (_running)
 	{
+		_textures.upload();
+
 		_processInput();
 		_update(_window.getDeltaTime());
 		_render();
@@ -65,7 +67,6 @@ void	Game::_swapScene(Scene *scene)
 	}
 
 	_currentScene->onEnter();
-	_textures.upload();
 }
 
 void	Game::_init()
