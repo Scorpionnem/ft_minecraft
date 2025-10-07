@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/03 16:01:33 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:01:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,7 +73,7 @@ void	MultiplayerNewScene::onEnter()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			_game->addServerInfo(ServerInfo(_name, _ip));
+			// _game->addServerInfo(std::pair<std::string, std::string>(_name, _ip));
 			this->_requestScene(new MultiplayerScene(_game));
 		});
 	static_cast<Button*>(tmp)->setDisabled(true);

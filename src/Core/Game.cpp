@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 13:41:52 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:16:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -172,44 +172,59 @@ void	Game::_render()
 
 void	Game::exportServerList()
 {
-	std::ofstream	file;
+	std::ofstream	file(SERVER_LIST_EXPORT_FILE);
 
-	file.open(SERVER_LIST_EXPORT_FILE);
 	if (!file.is_open())
 		return ;
 
-	for (ServerInfo &server : _serverInfos)
-		file << server.name << " " << server.ip << std::endl;
+	nlohmann::json	data;
+	data["servers"] = _servers;
+
+	file << std::setw(4) << data << std::endl;
+}
+
+bool	Game::isValidServer(const json &server)
+{
+	if (!server.contains("name") || !server.contains("ip") || !server.contains("port"))
+		return (false);
+
+	if (!server["name"].is_string())
+		return (false);
+	if (!server["ip"].is_string())
+		return (false);
+	if (!server["port"].is_number())
+		return (false);
+
+	return (true);
 }
 
 void	Game::importServerList()
 {
-	std::ifstream	file;
-	std::string		fileLine;
+	std::ifstream	file(SERVER_LIST_EXPORT_FILE);
 
-	file.open(SERVER_LIST_EXPORT_FILE);
 	if (!file.is_open())
 		return ;
 
-	while (std::getline(file, fileLine))
-	{
-		ServerInfo			server;
-		std::istringstream	line(fileLine);
+	nlohmann::json	data;
 
-		if (line >> server.name >> server.ip)
-			_serverInfos.push_back(server);
+	try {
+		data = json::parse(file);
+	} catch (const std::exception &e) {
+		std::cerr << "Failed to parse " << SERVER_LIST_EXPORT_FILE << "\n" << e.what() << std::endl;
 	}
-}
 
-void	Game::deleteServer(ServerInfo *info)
-{
-	_currentServer = NULL;
-	for (std::vector<ServerInfo>::iterator server = _serverInfos.begin(); server != _serverInfos.end(); server++)
+	std::vector<json>	validServers;
+
+	if (data.contains("servers") && data["servers"].is_array())
+		validServers = data["servers"];
+	else
+		std::cerr << "Invalid format in " << SERVER_LIST_EXPORT_FILE << std::endl;
+	
+	for (const json &server : validServers)
 	{
-		if (&*server == info)
-		{
-			server = _serverInfos.erase(server);
-			return ;
-		}
+		if (isValidServer(server))
+			_servers.push_back(server);
+		else
+			std::cerr << "Invalid server found in file " << SERVER_LIST_EXPORT_FILE << std::endl;
 	}
 }

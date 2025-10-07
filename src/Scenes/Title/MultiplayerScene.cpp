@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 16:54:56 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:18:51 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,7 +32,7 @@ void	MultiplayerScene::refreshServerList()
 {
 	TextureManager &textures = _game->getTextures();
 	ShaderManager &shaders = _game->getShaders();
-	std::vector<ServerInfo>	&serverList = _game->getServerInfos();
+	std::vector<json>	&servers = _game->getServers();
 	_serversPanel.clear();
 	float	yOffset = SERVER_LIST_START_OFFSET;
 	int	i = 0;
@@ -41,22 +41,23 @@ void	MultiplayerScene::refreshServerList()
 	_serversPanel.add("background_dark", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.1875));
 
 	// For each entry in the server list, we create a Checkbox with the server's name.
-	for (ServerInfo &server : serverList)
+	for (const json &server : servers)
 	{
 		if (i >= MAX_SERVERS_COUNT)
 			break ;
 
 		UIElement	*tmp = _serversPanel.add("server_button_" + std::to_string(i), new Checkbox(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
 										glm::vec2(0, yOffset), glm::vec2(0.5, 0)));
-		_serversPanel.add("server_text_" + std::to_string(i), new LimitedText(server.name, textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, yOffset + 6), glm::vec2(0.5, 0), 24));
-		static_cast<Checkbox*>(tmp)->setClickFunc(
-			[this, &server](bool state)
-			{
-				if (state)
-					this->_game->setCurrentServer(&server);
-				else
-					this->_game->setCurrentServer(NULL);
-			});
+		_serversPanel.add("server_text_" + std::to_string(i), new LimitedText(server["name"], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, yOffset + 6), glm::vec2(0.5, 0), 24));
+		(void)tmp;
+		// static_cast<Checkbox*>(tmp)->setClickFunc(
+		// 	[this, &server](bool state)
+		// 	{
+		// 		// if (state)
+		// 		// 	this->_game->setCurrentServer(&server);
+		// 		// else
+		// 		// 	this->_game->setCurrentServer(NULL);
+		// 	});
 		i++;
 		yOffset += SERVER_LIST_BUTTON_OFFSET;
 	}
@@ -117,7 +118,7 @@ void	MultiplayerScene::createServerHandling()
 	static_cast<Button*>(tmp)->setClickFunc(
 		[this]()
 		{
-			_game->deleteServer(_game->getCurrentServer());
+			// _game->deleteServer(_game->getCurrentServer());
 			this->refreshServerList();
 		});
 	static_cast<Button*>(tmp)->setDisabled(true);
@@ -125,7 +126,7 @@ void	MultiplayerScene::createServerHandling()
 
 void	MultiplayerScene::onEnter()
 {
-	_game->setCurrentServer(NULL);
+	// _game->setCurrentServer(NULL);
 	refreshServerList();
 
 	if (_loaded)
@@ -152,24 +153,24 @@ void	MultiplayerScene::update(UIEvent events, float deltaTime)
 	(void)deltaTime;
 
 	// Activate / Deactivate selected server handling buttons
-	if (_game->getCurrentServer())
-	{
-		static_cast<Button*>(_panel.get("delete_server"))->setDisabled(false);
-		static_cast<Button*>(_panel.get("play_server"))->setDisabled(false);
-		static_cast<Button*>(_panel.get("edit_server"))->setDisabled(false);
-	}
-	else
-	{
-		static_cast<Button*>(_panel.get("delete_server"))->setDisabled(true);
-		static_cast<Button*>(_panel.get("play_server"))->setDisabled(true);
-		static_cast<Button*>(_panel.get("edit_server"))->setDisabled(true);
-	}
+	// if (_game->getCurrentServer())
+	// {
+	// 	static_cast<Button*>(_panel.get("delete_server"))->setDisabled(false);
+	// 	static_cast<Button*>(_panel.get("play_server"))->setDisabled(false);
+	// 	static_cast<Button*>(_panel.get("edit_server"))->setDisabled(false);
+	// }
+	// else
+	// {
+	// 	static_cast<Button*>(_panel.get("delete_server"))->setDisabled(true);
+	// 	static_cast<Button*>(_panel.get("play_server"))->setDisabled(true);
+	// 	static_cast<Button*>(_panel.get("edit_server"))->setDisabled(true);
+	// }
 
 	// If too many servers, lock the create button (Ideally I have to add scroll functionnality)
-	if (_game->getServerInfos().size() >= MAX_SERVERS_COUNT)
-		static_cast<Button*>(_panel.get("create_server"))->setDisabled(true);
-	else
-		static_cast<Button*>(_panel.get("create_server"))->setDisabled(false);
+	// if (_game->getServerInfos().size() >= MAX_SERVERS_COUNT)
+	// 	static_cast<Button*>(_panel.get("create_server"))->setDisabled(true);
+	// else
+	// 	static_cast<Button*>(_panel.get("create_server"))->setDisabled(false);
 
 	_panel.handleEvents(events);
 	_serversPanel.handleEvents(events);

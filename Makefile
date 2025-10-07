@@ -54,7 +54,7 @@ EXTERNALDIR = external
 OBJS = $(SRCS:%.cpp=$(OBJDIR)/%.o)
 DEPS = $(SRCS:%.cpp=$(OBJDIR)/%.d)
 
-all: $(EXTERNALDIR) stb_image glfw glm $(NAME)
+all: $(EXTERNALDIR) stb_image glfw glm json $(NAME)
 
 $(EXTERNALDIR):
 	@mkdir external
@@ -67,6 +67,15 @@ glfw:
 		git clone https://github.com/glfw/glfw.git external/GLFW; \
 		cmake -S external/GLFW -B external/GLFW/build; \
 		cmake --build external/GLFW/build; \
+	fi
+
+json:
+	@if ls external | grep -q "json.h"; then \
+		echo "\033[32;1;4mjson.h Found\033[0m"; \
+	else\
+		echo "\033[31;1mDownloading json.h\033[0m"; \
+		curl --silent -o external/json.h https://raw.githubusercontent.com/nlohmann/json/refs/heads/develop/single_include/nlohmann/json.hpp;\
+		echo "\033[31;1mDownloaded json.h\033[0m"; \
 	fi
 
 stb_image:

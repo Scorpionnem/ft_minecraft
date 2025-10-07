@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/24 11:29:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 11:35:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:03:47 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -47,5 +47,8 @@
 # include "stb_image.h"
 # include "gtc/matrix_transform.hpp"
 # include "gtc/type_ptr.hpp"
+
+# include "json.h"
+using json = nlohmann::json;
 
 #endif

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 11:33:49 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:20:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 # include "UIElement.hpp"
 # include "Scene.hpp"
 
-# define SERVER_LIST_EXPORT_FILE "saves/server_list.txt"
+# define SERVER_LIST_EXPORT_FILE "saves/servers.json"
 
 struct	ServerInfo
 {
@@ -58,14 +58,15 @@ class	Game
 			_running = state;
 		}
 		
-		void	deleteServer(ServerInfo *info);
+		// void	deleteServer(std::pair<std::string, std::string> *info);
 		void	exportServerList();
 		void	importServerList();
-		
-		std::vector<ServerInfo>	&getServerInfos() {return (_serverInfos);}
-		void	addServerInfo(ServerInfo info) {_serverInfos.push_back(info);}
-		ServerInfo	*getCurrentServer() {return (_currentServer);}
-		void	setCurrentServer(ServerInfo *info) {this->_currentServer = info;}
+		bool	isValidServer(const json &server);
+
+		std::vector<json>	&getServers() {return (_servers);}
+		// void	addServerInfo(std::pair<std::string, std::string> info) {_serverInfos.push_back(info);}
+		// std::pair<std::string, std::string>	*getCurrentServer() {return (_currentServer);}
+		// void	setCurrentServer(std::pair<std::string, std::string> *info) {this->_currentServer = info;}
 	private:
 		void	_init();
 		void	_loadTextures();
@@ -89,8 +90,7 @@ class	Game
 
 		Scene	*_currentScene;
 		std::map<std::string, Scene*>	_scenes;
-		std::vector<ServerInfo>			_serverInfos;
-		ServerInfo						*_currentServer = NULL;
+		std::vector<json>				_servers;
 };
 
 #endif
