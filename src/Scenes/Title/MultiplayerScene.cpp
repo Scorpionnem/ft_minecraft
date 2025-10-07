@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 12:18:51 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 20:52:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,7 +22,7 @@
 #include "Text.hpp"
 #include "Toggle.hpp"
 #include "TextField.hpp"
-#include "ScaledBackgroundImage.hpp"
+#include "ImprovedBackgroundImage.hpp"
 
 # define MAX_SERVERS_COUNT 10
 # define SERVER_LIST_START_OFFSET 42.5
@@ -38,7 +38,7 @@ void	MultiplayerScene::refreshServerList()
 	int	i = 0;
 
 	// Decoration of the panel
-	_serversPanel.add("background_dark", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.1875));
+	_serversPanel.add("background_dark", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, REFERENCE_HEIGHT), glm::vec2(0), glm::vec2(0), glm::vec2(1), 0.1875, shaders.get("background"), textures.get(TX_PATH_DIRT)));
 
 	// For each entry in the server list, we create a Checkbox with the server's name.
 	for (const json &server : servers)
@@ -64,6 +64,8 @@ void	MultiplayerScene::refreshServerList()
 }
 
 #include "ImprovedBackgroundImage.hpp"
+#include "ImprovedText.hpp"
+#include "ImprovedButton.hpp"
 
 void	MultiplayerScene::createPanels()
 {
@@ -74,12 +76,12 @@ void	MultiplayerScene::createPanels()
 	_panel.add("background1", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, 58), glm::vec2(0, 1), glm::vec2(0), glm::vec2(1, 0), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
 	_panel.add("background2", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, 29), glm::vec2(0, 0), glm::vec2(0), glm::vec2(1, 0), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
 
-	_panel.add("multiplayer_text", new Text("Multiplayer", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
+	_panel.add("multiplayer_text", new ImprovedText("Multiplayer", 1, glm::vec2(0.5, 0), glm::vec2(0, 14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
 	// Back button to go back to the TitleScene
-	UIElement *tmp = _panel.add("back", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"), glm::vec2(102, -8), glm::vec2(0.5, 1), glm::vec2(1, 1)));
-	_panel.add("back_text", new Text("Back", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -14), glm::vec2(0.5, 1.0)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	UIElement	*tmp = _panel.add("back", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1.0), glm::vec2(102, -8), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	_panel.add("back_text", new ImprovedText("Back", 1, glm::vec2(0.5, 1.0), glm::vec2(102, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new TitleScene(_game));
@@ -94,34 +96,34 @@ void	MultiplayerScene::createServerHandling()
 	ShaderManager &shaders = _game->getShaders();
 
 	// Create server button (Will switch to MultiPLayerScene that will create a new server entry)
-	UIElement	*tmp = _panel.add("create_server", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"), glm::vec2(102, -30), glm::vec2(0.5, 1)));
-	_panel.add("create_server_text", new Text("Add Server", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(102, -36), glm::vec2(0.5, 1.0)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	UIElement	*tmp = _panel.add("create_server", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1.0), glm::vec2(102, -30), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	_panel.add("create_server_text", new ImprovedText("Add Server", 1, glm::vec2(0.5, 1.0), glm::vec2(102, -36), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new MultiplayerNewScene(_game));
 		});
 
 	// Play selected server button
-	tmp = _panel.add("play_server", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"), glm::vec2(-102, -30), glm::vec2(0.5, 1), glm::vec2(1, 1)));
-	_panel.add("play_server_text", new Text("Join Server", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-102, -36), glm::vec2(0.5, 1.0)));
-	static_cast<Button*>(tmp)->setDisabled(true);
+	tmp = _panel.add("play_server", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1.0), glm::vec2(-102, -30), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+	_panel.add("play_server_text", new ImprovedText("Join Server", 1, glm::vec2(0.5, 1.0), glm::vec2(-102, -36), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->disable();
 
 	// Edit selected server
-	tmp = _panel.add("edit_server", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"), glm::vec2(-153, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
-	_panel.add("edit_server_text", new Text("Edit", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-153, -14), glm::vec2(0.5, 1.0)));
-	static_cast<Button*>(tmp)->setDisabled(true);
+	tmp = _panel.add("edit_server", new ImprovedButton(glm::vec2(100, 20), glm::vec2(0.5, 1.0), glm::vec2(-153, -8), shaders.get("image"), textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED)));
+	_panel.add("edit_server_text", new ImprovedText("Edit", 1, glm::vec2(0.5, 1.0), glm::vec2(-153, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->disable();
 
 	// Delete selected server
-	tmp = _panel.add("delete_server", new Button(textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED), shaders.get("image"), glm::vec2(-51, -8), glm::vec2(0.5, 1), glm::vec2(0.98, 1)));
-	_panel.add("delete_server_text", new Text("Delete", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(-51, -14), glm::vec2(0.5, 1.0)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	tmp = _panel.add("delete_server", new ImprovedButton(glm::vec2(100, 20), glm::vec2(0.5, 1.0), glm::vec2(-51, -8), shaders.get("image"), textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED)));
+	_panel.add("delete_server_text", new ImprovedText("Delete", 1, glm::vec2(0.5, 1.0), glm::vec2(-51, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			// _game->deleteServer(_game->getCurrentServer());
 			this->refreshServerList();
 		});
-	static_cast<Button*>(tmp)->setDisabled(true);
+	static_cast<ImprovedButton*>(tmp)->disable();
 }
 
 void	MultiplayerScene::onEnter()
