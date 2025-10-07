@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 17:28:28 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 20:37:07 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -19,6 +19,7 @@
 #include "Game.hpp"
 #include "ImprovedButton.hpp"
 #include "TitleScene.hpp"
+#include "ErrorScene.hpp"
 #include "ImprovedText.hpp"
 
 #include "Perlin2D.hpp"
@@ -38,12 +39,12 @@ void	GameScene::_generateMap()
 			float	pixelSize = 1.0;
 			float	screenX = (x * pixelSize) - 100;
 			float	screenY = (y * pixelSize) - 100;
-			
+
 			float	contNoise = Perlin2D::calcNoise(glm::vec2(x, y), 0.005, 1, 6);
-			int height = getValueInSpline(CONTINENTALNESS_SPLINE, contNoise);
+			int height = _generator.getContinentalness(contNoise);
 
 			float	riverNoise = std::abs(Perlin2D::calcNoise(glm::vec2(x, y), 0.003, 1, 4));
-			height += getValueInSpline(RIVERS_VALLEYS_SPLINE, riverNoise);
+			height += _generator.getPeaksValleys(riverNoise);
 
 			glm::vec3	color = glm::vec3(0, 0.9, 0.1) / 1.5f;
 
@@ -72,6 +73,8 @@ void	GameScene::onEnter()
 	ShaderManager &shaders = _game->getShaders();
 	TextureManager &textures = _game->getTextures();
 
+	_generator.load();
+
 	_generateMap();
 
 	UIElement *tmp = _panel.add("back", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(0, -8), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
@@ -81,7 +84,7 @@ void	GameScene::onEnter()
 			this->_requestScene(new TitleScene(_game));
 		});
 	_panel.add("back_text", new Text("Back", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
-	
+
 	_panel.add("fps", new Text("0 fps", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0)));
 
 	tmp = _panel.add("reload", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(0, -28), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 12:29:37 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 20:40:42 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -16,6 +16,7 @@
 #include "OptionsScene.hpp"
 #include "GameScene.hpp"
 #include "LoadingScene.hpp"
+#include "ErrorScene.hpp"
 
 Game::Game() {}
 Game::~Game() {}
@@ -66,7 +67,14 @@ void	Game::_swapScene(Scene *scene)
 		_scenes.insert({_currentScene->id(), _currentScene});
 	}
 
-	_currentScene->onEnter();
+	try {
+		_currentScene->onEnter();
+	} catch (const std::exception &e) {
+		if (_currentScene->id() != "ErrorScene")
+			_swapScene(new ErrorScene(this, e.what()));
+		else
+			throw ;
+	}
 }
 
 void	Game::_init()
@@ -219,7 +227,7 @@ void	Game::importServerList()
 		validServers = data["servers"];
 	else
 		std::cerr << "Invalid format in " << SERVER_LIST_EXPORT_FILE << std::endl;
-	
+
 	for (const json &server : validServers)
 	{
 		if (isValidServer(server))

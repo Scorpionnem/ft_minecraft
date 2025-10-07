@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/06 17:25:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 17:29:05 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 20:35:57 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,9 +26,9 @@ struct	Spline
 	std::vector<SplinePoint>	points;
 };
 
-float	getValueInSpline(const Spline &spline, float value);
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(SplinePoint, x, y)
+NLOHMANN_DEFINE_TYPE_NON_INTRUSIVE(Spline, points)
 
-extern const Spline CONTINENTALNESS_SPLINE;
-extern const Spline RIVERS_VALLEYS_SPLINE;
+float	getValueInSpline(const Spline &spline, float value);
 
 #endif
