@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 12:16:17 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/07 12:29:37 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -83,7 +83,7 @@ void	Game::_init()
 
 	importServerList();
 
-	_currentScene = new LoadingScene(this, new GameScene(this));
+	_currentScene = new LoadingScene(this, new TitleScene(this));
 	_scenes.insert({_currentScene->id(), _currentScene});
 	_currentScene->onEnter();
 }
