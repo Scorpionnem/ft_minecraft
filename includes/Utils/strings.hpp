@@ -6,14 +6,14 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:23:39 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 16:47:47 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/09 12:49:52 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #ifndef STRINGS_HPP
 # define STRINGS_HPP
 
-# define TX_PATH_ASCII "assets/textures/ui/font/ascii.png"
+# define TX_PATH_ASCII "assets/textures/font/ascii.png"
 # define TX_PATH_DIRT "assets/textures/block/dirt.png"
 
 # define TX_PATH_BUTTON_SMALL "assets/textures/ui/button_small.png"
