@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:27:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 11:09:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/14 12:23:39 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -22,6 +22,18 @@ ImprovedText::ImprovedText(const std::string &text, float scale, const glm::vec2
 	_scale = scale;
 	_anchor = anchor;
 	_offset = offset;
+}
+
+extern std::map<char, int>	_charSpacing;
+
+float	ImprovedText::_computeStringSize()
+{
+	float	res = 0;
+	for (char c : _text)
+	{
+		res += _charSpacing[c];
+	}
+	return (res);
 }
 
 void	ImprovedText::draw(glm::vec2 windowSize)

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 12:20:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/14 12:23:53 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -73,6 +73,9 @@ class	Game
 		void	_loadShaders();
 		void	_stop();
 
+		void	_processFontSpacing(Texture *font);
+		int	_processCharMaxWidth(Texture *font, int start_width, int start_height, int char_width, int char_height);
+		
 		void	_processInput();
 
 		void	_update(float deltaTime);

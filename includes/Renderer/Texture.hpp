@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 13:31:14 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/03 10:50:19 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/14 09:57:26 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,8 @@ class	Texture
 		uint	id() {return (this->_id);}
 		int		getWidth() {return (this->_width);}
 		int		getHeight() {return (this->_height);}
+		const std::vector<unsigned char> &getPixels() {return (_pixels);}
+		GLenum	getFormat() {return (_format);}
 		bool	uploaded() {return (_uploaded);}
 	private:
 		void						_missingTexture();

@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:28:00 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 20:40:42 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/14 10:30:17 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -96,6 +96,53 @@ void	Game::_init()
 	_currentScene->onEnter();
 }
 
+int	Game::_processCharMaxWidth(Texture *font, int start_width, int start_height, int char_width, int char_height)
+{
+	int		maxX = 0;
+	auto	pixel = font->getPixels();
+	
+	for (int x = start_width; x < start_width + char_width; x++)
+	{
+		for (int y = (font->getHeight() - start_height - char_height); y < (font->getHeight() - start_height - char_height) + char_height; y++)
+		{
+			int	alpha = (int)pixel[(x + y * font->getWidth()) * 4 + 3];
+			if (alpha != 0)
+				maxX = x - start_width;
+		}
+	}
+	return (maxX + 1);
+}
+
+std::map<char, int>	_charSpacing;
+
+void	Game::_processFontSpacing(Texture *font)
+{
+	int	img_height = font->getHeight();
+	int	img_width = font->getWidth();
+
+	int	char_height = img_height / 16;
+	int	char_width = img_width / 16;
+
+	if (img_height / char_height != 16 || img_width / char_width != 16 || font->getFormat() != GL_RGBA)
+	{
+		std::cout << "Invalid font format" << std::endl;
+		return ;
+	}
+
+	char	c = 0;
+	for (int y = 0; y < 16; y++)
+	{
+		for (int x = 0; x < 16; x++)
+		{
+			int t = _processCharMaxWidth(font, x * char_width, y * char_height, char_width, char_height);
+			_charSpacing[c] = t;
+			c++;
+		}
+	}
+	_charSpacing[' '] = 8;
+	_charSpacing['\t'] = 8;
+}
+
 void	Game::_loadTextures()
 {
 	/*
@@ -117,6 +164,8 @@ void	Game::_loadTextures()
 
 	_textures.get(TX_PATH_TEXT_FIELD);
 	_textures.get(TX_PATH_TEXT_FIELD_HIGHLIGHTED);
+
+	_processFontSpacing(_textures.get(TX_PATH_ASCII));
 
 	_textures.upload();
 }
