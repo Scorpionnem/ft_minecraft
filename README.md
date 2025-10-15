@@ -6,7 +6,7 @@ This project is part of the 42 advanced curriculum. It will make us learn about 
 This project comes after [ft_vox](https://github.com/Manualouest/ft_vox) (Beware my code wasnt the best back then!) and is pretty much about upgrading it.
 It also allows us to discover how to create a "basic" game engine.
 
-<img width="1150" height="650" alt="image" src="https://github.com/user-attachments/assets/9d6d1943-58d6-40e1-898a-a8cfa3ff664a" />
+<img width="1152" height="654" alt="Screenshot from 2025-10-15 09-55-50" src="https://github.com/user-attachments/assets/bd99ef07-5191-4372-9cdd-2fb0d2d417cd" />
 
 # TODO
 
