@@ -46,6 +46,8 @@ SRCS =	external/glad/glad.cpp\
 		src/UI/Elements/ImprovedText.cpp\
 		src/UI/Elements/ImprovedBackgroundImage.cpp\
 		src/UI/Elements/ImprovedImage.cpp\
+		src/UI/Elements/ImprovedToggle.cpp\
+		src/UI/Elements/ImprovedTextField.cpp\
 		src/Generation/Noise/Perlin2D.cpp\
 		src/Generation/Spline.cpp
 

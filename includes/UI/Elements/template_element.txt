@@ -1,0 +1,25 @@
+# **************************************************************************** #
+#                                                                              #
+#                                                         :::      ::::::::    #
+#    template_element.txt                               :+:      :+:    :+:    #
+#                                                     +:+ +:+         +:+      #
+#    By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+         #
+#                                                 +#+#+#+#+#+   +#+            #
+#    Created: 2025/10/15 08:42:38 by mbatty            #+#    #+#              #
+#    Updated: 2025/10/15 08:44:16 by mbatty           ###   ########.fr        #
+#                                                                              #
+# **************************************************************************** #
+
+class	Template : public UIElement
+{
+	public:
+		Template(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, custom ..., shaders/textures...)
+		~Template()
+
+		void	handleEvents(UIEvent events);
+
+		void	draw(glm::vec2 windowSize);
+	private:
+		Texture	*_texture = NULL;
+		Shader	*_shader = NULL;
+};

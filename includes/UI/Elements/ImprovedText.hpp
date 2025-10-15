@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:55:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/14 10:29:20 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 08:59:31 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -32,6 +32,7 @@ class	ImprovedText : public UIElement
 		void		setColor(const glm::vec4 &color) {_color = color;}
 		void		setAngle(float angle) {_angle = angle;}
 		void		setScale(float scale) {_scale = scale;}
+		void		setMaxWidth(float val) {_maxWidth = val;}
 	private:
 		float	_computeStringSize();
 
@@ -41,6 +42,7 @@ class	ImprovedText : public UIElement
 
 		float		_scale = 1;
 		float		_angle = 0;
+		float		_maxWidth = -1;
 
 		glm::vec4	_color = glm::vec4(1);
 

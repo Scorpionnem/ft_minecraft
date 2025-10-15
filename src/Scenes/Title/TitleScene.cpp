@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 13:23:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 09:40:02 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -72,6 +72,8 @@ constexpr const char	*SPLASH_TEXT_TITLES[SPLASH_TEXT_COUNT] =
 #include "ImprovedText.hpp"
 #include "ImprovedBackgroundImage.hpp"
 #include "ImprovedImage.hpp"
+#include "ImprovedToggle.hpp"
+#include "ImprovedTextField.hpp"
 #include "Quad.hpp"
 
 void	TitleScene::onEnter()

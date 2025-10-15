@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:27:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/14 12:23:39 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 09:27:32 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -31,7 +31,7 @@ float	ImprovedText::_computeStringSize()
 	float	res = 0;
 	for (char c : _text)
 	{
-		res += _charSpacing[c];
+		res += _charSpacing[c] + 1;
 	}
 	return (res);
 }
@@ -46,7 +46,9 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 	float uiScale = UIElement::_getUiScale(windowSize);
 
 	_size = glm::vec2(DEFAULT_FONT_SIZE * _text.size(), DEFAULT_FONT_SIZE) * _scale;
-	_pos = UIElement::_getScaledPos(_size, _anchor, _offset, windowSize);
+	glm::vec2 spacedSize = glm::vec2(_computeStringSize(), DEFAULT_FONT_SIZE);
+	
+	_pos = UIElement::_getScaledPos(spacedSize, _anchor, _offset, windowSize);
 
 	glm::vec2	scaledSize = glm::vec2(_size.x * uiScale, _size.y * uiScale);
 
@@ -63,8 +65,11 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 	_shader->setMat4("projection", glm::ortho(0.f, windowSize.x, windowSize.y, 0.f, -1.f, 1.f));
 	_texture->bind(0);
 
+	float	advance = 0;
+
 	for (char c : _text)
 	{
+		float	spacing = _charSpacing[c];
 		_shader->setVec3("color", _color / 5.f);
 		_shader->setMat4("model", glm::translate(model, glm::vec3(1.f / 8.f, 1.f / 8.f, 0.0f)));
 		_shader->setInt("charIndex", c);
@@ -79,6 +84,9 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 		glBindVertexArray(_VAO);
 		glDrawArrays(GL_TRIANGLES, 0, sizeof(quadVertices));
 
-		model = glm::translate(model, glm::vec3(1.0f, 0.0f, 0.0f));
+		model = glm::translate(model, glm::vec3((spacing + 1) / 8.0f, 0.0f, 0.0f));
+		advance += spacing + 1;
+		if (_maxWidth > 0 && advance >= _maxWidth)
+			break ;
 	}
 }
