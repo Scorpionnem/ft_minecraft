@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:27:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 09:52:29 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 09:54:13 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -50,16 +50,16 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 	
 	_pos = UIElement::_getScaledPos(spacedSize, _anchor, _offset, windowSize);
 
-	glm::vec2 caca = spacedSize * uiScale;
+	glm::vec2 scaledSpacedSize = spacedSize * uiScale;
 
 	glm::vec2	scaledSize = glm::vec2(_size.x * uiScale, _size.y * uiScale);
 
 	glm::mat4 model(1.0f);
 
 	model = glm::translate(model, glm::vec3(_pos.x, _pos.y, 0.0f));
-	model = glm::translate(model, glm::vec3(caca.x / 2, caca.y / 2, 0.0f));
+	model = glm::translate(model, glm::vec3(scaledSpacedSize.x / 2, scaledSpacedSize.y / 2, 0.0f));
 	model = glm::rotate(model, glm::radians(_angle), glm::vec3(0.0, 0.0, 1.0));
-	model = glm::translate(model, glm::vec3(-caca.x / 2, -caca.y / 2, 0.0f));
+	model = glm::translate(model, glm::vec3(-scaledSpacedSize.x / 2, -scaledSpacedSize.y / 2, 0.0f));
 	model = glm::scale(model, glm::vec3(scaledSize.y, scaledSize.y, 1.0f));
 
 	_shader->bind();
