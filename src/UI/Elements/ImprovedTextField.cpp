@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 09:03:32 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 09:38:58 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 11:13:59 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,6 +15,7 @@
 ImprovedTextField::ImprovedTextField(glm::vec2 size, glm::vec2 anchor, glm::vec2 offset, Shader *fontShader, Shader *shader, Texture *fontTexture, Texture *defaultTexture, Texture *hoverTexture)
 : _text("", 1, anchor, offset + glm::vec2(4, size.y / 4), fontShader, fontTexture), _toggle(size, anchor, offset, shader, defaultTexture, hoverTexture, defaultTexture)
 {
+	_size = size;
 	_text.setMaxWidth(size.x - 12);
 	_text.setOffsetY((anchor.y * -(size.y / 4)) + ((1 - anchor.y) * (size.y / 4)));
 	_toggle.setClickFunc([this](bool state)

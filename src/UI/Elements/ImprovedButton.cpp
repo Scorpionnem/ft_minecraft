@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:24:13 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:17:24 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/17 14:24:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -29,6 +29,9 @@ ImprovedButton::ImprovedButton(glm::vec2 size, glm::vec2 anchor, glm::vec2 offse
 
 void	ImprovedButton::draw(glm::vec2 windowSize)
 {
+	if (_hovered)
+		_activeTexture = _hoverTexture;
+		
 	if (!_activeTexture || !_shader)
 		return ;
 
@@ -64,10 +67,13 @@ void	ImprovedButton::handleEvents(UIEvent events)
 	bool		inside = _isInBounds(events.mousePos, _pos, this->_size * _scale);
 
 	if (inside)
-		_activeTexture = _hoverTexture;
+		_hovered = true;
 	else
+	{
+		_hovered = false;
 		_activeTexture = _defaultTexture;
+	}
 
-	if (inside && _onClick && events.inputs->isMousePressed(GLFW_MOUSE_BUTTON_LEFT))
+	if (inside && _onClick && events.inputs->isMouseDown(GLFW_MOUSE_BUTTON_LEFT))
 		_onClick();
 }

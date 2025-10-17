@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 21:55:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 08:59:31 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 11:06:38 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -33,8 +33,8 @@ class	ImprovedText : public UIElement
 		void		setAngle(float angle) {_angle = angle;}
 		void		setScale(float scale) {_scale = scale;}
 		void		setMaxWidth(float val) {_maxWidth = val;}
+		float		computeStringSize();
 	private:
-		float	_computeStringSize();
 
 		Texture	*_texture = NULL;
 

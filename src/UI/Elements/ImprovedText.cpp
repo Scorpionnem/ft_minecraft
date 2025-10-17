@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/04 22:27:29 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 09:54:13 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/15 11:17:36 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -26,7 +26,7 @@ ImprovedText::ImprovedText(const std::string &text, float scale, const glm::vec2
 
 extern std::map<char, int>	_charSpacing;
 
-float	ImprovedText::_computeStringSize()
+float	ImprovedText::computeStringSize()
 {
 	float	res = 0;
 	for (char c : _text)
@@ -46,7 +46,7 @@ void	ImprovedText::draw(glm::vec2 windowSize)
 	float uiScale = UIElement::_getUiScale(windowSize);
 
 	_size = glm::vec2(DEFAULT_FONT_SIZE * _text.size(), DEFAULT_FONT_SIZE) * _scale;
-	glm::vec2 spacedSize = glm::vec2(_computeStringSize(), DEFAULT_FONT_SIZE);
+	glm::vec2 spacedSize = glm::vec2(computeStringSize(), DEFAULT_FONT_SIZE);
 	
 	_pos = UIElement::_getScaledPos(spacedSize, _anchor, _offset, windowSize);
 

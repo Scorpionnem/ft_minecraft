@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/27 12:25:27 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/14 12:23:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/16 16:22:34 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -58,15 +58,11 @@ class	Game
 			_running = state;
 		}
 		
-		// void	deleteServer(std::pair<std::string, std::string> *info);
 		void	exportServerList();
 		void	importServerList();
 		bool	isValidServer(const json &server);
 
 		std::vector<json>	&getServers() {return (_servers);}
-		// void	addServerInfo(std::pair<std::string, std::string> info) {_serverInfos.push_back(info);}
-		// std::pair<std::string, std::string>	*getCurrentServer() {return (_currentServer);}
-		// void	setCurrentServer(std::pair<std::string, std::string> *info) {this->_currentServer = info;}
 	private:
 		void	_init();
 		void	_loadTextures();
@@ -91,7 +87,7 @@ class	Game
 		TextureManager	_textures;
 		ShaderManager	_shaders;
 
-		Scene	*_currentScene;
+		Scene							*_currentScene;
 		std::map<std::string, Scene*>	_scenes;
 		std::vector<json>				_servers;
 };
