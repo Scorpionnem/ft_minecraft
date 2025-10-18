@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/16 16:23:22 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/17 14:27:55 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 10:24:43 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -28,6 +28,14 @@
 
 */
 
+/*
+
+	todo
+
+	make float slider, int slider, min val, max val
+
+*/
+
 // template	<typename  T>
 class	ImprovedSlider : public UIElement
 {
@@ -36,18 +44,16 @@ class	ImprovedSlider : public UIElement
 		: _slider(size, anchor, offset, shader, slider, NULL, NULL), _sliderHandle(sliderSsize, anchor, offset, shader, sliderHandle, sliderHandleHover, NULL)
 		{
 			_val = startVal;
-			_setSlider();
+			_setSlider(false);
 
 			_slider.setClickFunc([this]
 				()
 				{
 					_computeSliderVal();
-					_setSlider();
+					_setSlider(true);
 				});
 		}
-		~ImprovedSlider()
-		{
-		}
+		~ImprovedSlider() {}
 
 		void	handleEvents(UIEvent events)
 		{
@@ -67,6 +73,12 @@ class	ImprovedSlider : public UIElement
 			_sliderHandle.draw(windowSize);
 		}
 
+		void	setVal(float val)
+		{
+			_val = glm::clamp(val, 0.f, 1.f);
+			_setSlider(false);
+		}
+
 		void	setClickFunc(std::function<void(float)> func) {_onClick = func;}
 	private:
 		void			_computeSliderVal()
@@ -76,13 +88,15 @@ class	ImprovedSlider : public UIElement
 			
 			_val = _mousePos.x / (sliderPos + sliderSize);
 		}
-		void			_setSlider()
+		void			_setSlider(bool click)
 		{
 			float	x = _val * _slider.getSize().x;
 			
-			x -= _val * _sliderHandle.getSize().x;
+			x -= (_val * (_sliderHandle.getSize().x / 2)) + ((1 - _val) * (_sliderHandle.getSize().x / 2));
 
-			_sliderHandle.setOffsetX(x);
+			_sliderHandle.setOffsetX(_slider.getOffset().x + x);
+			if (_onClick && click)
+				_onClick(_val);
 		}
 		ImprovedButton	_slider;
 		ImprovedButton	_sliderHandle;
