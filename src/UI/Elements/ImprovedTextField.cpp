@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 09:03:32 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 11:13:59 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 13:26:21 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -17,7 +17,7 @@ ImprovedTextField::ImprovedTextField(glm::vec2 size, glm::vec2 anchor, glm::vec2
 {
 	_size = size;
 	_text.setMaxWidth(size.x - 12);
-	_text.setOffsetY((anchor.y * -(size.y / 4)) + ((1 - anchor.y) * (size.y / 4)));
+	_text.setOffsetY(offset.y + (anchor.y * -(DEFAULT_FONT_SIZE / 2)) + ((1 - anchor.y) * (DEFAULT_FONT_SIZE / 2)));
 	_toggle.setClickFunc([this](bool state)
 	{
 		_selected = state;

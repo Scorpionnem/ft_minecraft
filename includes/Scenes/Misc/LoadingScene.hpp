@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 21:26:25 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/06 12:10:22 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 11:52:44 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -15,7 +15,6 @@
 
 # include "Scene.hpp"
 # include "UIElement.hpp"
-# include "Image.hpp"
 # include "ImprovedText.hpp"
 # include "ImprovedBackgroundImage.hpp"
 

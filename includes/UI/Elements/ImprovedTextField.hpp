@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/15 09:00:17 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/15 09:37:00 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 13:19:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -27,6 +27,7 @@ class	ImprovedTextField : public UIElement
 
 		void	handleEvents(UIEvent events);
 		void	draw(glm::vec2 windowSize);
+		void	setClickFunc(std::function<void(const std::string &)> onClick) {_onClick = onClick;}
 	private:
 		void	_handleCursorBlink();
 		

@@ -6,23 +6,17 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/10/02 11:45:16 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 20:52:53 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 13:05:58 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "MultiplayerScene.hpp"
 #include "MultiplayerNewScene.hpp"
 #include "TitleScene.hpp"
-#include "Button.hpp"
 #include "Game.hpp"
-#include "Button.hpp"
-#include "Checkbox.hpp"
-#include "Image.hpp"
-#include "BackgroundImage.hpp"
-#include "Text.hpp"
-#include "Toggle.hpp"
-#include "TextField.hpp"
 #include "ImprovedBackgroundImage.hpp"
+#include "ImprovedButton.hpp"
+#include "ImprovedText.hpp"
 
 # define MAX_SERVERS_COUNT 10
 # define SERVER_LIST_START_OFFSET 42.5
@@ -46,9 +40,9 @@ void	MultiplayerScene::refreshServerList()
 		if (i >= MAX_SERVERS_COUNT)
 			break ;
 
-		UIElement	*tmp = _serversPanel.add("server_button_" + std::to_string(i), new Checkbox(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), shaders.get("image"),
-										glm::vec2(0, yOffset), glm::vec2(0.5, 0)));
-		_serversPanel.add("server_text_" + std::to_string(i), new LimitedText(server["name"], textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, yOffset + 6), glm::vec2(0.5, 0), 24));
+		UIElement	*tmp = _serversPanel.add("server_button_" + std::to_string(i), new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 0.0), glm::vec2(0, yOffset), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+		
+		_serversPanel.add("server_text_" + std::to_string(i), new ImprovedText(server["name"], 1, glm::vec2(0.5, 0.0), glm::vec2(0, yOffset + 6), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 		(void)tmp;
 		// static_cast<Checkbox*>(tmp)->setClickFunc(
 		// 	[this, &server](bool state)

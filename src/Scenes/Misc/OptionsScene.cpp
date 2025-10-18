@@ -6,21 +6,16 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/05 12:26:48 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 13:03:04 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "OptionsScene.hpp"
 #include "TitleScene.hpp"
-#include "Button.hpp"
 #include "Game.hpp"
-#include "Button.hpp"
-#include "Checkbox.hpp"
-#include "Image.hpp"
-#include "BackgroundImage.hpp"
-#include "Text.hpp"
-#include "Toggle.hpp"
-#include "TextField.hpp"
+#include "ImprovedBackgroundImage.hpp"
+#include "ImprovedButton.hpp"
+#include "ImprovedText.hpp"
 
 void	OptionsScene::onEnter()
 {
@@ -32,18 +27,18 @@ void	OptionsScene::onEnter()
 
 	_loaded = true;
 
-	_panel.add("background", new BackgroundImage(textures.get(TX_PATH_DIRT), shaders.get("background"), 0.5));
+	_panel.add("background", new ImprovedBackgroundImage(glm::vec2(REFERENCE_WIDTH, REFERENCE_HEIGHT), glm::vec2(0), glm::vec2(0), glm::vec2(1), 0.5, shaders.get("background"), textures.get(TX_PATH_DIRT)));
 
-	UIElement *tmp = _panel.add("done", new Button(textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED), shaders.get("image"),
-										glm::vec2(0, -8), glm::vec2(0.5, 1), glm::vec2(1, 1)));
-	static_cast<Button*>(tmp)->setClickFunc(
+	UIElement *tmp = _panel.add("done", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(0, -8), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
+
+	static_cast<ImprovedButton*>(tmp)->setClickFunc(
 		[this]()
 		{
 			this->_requestScene(new TitleScene(_game));
 		});
-	_panel.add("done_text", new Text("Done", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
+	_panel.add("done_text", new ImprovedText("Done", 1, glm::vec2(0.5, 0), glm::vec2(0, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
-	_panel.add("options_text", new Text("Options", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 14), glm::vec2(0.5, 0)));
+	_panel.add("options_text", new ImprovedText("Options", 1, glm::vec2(0.5, 0), glm::vec2(0, 14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 }
 
 void	OptionsScene::onExit()

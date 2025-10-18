@@ -6,14 +6,11 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 17:02:18 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/07 20:37:07 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 13:03:33 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
 #include "GameScene.hpp"
-#include "Button.hpp"
-#include "Image.hpp"
-#include "Text.hpp"
 #include "Game.hpp"
 #include "Quad.hpp"
 #include "Game.hpp"
@@ -83,9 +80,9 @@ void	GameScene::onEnter()
 		{
 			this->_requestScene(new TitleScene(_game));
 		});
-	_panel.add("back_text", new Text("Back", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -14), glm::vec2(0.5, 1.0)));
+	_panel.add("back_text", new ImprovedText("Back", 1, glm::vec2(0.5, 1.0), glm::vec2(0, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
-	_panel.add("fps", new Text("0 fps", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, 0), glm::vec2(0)));
+	_panel.add("fps", new ImprovedText("0 fps", 1, glm::vec2(0), glm::vec2(0), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
 	tmp = _panel.add("reload", new ImprovedButton(glm::vec2(200, 20), glm::vec2(0.5, 1), glm::vec2(0, -28), shaders.get("image"), textures.get(TX_PATH_BUTTON), textures.get(TX_PATH_BUTTON_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_DISABLED)));
 	static_cast<ImprovedButton*>(tmp)->setClickFunc(
@@ -95,8 +92,7 @@ void	GameScene::onEnter()
 			seed = rand();
 			this->_generateMap();
 		});
-	_panel.add("reload_text", new Text("Reload", textures.get(TX_PATH_ASCII), shaders.get("font"), glm::vec2(0, -34), glm::vec2(0.5, 1.0)));
-
+	_panel.add("reload_text", new ImprovedText("Reload", 1, glm::vec2(0.5, 1.0), glm::vec2(0, -34), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
 	_loaded = true;
 }
@@ -115,7 +111,7 @@ void	GameScene::update(UIEvent events, float deltaTime)
 	(void)deltaTime;
 	_panel.handleEvents(events);
 
-	static_cast<Text*>(_panel.get("fps"))->setText(std::to_string((int)(1.0f / _game->getWindow().getDeltaTime())));
+	static_cast<ImprovedText*>(_panel.get("fps"))->setText(std::to_string((int)(1.0f / _game->getWindow().getDeltaTime())));
 }
 
 void	GameScene::render()
