@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/18 10:24:54 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 14:05:25 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -98,18 +98,6 @@ void	TitleScene::onEnter()
 	UIElement *tmp = _panel.add("splash_text", new ImprovedText(SPLASH_TEXT_TITLES[rand() % SPLASH_TEXT_COUNT], 1, glm::vec2(0.5), glm::vec2(140, -80), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 	static_cast<ImprovedText*>(tmp)->setAngle(-15);
 	static_cast<ImprovedText*>(tmp)->setColor(glm::vec4(1.0, 1.0, 0.0, 1.0));
-
-	tmp = _panel.add("testSlider", new ImprovedSlider(glm::vec2(200, 20), glm::vec2(10, 20), glm::vec2(0), glm::vec2(10, 10), 0.5, shaders.get("image"), textures.get(TX_PATH_SLIDER), textures.get(TX_PATH_SLIDER_HANDLE), textures.get(TX_PATH_SLIDER_HANDLE_HIGHLIGHTED)));
-	ImprovedSlider	*slider = static_cast<ImprovedSlider*>(tmp);
-	slider->setClickFunc([this, slider]
-		(float val)
-		{
-			(void)this;
-			int	min = 0;
-			int	max = 10;
-			int step = (int)(std::round(val * (max - min))) + min;
-			slider->setVal(step / (float)(max));
-		});
 
 	// Options button to access options scene
 	tmp = _panel.add("options", new ImprovedButton(glm::vec2(98, 20), glm::vec2(0.5), glm::vec2(-51, 40), shaders.get("image"), textures.get(TX_PATH_BUTTON_SMALL), textures.get(TX_PATH_BUTTON_SMALL_HIGHLIGHTED), textures.get(TX_PATH_BUTTON_SMALL_DISABLED)));

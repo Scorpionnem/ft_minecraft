@@ -6,7 +6,7 @@
 /*   By: mbatty <mbatty@student.42angouleme.fr>     +#+  +:+       +#+        */
 /*                                                +#+#+#+#+#+   +#+           */
 /*   Created: 2025/09/30 14:17:02 by mbatty            #+#    #+#             */
-/*   Updated: 2025/10/18 13:03:04 by mbatty           ###   ########.fr       */
+/*   Updated: 2025/10/18 14:04:49 by mbatty           ###   ########.fr       */
 /*                                                                            */
 /* ************************************************************************** */
 
@@ -36,7 +36,7 @@ void	OptionsScene::onEnter()
 		{
 			this->_requestScene(new TitleScene(_game));
 		});
-	_panel.add("done_text", new ImprovedText("Done", 1, glm::vec2(0.5, 0), glm::vec2(0, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
+	_panel.add("done_text", new ImprovedText("Done", 1, glm::vec2(0.5, 1), glm::vec2(0, -14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 
 	_panel.add("options_text", new ImprovedText("Options", 1, glm::vec2(0.5, 0), glm::vec2(0, 14), shaders.get("font"), textures.get(TX_PATH_ASCII)));
 }
