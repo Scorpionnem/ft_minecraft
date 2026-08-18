@@ -6,7 +6,7 @@ struct   Camera
 {
     mat4f	getViewMatrix()
     {
-        return (mat4f::lookAt(vec3f(0.0), vec3f(0.0) + front(), vec3f(0, 1, 0)));
+        return (mat4f::lookAt(pos, pos + front(), vec3f(0, 1, 0)));
     }
     mat4f	getProjectionMatrix()
     {
@@ -15,19 +15,19 @@ struct   Camera
 
     vec3f    front() const
     {
-        float   c = std::cos(pitch);
+        float   c = std::cos(radians(pitch));
 
         return (vec3f(
-            std::sin(yaw) * c,
-            std::sin(pitch),
-            -std::cos(yaw) * c));
+            std::sin(radians(yaw)) * c,
+            std::sin(radians(pitch)),
+            -std::cos(radians(yaw)) * c));
     }
 
-    vec3d   pos;
-    double  yaw = 0;
-    double  pitch = 0;
-    double  fov = 0;
-    double  aspect = 0;
-    double  near = 0;
-    double  far = 0;
+    vec3f   pos;
+    float  yaw = 0;
+    float  pitch = 0;
+    float  fov = 0;
+    float  aspect = 0;
+    float  near = 0;
+    float  far = 0;
 };

@@ -16,6 +16,8 @@ class Input
 		int		mouseX() const;
 		int		mouseY() const;
 		bool	close() const;
+        double  delta() const;
+        double  aspect() const;
 
 	private:
 		void	beginFrame();
@@ -29,6 +31,9 @@ class Input
 		float	_mouseDY;
 		int		_mouseX;
 		int		_mouseY;
+
+        double  _delta;
+        double  _aspect;
 
         bool    _close;
 

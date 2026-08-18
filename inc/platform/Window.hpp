@@ -3,6 +3,7 @@
 #include "math.hpp"
 #include "platform/Input.hpp"
 #include "render/GL.hpp"
+#include "utils/Chrono.hpp"
 
 #include <SDL2/SDL.h>
 
@@ -32,6 +33,7 @@ class Window
 		u32     width() const;
 		u32     height() const;
 
+        double  delta = 0;
 	private:
 		void    _initSDL();
 		void    _createWindow(const char* title, u32 width, u32 height);
@@ -40,9 +42,13 @@ class Window
 
         Input       _input;
 
+        Chrono      _time;
+
 		SDL_Window* _window = nullptr;
         void*       _glContext = nullptr;
 
 		u32         _width = 0;
 		u32         _height = 0;
+
+        double  lastFrameTime = 0;
 };

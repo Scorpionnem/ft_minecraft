@@ -65,3 +65,13 @@ bool    Input::close() const
 {
     return (_close);
 }
+
+double    Input::delta() const
+{
+    return (_delta);
+}
+
+double    Input::aspect() const
+{
+    return (_aspect);
+}

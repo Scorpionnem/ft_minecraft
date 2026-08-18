@@ -55,6 +55,9 @@ void    Window::close()
 
 const Input&    Window::pollEvents()
 {
+    _input._aspect = _width / _height;
+    _input._delta = _time.get() - lastFrameTime;
+    lastFrameTime = _time.get();
 	SDL_Event   event;
 
 	_input.beginFrame();
@@ -86,6 +89,7 @@ const Input&    Window::pollEvents()
 void    Window::swapBuffers()
 {
     SDL_GL_SwapWindow(_window);
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 }
 
 void    Window::captureMouse(bool captured)
