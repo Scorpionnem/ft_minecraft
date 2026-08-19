@@ -15,11 +15,12 @@ SDL_CFLAGS :=	$(shell sdl2-config --cflags)
 SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
 
-SRCS :=	src/main.cpp			\
-		src/App.cpp	\
-		src/platform/Window.cpp	\
-		src/platform/Input.cpp	\
-		src/render/Shader.cpp	\
+SRCS :=	src/main.cpp				\
+		src/App.cpp					\
+		src/platform/Window.cpp		\
+		src/platform/Input.cpp		\
+		src/render/Shader.cpp		\
+		src/render/FrameBuffer.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)
