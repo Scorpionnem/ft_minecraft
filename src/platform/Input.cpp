@@ -8,6 +8,7 @@ Input::Input() : _mouseDX(0.0f), _mouseDY(0.0f)
 
 void    Input::beginFrame()
 {
+	_resize = false;
 	_close = false;
 	_pressed.clear();
     _mouseDX = 0.0f;
@@ -64,6 +65,11 @@ int   Input::mouseY() const
 bool    Input::close() const
 {
     return (_close);
+}
+
+bool	Input::resize() const
+{
+	return (_resize);
 }
 
 double    Input::delta() const

@@ -3,7 +3,9 @@
 #include "platform/Window.hpp"
 #include "render/Camera.hpp"
 #include "render/Mesh.hpp"
+#include "render/FrameBuffer.hpp"
 #include "utils/Chrono.hpp"
+#include "loader/OBJLoader.hpp"
 
 #include <algorithm>
 
@@ -18,28 +20,45 @@ class   App
     private:
         void    init()
         {
-            win.open("shaderpixel", 860, 520);
+			win.open("shaderpixel", 860, 520);
 
-            glEnable(GL_CULL_FACE);
-            glEnable(GL_DEPTH_TEST);
-            glDepthFunc(GL_LEQUAL);
+			glEnable(GL_CULL_FACE);
+			glEnable(GL_DEPTH_TEST);
+			glDepthFunc(GL_LEQUAL);
 
-            skybox_shader.load("assets/skybox.vert", "assets/skybox.frag");
+			skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 
-            vec2f verts[] = {
-                {-1.0f, -1.0f},
-                { 1.0f, -1.0f},
-                { 1.0f,  1.0f},
+			clouds_shader.load("assets/shaders/clouds.vert", "assets/shaders/clouds.frag");
 
-                { 1.0f,  1.0f},
-                {-1.0f,  1.0f},
-                {-1.0f, -1.0f},
-            };
+			mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
 
-            screen_mesh.set_sizeof_layout(sizeof(vec2f));
-            screen_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
-            screen_mesh.add_vertex_data(reinterpret_cast<uint8_t*>(verts), sizeof(verts));
-            screen_mesh.upload();
+			screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
+
+			frame_buffer.create(win.width(), win.height(), false);
+			clouds_buffer.create(win.width(), win.height(), false);
+
+			vec2f verts[] = {
+				{-1.0f, -1.0f},
+				{ 1.0f, -1.0f},
+				{ 1.0f,  1.0f},
+
+				{ 1.0f,  1.0f},
+				{-1.0f,  1.0f},
+				{-1.0f, -1.0f},
+			};
+
+			screen_mesh.set_sizeof_layout(sizeof(vec2f));
+			screen_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
+			screen_mesh.add_vertex_data(reinterpret_cast<uint8_t*>(verts), sizeof(verts));
+			screen_mesh.upload();
+
+			OBJLoader::load("assets/models/teapot.obj", teapot_mesh);
+			teapot_mesh.upload();
+
+			cam.fov = 70;
+			cam.far = 1000;
+			cam.near = 0.01;
+			cam.pos = vec3f(0, 2, 8);
         }
         void    loop();
         void    update(const Input &input);
@@ -49,8 +68,17 @@ class   App
         Window  win;
         Camera  cam;
 
+		FrameBuffer	frame_buffer;
+		FrameBuffer	clouds_buffer;
+
         Chrono  time;
+
+        Shader  clouds_shader;
 
         Shader  skybox_shader;
         Mesh    screen_mesh;
+        Shader  screen_shader;
+
+        Shader  mesh_shader;
+		Mesh	teapot_mesh;
 };

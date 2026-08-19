@@ -9,19 +9,8 @@ void    App::loop()
         if (input.close() || input.isDown(SDLK_ESCAPE))
             break ;
 
-        cam.fov = 70;
-        cam.far = 1000;
-        cam.near = 0.01;
-        cam.aspect = input.aspect();
-
         update(input);
         render();
-
-        skybox_shader.bind();
-        skybox_shader.setFloat("uTime", time.get());
-        skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
-        skybox_shader.setMat4("uView", cam.getViewMatrix());
-        screen_mesh.draw();
 
         win.swapBuffers();
     }
@@ -29,14 +18,69 @@ void    App::loop()
 
 void    App::update(const Input &input)
 {
+	if (input.resize())
+	{
+        glViewport(0, 0, win.width(), win.height());
+		frame_buffer.resize(win.width(), win.height());
+		clouds_buffer.resize(win.width(), win.height());
+	}
+    cam.aspect = input.aspect();
+
     if (input.wasPressed(SDLK_r))
+	{
         skybox_shader.reload();
+		clouds_shader.reload();
+	}
     updateCamera(input);
 }
 
 void    App::render()
 {
+	frame_buffer.bind();
 
+	skybox_shader.bind();
+	skybox_shader.setFloat("uTime", time.get());
+	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
+	skybox_shader.setMat4("uView", cam.getViewMatrix());
+	screen_mesh.draw();
+
+	frame_buffer.unbind();
+
+	glBindFramebuffer(GL_READ_FRAMEBUFFER, frame_buffer.id());
+	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, clouds_buffer.id());
+	glBlitFramebuffer(0, 0, win.width(), win.height(), 0, 0, win.width(), win.height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
+	glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+	clouds_buffer.bind();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, frame_buffer.colorTexture());
+
+	clouds_shader.bind();
+	clouds_shader.setFloat("uTime", time.get());
+	clouds_shader.setInt("uFrameBuffer", 0);
+	clouds_shader.setMat4("uProj", cam.getProjectionMatrix());
+	clouds_shader.setMat4("uView", cam.getViewMatrix());
+	clouds_shader.setVec3("uBoundsMin", vec3f(-32, 0, -32));
+	clouds_shader.setVec3("uBoundsMax", vec3f(32, 64, 32));
+	screen_mesh.draw();
+
+	clouds_buffer.unbind();
+
+	glActiveTexture(GL_TEXTURE0);
+	glBindTexture(GL_TEXTURE_2D, clouds_buffer.colorTexture());
+
+	glDepthMask(GL_FALSE);
+	screen_shader.bind();
+	screen_shader.setInt("uFrameBuffer", 0);
+	screen_mesh.draw();
+	glDepthMask(GL_TRUE);
+
+	mesh_shader.bind();
+	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
+	mesh_shader.setMat4("uView", cam.getViewMatrix());
+	mesh_shader.setMat4("uModel", mat4f::scale(vec3f(4)) * mat4f::translate(vec3f(-5, 5, -5)));
+	teapot_mesh.draw();
 }
 
 void    App::updateCamera(const Input &input)

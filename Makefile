@@ -21,6 +21,7 @@ SRCS :=	src/main.cpp				\
 		src/platform/Input.cpp		\
 		src/render/Shader.cpp		\
 		src/render/FrameBuffer.cpp	\
+		src/loader/OBJLoader.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

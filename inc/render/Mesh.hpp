@@ -48,7 +48,7 @@ class   Mesh
 			_sizeof_layout = size;
 		}
 
-        void	upload()
+		void	upload()
 		{
 			if (_VAO != 0)
 				glDeleteVertexArrays(1, &_VAO);

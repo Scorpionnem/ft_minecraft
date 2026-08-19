@@ -16,6 +16,7 @@ class Input
 		int		mouseX() const;
 		int		mouseY() const;
 		bool	close() const;
+		bool	resize() const;
         double  delta() const;
         double  aspect() const;
 
@@ -36,6 +37,7 @@ class Input
         double  _aspect;
 
         bool    _close;
+		bool	_resize;
 
 		friend Window;
 };

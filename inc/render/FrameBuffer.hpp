@@ -31,6 +31,7 @@ class   FrameBuffer
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
 
+        u32     id() const {return (_FBO);}
         u32     colorTexture() const {return (_colorTex);}
         u32     width() const {return (_width);}
         u32     height() const {return (_height);}

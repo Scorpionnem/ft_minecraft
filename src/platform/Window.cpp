@@ -77,9 +77,9 @@ const Input&    Window::pollEvents()
 			_input.addMouseDelta(static_cast<float>(event.motion.xrel), static_cast<float>(event.motion.yrel));
 		else if (event.type == SDL_WINDOWEVENT && event.window.event == SDL_WINDOWEVENT_SIZE_CHANGED)
 		{
+			_input._resize = true;
 			_width = static_cast<u32>(event.window.data1);
-			_height = static_cast<u32>(event.window.data2);
-        	glViewport(0, 0, _width, _height);
+			_height = static_cast<u32>(event.window.data2);			
 		}
 	}
 	SDL_GetMouseState(&_input._mouseX, &_input._mouseY);
