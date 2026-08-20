@@ -1,4 +1,4 @@
-#include "loader/OBJLoader.hpp"
+#include "loader/mesh/OBJLoader.hpp"
 
 #include <fstream>
 #include <sstream>
@@ -98,7 +98,7 @@ void	OBJLoader::load(const std::string& path, Mesh& mesh)
 {
 	std::ifstream file(path);
 	if (!file.is_open())
-		throw std::runtime_error("Failed to open model");
+		throw std::runtime_error("Failed to open model " + path);
 
 	vec2f verts[] = {
 			{-1.0f, -1.0f},

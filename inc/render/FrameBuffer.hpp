@@ -1,6 +1,7 @@
 #pragma once
 
 #include "render/GL.hpp"
+#include "render/Texture.hpp"
 #include "math.hpp"
 
 class   FrameBuffer
@@ -32,6 +33,7 @@ class   FrameBuffer
         }
 
         u32     id() const {return (_FBO);}
+		void	bindColor(u32 unit) {Texture::bind(_colorTex, unit);}
         u32     colorTexture() const {return (_colorTex);}
         u32     width() const {return (_width);}
         u32     height() const {return (_height);}

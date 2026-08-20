@@ -53,8 +53,7 @@ void    App::render()
 
 	clouds_buffer.bind();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, frame_buffer.colorTexture());
+	frame_buffer.bindColor(0);
 
 	clouds_shader.bind();
 	clouds_shader.setFloat("uTime", time.get());
@@ -67,8 +66,7 @@ void    App::render()
 
 	clouds_buffer.unbind();
 
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, clouds_buffer.colorTexture());
+	clouds_buffer.bindColor(0);
 
 	glDepthMask(GL_FALSE);
 	screen_shader.bind();

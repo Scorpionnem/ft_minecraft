@@ -3,9 +3,11 @@
 #include "platform/Window.hpp"
 #include "render/Camera.hpp"
 #include "render/Mesh.hpp"
+#include "render/Texture.hpp"
 #include "render/FrameBuffer.hpp"
 #include "utils/Chrono.hpp"
-#include "loader/OBJLoader.hpp"
+#include "loader/mesh/OBJLoader.hpp"
+#include "loader/texture/STBLoader.hpp"
 
 #include <algorithm>
 
