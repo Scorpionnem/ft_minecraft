@@ -22,6 +22,10 @@ class	Texture
 		{
 			_pixels.insert(_pixels.end(), bytes, bytes + size);
 		}
+		void	clear_pixel_data()
+		{
+			_pixels.clear();
+		}
 		void	set_format(u32 width, u32 height, GLenum internal_format = GL_RGBA8, GLenum format = GL_RGBA, GLenum type = GL_UNSIGNED_BYTE)
 		{
 			_width = width;
@@ -43,7 +47,7 @@ class	Texture
 			glGenerateMipmap(GL_TEXTURE_2D);
 
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
 			glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
 

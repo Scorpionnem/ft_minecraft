@@ -36,49 +36,13 @@ void    App::update(const Input &input)
 
 void    App::render()
 {
-	frame_buffer.bind();
-
-	skybox_shader.bind();
-	skybox_shader.setFloat("uTime", time.get());
-	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
-	skybox_shader.setMat4("uView", cam.getViewMatrix());
-	screen_mesh.draw();
-
-	frame_buffer.unbind();
-
-	glBindFramebuffer(GL_READ_FRAMEBUFFER, frame_buffer.id());
-	glBindFramebuffer(GL_DRAW_FRAMEBUFFER, clouds_buffer.id());
-	glBlitFramebuffer(0, 0, win.width(), win.height(), 0, 0, win.width(), win.height(), GL_COLOR_BUFFER_BIT, GL_NEAREST);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	clouds_buffer.bind();
-
-	frame_buffer.bindColor(0);
-
-	clouds_shader.bind();
-	clouds_shader.setFloat("uTime", time.get());
-	clouds_shader.setInt("uFrameBuffer", 0);
-	clouds_shader.setMat4("uProj", cam.getProjectionMatrix());
-	clouds_shader.setMat4("uView", cam.getViewMatrix());
-	clouds_shader.setVec3("uBoundsMin", vec3f(-32, 0, -32));
-	clouds_shader.setVec3("uBoundsMax", vec3f(32, 64, 32));
-	screen_mesh.draw();
-
-	clouds_buffer.unbind();
-
-	clouds_buffer.bindColor(0);
+    test_texture.bind(0);
 
 	glDepthMask(GL_FALSE);
 	screen_shader.bind();
 	screen_shader.setInt("uFrameBuffer", 0);
 	screen_mesh.draw();
 	glDepthMask(GL_TRUE);
-
-	mesh_shader.bind();
-	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
-	mesh_shader.setMat4("uView", cam.getViewMatrix());
-	mesh_shader.setMat4("uModel", mat4f::scale(vec3f(4)) * mat4f::translate(vec3f(-5, 5, -5)));
-	teapot_mesh.draw();
 }
 
 void    App::updateCamera(const Input &input)

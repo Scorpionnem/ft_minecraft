@@ -1,10 +1,15 @@
 #pragma once
 
+#include "loader/texture/STBLoader.hpp"
 #include "render/Texture.hpp"
 #include "utils/AABB.hpp"
+#include "vec.hpp"
 
+#include <algorithm>
 #include <map>
+#include <stdexcept>
 #include <string>
+#include <vector>
 
 /*
  * when you add a texture, it looks for a free spot
@@ -27,19 +32,70 @@ class   TextureAtlas
         TextureAtlas(const TextureAtlas&) = delete;
         TextureAtlas& operator=(const TextureAtlas&) = delete;
 
-        void        add_texture(const std::string& path);
+        void        add_texture(const std::string& path)
+        {
+            int             width;
+            int             height;
+            int             channels;
+            GLenum          format;
+            std::vector<u8> data;
 
-        void        upload();
+            STBLoader::load(path, data, width, height, channels, format);
+
+            std::vector<u8> rgba = _toRGBA(data, width, height, channels);
+
+            while (width > (int)_size || height > (int)_size)
+                _sizeUp();
+
+            vec2i   size = vec2i(width, height);
+            vec2i   pos;
+
+            int max_tries = 16;
+            for (int tries = 0; tries < max_tries; tries++)
+            {
+                if (_findSpot(size, pos))
+                {
+                    _insertTexture(rgba, width, height, pos);
+                    _uvs[path] = aabb2i{.min = pos, .max = pos + size - vec2i(1)};
+                    _dirty = true;
+                    return ;
+                }
+                _sizeUp();
+            }
+            throw std::runtime_error("TextureAtlas: could not find a spot for " + path);
+        }
+
+        void        upload()
+        {
+            if (!_dirty)
+                return ;
+
+            _texture.clear_pixel_data();
+            _texture.set_format(_size, _size, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
+            _texture.add_pixel_data(_pixels.data(), _pixels.size());
+            _texture.upload();
+            _dirty = false;
+        }
 
         void        bind(u32 unit) const {_texture.bind(unit);}
 
-        vec4f       uv(const std::string& path) const;
+        vec4f       uv(const std::string& path) const
+        {
+            auto    it = _uvs.find(path);
+            if (it == _uvs.end())
+                throw std::runtime_error("TextureAtlas: unknown texture " + path);
+
+            const aabb2i&   box = it->second;
+            float           s = (float)_size;
+
+            return (vec4f(box.min.x() / s, box.min.y() / s, (box.max.x() + 1) / s, (box.max.y() + 1) / s));
+        }
 
         const Texture&  texture() const {return (_texture);}
         u32         size() const {return (_size);}
 
     private:
-        bool    isSpotFree(const aabb2i& target_box)
+        bool    _isSpotFree(const aabb2i& target_box) const
         {
             for (auto &[path, box] : _uvs)
                 if (aabb2i::intersects(target_box, box))
@@ -47,7 +103,72 @@ class   TextureAtlas
             return (true);
         }
 
+        bool    _findSpot(const vec2i& size, vec2i& out_pos) const
+        {
+            for (int y = 0; y + size.y() <= (int)_size; y++)
+            {
+                for (int x = 0; x + size.x() <= (int)_size; x++)
+                {
+                    aabb2i  target_box = {.min = vec2i(x, y), .max = vec2i(x + size.x() - 1, y + size.y() - 1)};
+
+                    if (_isSpotFree(target_box))
+                    {
+                        out_pos = vec2i(x, y);
+                        return (true);
+                    }
+                }
+            }
+            return (false);
+        }
+
+        void    _sizeUp()
+        {
+            u32             old_size = _size;
+            std::vector<u8> old_pixels = std::move(_pixels);
+
+            _n++;
+            _size = 1u << _n;
+            _pixels.assign((u64)_size * _size * _channels, 0);
+
+            for (u32 y = 0; y < old_size; y++)
+            {
+                u8*         dst = &_pixels[(u64)y * _size * _channels];
+                const u8*   src = &old_pixels[(u64)y * old_size * _channels];
+
+                std::copy(src, src + (u64)old_size * _channels, dst);
+            }
+        }
+
+        void    _insertTexture(const std::vector<u8>& rgba, int width, int height, const vec2i& pos)
+        {
+            for (int y = 0; y < height; y++)
+            {
+                u8*         dst = &_pixels[((u64)(pos.y() + y) * _size + pos.x()) * _channels];
+                const u8*   src = &rgba[(u64)y * width * _channels];
+
+                std::copy(src, src + (u64)width * _channels, dst);
+            }
+        }
+
+        static std::vector<u8> _toRGBA(const std::vector<u8>& data, int width, int height, int channels)
+        {
+            std::vector<u8> out((u64)width * height * 4, 255);
+
+            for (u64 i = 0; i < (u64)width * height; i++)
+            {
+                for (int c = 0; c < channels && c < 4; c++)
+                    out[i * 4 + c] = data[i * channels + c];
+                if (channels == 1)
+                {
+                    out[i * 4 + 1] = out[i * 4];
+                    out[i * 4 + 2] = out[i * 4];
+                }
+            }
+            return (out);
+        }
+
         Texture     _texture;
+        bool        _dirty = false;
 
         std::vector<u8> _pixels;
         u32             _n = 1; // power of 2 size of the atlas

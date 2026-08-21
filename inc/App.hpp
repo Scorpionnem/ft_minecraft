@@ -4,6 +4,7 @@
 #include "render/Camera.hpp"
 #include "render/Mesh.hpp"
 #include "render/Texture.hpp"
+#include "render/TextureAtlas.hpp"
 #include "render/FrameBuffer.hpp"
 #include "utils/Chrono.hpp"
 #include "loader/mesh/OBJLoader.hpp"
@@ -35,6 +36,13 @@ class   App
 			mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
 
 			screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
+
+
+			test_texture.add_texture("assets/textures/test1.png");
+			test_texture.add_texture("assets/textures/test2.png");
+			test_texture.add_texture("assets/textures/test3.png");
+			test_texture.add_texture("assets/textures/test6.png");
+			test_texture.upload();
 
 			frame_buffer.create(win.width(), win.height(), false);
 			clouds_buffer.create(win.width(), win.height(), false);
@@ -76,6 +84,8 @@ class   App
         Chrono  time;
 
         Shader  clouds_shader;
+
+        TextureAtlas test_texture;
 
         Shader  skybox_shader;
         Mesh    screen_mesh;
