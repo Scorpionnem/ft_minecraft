@@ -24,6 +24,7 @@ SRCS :=	src/main.cpp						\
 		src/render/FrameBuffer.cpp			\
 		src/loader/mesh/OBJLoader.cpp		\
 		src/loader/texture/STBLoader.cpp	\
+		src/ui/UI.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

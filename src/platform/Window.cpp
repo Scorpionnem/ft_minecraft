@@ -32,7 +32,7 @@ void    Window::open(const char *title, u32 width, u32 height)
     _createGLContext();
 	_width = width;
 	_height = height;
-    
+
     glViewport(0, 0, _width, _height);
 	glClearColor(0.0f, 0.0f, 0.0f, 0.0f);
 }
@@ -79,10 +79,14 @@ const Input&    Window::pollEvents()
 		{
 			_input._resize = true;
 			_width = static_cast<u32>(event.window.data1);
-			_height = static_cast<u32>(event.window.data2);			
+			_height = static_cast<u32>(event.window.data2);
 		}
+		else if (event.type == SDL_TEXTINPUT)
+		    _input._textInput += event.text.text;
 	}
 	SDL_GetMouseState(&_input._mouseX, &_input._mouseY);
+	_input._width = _width;
+	_input._height = _height;
 	return (_input);
 }
 

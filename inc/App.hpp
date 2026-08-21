@@ -10,6 +10,9 @@
 
 class   App
 {
+    #define TARGET_WINDOW_WIDTH 860
+    #define TARGET_WINDOW_HEIGHT 520
+
     private:
         enum class State
         {

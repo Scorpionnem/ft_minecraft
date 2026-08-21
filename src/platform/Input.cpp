@@ -13,6 +13,7 @@ void    Input::beginFrame()
 	_pressed.clear();
     _mouseDX = 0.0f;
     _mouseDY = 0.0f;
+    _textInput.clear();
 }
 
 void    Input::press(int action)
@@ -80,4 +81,14 @@ double    Input::delta() const
 double    Input::aspect() const
 {
     return (_aspect);
+}
+
+u32    Input::width() const
+{
+    return (_width);
+}
+
+u32    Input::height() const
+{
+    return (_height);
 }

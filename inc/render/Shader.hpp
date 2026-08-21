@@ -47,6 +47,10 @@ class   Shader
         {
             glUniform2fv(glGetUniformLocation(_program, name), 1, v.data);
         }
+        void    setVec4(const char *name, const vec4f& v) const
+        {
+            glUniform4fv(glGetUniformLocation(_program, name), 1, v.data);
+        }
         void    setMat4(const char *name, const mat4f& m) const
         {
             glUniformMatrix4fv(glGetUniformLocation(_program, name), 1, GL_FALSE, m.data);

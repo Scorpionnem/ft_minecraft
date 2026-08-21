@@ -1,5 +1,6 @@
 #pragma once
 
+#include "math.hpp"
 #include <unordered_map>
 
 class Window;
@@ -19,6 +20,10 @@ class Input
 		bool	resize() const;
         double  delta() const;
         double  aspect() const;
+        u32     width() const;
+        u32     height() const;
+
+        const std::string   &textInput() const {return (_textInput);};
 
 	private:
 		void	beginFrame();
@@ -36,8 +41,13 @@ class Input
         double  _delta;
         double  _aspect;
 
+        u32 _width;
+        u32 _height;
+
         bool    _close;
 		bool	_resize;
+
+		std::string _textInput;
 
 		friend Window;
 };

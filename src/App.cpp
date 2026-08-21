@@ -1,22 +1,26 @@
 #include "App.hpp"
-#include "SDL_video.h"
 #include "loader/mesh/OBJLoader.hpp"
 #include "loader/texture/STBLoader.hpp"
+#include "mat.hpp"
+#include "ui/UI.hpp"
 
 void    App::init()
 {
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
 
-	win.open("shaderpixel", 860, 520);
+	win.open("shaderpixel", TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
 
-	frame_buffer.create(860, 520);
+	UI::init();
+	UI::setTargetSize(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
+
+	frame_buffer.create(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
 
 	skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 	mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
 	screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
 
-	STBLoader::load("assets/textures/loading_screen.png", loading_texture);
-	loading_texture.upload();
+	// STBLoader::load("assets/textures/loading_screen.png", loading_texture);
+	// loading_texture.upload();
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -58,6 +62,8 @@ void    App::loop()
         if (input.resize())
             glViewport(0, 0, win.width(), win.height());
 
+        UI::beginFrame(input);
+
         switch (state)
         {
             case State::LOADING:
@@ -66,13 +72,15 @@ void    App::loop()
             	update_running(input); render_running(); break ;
         }
 
+        UI::render();
+
         win.swapBuffers();
     }
 }
 
 void	App::update_running(const Input& input)
 {
-	cam.aspect = input.aspect();
+    cam.aspect = input.aspect();
 	updateCamera(input);
 }
 
@@ -107,7 +115,8 @@ void	App::render_running()
 
 void    App::update_loading(const Input& input)
 {
-	if (threads.active_tasks() == 0)
+	if (threads.active_tasks() == 0
+	    && UI::button("start", vec2i(TARGET_WINDOW_WIDTH / 2 - 64, TARGET_WINDOW_HEIGHT / 2 - 32), vec2i(128, 64)))
 	{
 		state = State::RUNNING;
 		test_texture.upload();
