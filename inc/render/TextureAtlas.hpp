@@ -6,6 +6,7 @@
 #include "vec.hpp"
 
 #include <algorithm>
+#include <climits>
 #include <map>
 #include <stdexcept>
 #include <string>
@@ -46,6 +47,9 @@ class   TextureAtlas
 
             while (width > (int)_size || height > (int)_size)
                 _sizeUp();
+
+            smallest = std::min(smallest, width);
+            height = std::min(smallest, height);
 
             vec2i   size = vec2i(width, height);
             vec2i   pos;
@@ -103,17 +107,17 @@ class   TextureAtlas
             return (true);
         }
 
-        bool    _findSpot(const vec2i& size, vec2i& out_pos) const
+        bool    _findSpot(const vec2i& size, vec2i& out_pos)
         {
-            for (int y = 0; y + size.y() <= (int)_size; y++)
+            for (last_x = 0; last_x + size.x() <= (int)_size; last_x += smallest)
             {
-                for (int x = 0; x + size.x() <= (int)_size; x++)
+                for (last_y = 0; last_y + size.y() <= (int)_size; last_y += smallest)
                 {
-                    aabb2i  target_box = {.min = vec2i(x, y), .max = vec2i(x + size.x() - 1, y + size.y() - 1)};
+                    aabb2i  target_box = {.min = vec2i(last_x, last_y), .max = vec2i(last_x + size.x() - 1, last_y + size.y() - 1)};
 
                     if (_isSpotFree(target_box))
                     {
-                        out_pos = vec2i(x, y);
+                        out_pos = vec2i(last_x, last_y);
                         return (true);
                     }
                 }
@@ -174,6 +178,11 @@ class   TextureAtlas
         u32             _n = 1; // power of 2 size of the atlas
         u32             _size = 0; // always a square
         u32             _channels = 4;
+
+        int smallest = INT_MAX;
+
+        int last_x = 0;
+        int last_y = 0;
 
         std::map<std::string, aabb2i>   _uvs;
 };
