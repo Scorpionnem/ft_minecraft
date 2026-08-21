@@ -28,7 +28,7 @@ SRCS :=	src/main.cpp						\
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)
 
-all: $(MATH_LIB_DIR) $(NAME)
+all: $(MATH_LIB_DIR) $(STB_LIB_DIR) $(NAME)
 
 $(MATH_LIB_DIR): | $(LIB_DIR)
 	git clone git@github.com:Scorpionnem/graphics_math.git $(MATH_LIB_DIR)
