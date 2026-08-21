@@ -9,8 +9,6 @@ void    App::init()
 
 	win.open("shaderpixel", 860, 520);
 
-	SDL_GL_SetSwapInterval(0);
-
 	frame_buffer.create(860, 520);
 
 	skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
@@ -74,7 +72,6 @@ void    App::loop()
 
 void	App::update_running(const Input& input)
 {
-	std::cout << 1.0 / input.delta() << std::endl;
 	cam.aspect = input.aspect();
 	updateCamera(input);
 }
