@@ -1,4 +1,52 @@
 #include "App.hpp"
+#include "SDL_video.h"
+#include "loader/mesh/OBJLoader.hpp"
+#include "loader/texture/STBLoader.hpp"
+
+void    App::init()
+{
+	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
+
+	win.open("shaderpixel", 860, 520);
+
+	SDL_GL_SetSwapInterval(0);
+
+	frame_buffer.create(860, 520);
+
+	skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
+	mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
+	screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
+
+	STBLoader::load("assets/textures/loading_screen.png", loading_texture);
+	loading_texture.upload();
+
+	glEnable(GL_CULL_FACE);
+	glEnable(GL_DEPTH_TEST);
+	glDepthFunc(GL_LEQUAL);
+
+	vec2f verts[] = {
+		{-1.0f, -1.0f},
+		{ 1.0f, -1.0f},
+		{ 1.0f,  1.0f},
+
+		{ 1.0f,  1.0f},
+		{-1.0f,  1.0f},
+		{-1.0f, -1.0f},
+	};
+
+	screen_mesh.set_sizeof_layout(sizeof(vec2f));
+	screen_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
+	screen_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
+	screen_mesh.upload();
+
+	OBJLoader::load("assets/models/teapot.obj", teapot_mesh);
+	teapot_mesh.upload();
+
+	cam.fov = 70;
+	cam.far = 1000;
+	cam.near = 0.01;
+	cam.pos = vec3f(0, 2, 8);
+}
 
 void    App::loop()
 {
@@ -9,43 +57,78 @@ void    App::loop()
         if (input.close() || input.isDown(SDLK_ESCAPE))
             break ;
 
-        update(input);
-        render();
+        if (input.resize())
+            glViewport(0, 0, win.width(), win.height());
+
+        switch (state)
+        {
+            case State::LOADING:
+                update_loading(input); render_loading(); break ;
+            case State::RUNNING:
+            	update_running(input); render_running(); break ;
+        }
 
         win.swapBuffers();
     }
 }
 
-void    App::update(const Input &input)
+void	App::update_running(const Input& input)
 {
-	if (input.resize())
-	{
-        glViewport(0, 0, win.width(), win.height());
-		frame_buffer.resize(win.width(), win.height());
-		clouds_buffer.resize(win.width(), win.height());
-	}
-    cam.aspect = input.aspect();
-
-    if (input.wasPressed(SDLK_r))
-	{
-        skybox_shader.reload();
-		clouds_shader.reload();
-	}
-    updateCamera(input);
+	std::cout << 1.0 / input.delta() << std::endl;
+	cam.aspect = input.aspect();
+	updateCamera(input);
 }
 
-void    App::render()
+void	App::render_running()
 {
-    test_texture.bind(0);
+	frame_buffer.bind();
+	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+	skybox_shader.bind();
+	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
+	skybox_shader.setMat4("uView", cam.getViewMatrix());
+	screen_mesh.draw();
+
+	mesh_shader.bind();
+	mesh_shader.setMat4("uModel", mat4f::identity());
+	mesh_shader.setMat4("uView", cam.getViewMatrix());
+	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
+	teapot_mesh.draw();
+
+	frame_buffer.unbind();
+	glViewport(0, 0, win.width(), win.height());
+
+	screen_shader.bind();
+	frame_buffer.bindColor(0);
+	frame_buffer.bindDepth(1);
+	screen_shader.setInt("uColorFrameBuffer", 0);
+	screen_shader.setInt("uDepthFrameBuffer", 1);
+	screen_shader.setInt("uScreenWidth", win.width());
+	screen_shader.setInt("uScreenHeight", win.height());
+	screen_mesh.draw();
+}
+
+void    App::update_loading(const Input& input)
+{
+	if (threads.active_tasks() == 0)
+	{
+		state = State::RUNNING;
+		test_texture.upload();
+	}
+}
+
+void    App::render_loading()
+{
+    loading_texture.bind(0);
 
 	glDepthMask(GL_FALSE);
 	screen_shader.bind();
-	screen_shader.setInt("uFrameBuffer", 0);
+	screen_shader.setInt("uColorFrameBuffer", 0);
 	screen_mesh.draw();
 	glDepthMask(GL_TRUE);
 }
 
-void    App::updateCamera(const Input &input)
+void    App::updateCamera(const Input& input)
 {
     float   move_speed = 20 * input.delta();
     float   speed = 100 * input.delta();
