@@ -2,3 +2,4 @@ lib/math
 lib/stb_image
 .obj/
 shaderpixel
+compile_commands.json
