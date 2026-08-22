@@ -20,7 +20,7 @@ void    App::init()
 
 	skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 	mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
-	screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
+	screen_shader.load("assets/shaders/post/screen.vert", "assets/shaders/post/screen.frag");
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);

@@ -1,19 +1,40 @@
 #include "render/Shader.hpp"
 
 #include <fstream>
-#include <sstream>
+#include <filesystem>
 #include <stdexcept>
 #include <string>
+
+std::string	extract_include(const std::string& line)
+{
+	std::size_t first = line.find_first_of("\"") + 1;
+	std::size_t	size = line.substr(line.find_first_of("\"") + 1).find_first_of("\"");
+	if (first == std::string::npos || size == std::string::npos)
+		throw std::runtime_error("invalid include");
+	return (line.substr(first, size));
+}
 
 static std::string  readFile(const char *path)
 {
     std::ifstream       file(path);
-    std::stringstream   buffer;
 
     if (!file.is_open())
         throw std::runtime_error(std::string(path) + ": cannot open");
-    buffer << file.rdbuf();
-    return (buffer.str());
+
+    std::string	res;
+    std::string	line;
+    while (std::getline(file, line))
+    {
+		if (!line.compare(0, 8, "#include"))
+		{
+			std::string	new_path = std::filesystem::path(path).parent_path().string() + "/" + extract_include(line);
+
+			res += readFile(new_path.c_str());
+		}
+		else
+			res += line + "\n";
+    }
+    return (res);
 }
 
 static u32  compile(u32 type, const std::string &src, const char *path)
