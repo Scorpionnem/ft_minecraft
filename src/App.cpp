@@ -3,6 +3,7 @@
 #include "loader/texture/STBLoader.hpp"
 #include "mat.hpp"
 #include "ui/UI.hpp"
+#include <string>
 
 void    App::init()
 {
@@ -10,17 +11,15 @@ void    App::init()
 
 	win.open("shaderpixel", TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
 
-	UI::init();
+	UI::init("assets/textures/font/ascii.png");
 	UI::setTargetSize(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
+	UI::setTargetFontScale(2);
 
 	frame_buffer.create(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
 
 	skybox_shader.load("assets/shaders/skybox.vert", "assets/shaders/skybox.frag");
 	mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
 	screen_shader.load("assets/shaders/screen.vert", "assets/shaders/screen.frag");
-
-	// STBLoader::load("assets/textures/loading_screen.png", loading_texture);
-	// loading_texture.upload();
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -80,6 +79,8 @@ void    App::loop()
 
 void	App::update_running(const Input& input)
 {
+	UI::text(std::to_string(static_cast<int>(1.0 / input.delta())) + " fps", vec2i(0), UI::Anchor::TOP_LEFT);
+
     cam.aspect = input.aspect();
 	updateCamera(input);
 }
@@ -116,7 +117,7 @@ void	App::render_running()
 void    App::update_loading(const Input& input)
 {
 	if (threads.active_tasks() == 0
-	    && UI::button("start", vec2i(TARGET_WINDOW_WIDTH / 2 - 64, TARGET_WINDOW_HEIGHT / 2 - 32), vec2i(128, 64)))
+	    && UI::button("START", vec2i(TARGET_WINDOW_WIDTH / 2 - 64, TARGET_WINDOW_HEIGHT / 2 - 32), vec2i(128, 64), UI::Anchor::CENTER))
 	{
 		state = State::RUNNING;
 		test_texture.upload();

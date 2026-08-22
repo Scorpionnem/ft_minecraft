@@ -7,6 +7,7 @@
 #include "render/TextureAtlas.hpp"
 #include "utils/Chrono.hpp"
 #include "utils/ThreadPool.hpp"
+#include "ui/UI.hpp"
 
 class   App
 {
@@ -20,7 +21,7 @@ class   App
             RUNNING,
         };
     public:
-        ~App() {threads.stop();}
+        ~App() {UI::destroy(); threads.stop();}
 
         void    run()
         {

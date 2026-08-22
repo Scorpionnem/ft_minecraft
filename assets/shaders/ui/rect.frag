@@ -6,11 +6,20 @@ in vec2 fragPos;
 
 uniform sampler2D uTex;
 
+uniform vec3	uColor;
+uniform vec4	uUV;
+uniform bool	uUseTex;
+
 void main()
 {
-    vec3 color = texture(uTex, fragPos).rgb;
-
-    color = vec3(1);
-
-    fragColor = vec4(color, 1.0);
+    if (uUseTex)
+    {
+        vec2 uv = mix(uUV.xy, uUV.zw, fragPos);
+        float a = texture(uTex, uv).a;
+        fragColor = vec4(uColor, a);
+    }
+    else
+    {
+        fragColor = vec4(uColor, 1.0);
+    }
 }

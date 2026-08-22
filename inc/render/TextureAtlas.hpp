@@ -12,18 +12,6 @@
 #include <string>
 #include <vector>
 
-/*
- * when you add a texture, it looks for a free spot
- * a free spot does not intersect with any other texture's spot
- * a spot is a rectangle containing the texture
- *
- * if it cant find a spot:
- * increase _n by 1
- * alloc new vector for pixels
- * copy all old data in the same spots as before
- * find a spot to fit texture
- */
-
 class   TextureAtlas
 {
     public:
@@ -42,31 +30,33 @@ class   TextureAtlas
             std::vector<u8> data;
 
             STBLoader::load(path, data, width, height, channels, format);
+            add_texture(path, data, width, height, channels, format);
+        }
+        void	add_texture(const std::string& path, const std::vector<u8>& pixels, int width, int height, int channels, GLenum format)
+        {
+	        std::vector<u8> rgba = _toRGBA(pixels, width, height, channels);
 
-            std::vector<u8> rgba = _toRGBA(data, width, height, channels);
+	        while (width > (int)_size || height > (int)_size)
+	            _sizeUp();
 
-            while (width > (int)_size || height > (int)_size)
-                _sizeUp();
+	        smallest = std::min({smallest, width, height});
 
-            smallest = std::min(smallest, width);
-            height = std::min(smallest, height);
+	        vec2i   size = vec2i(width, height);
+	        vec2i   pos;
 
-            vec2i   size = vec2i(width, height);
-            vec2i   pos;
-
-            int max_tries = 16;
-            for (int tries = 0; tries < max_tries; tries++)
-            {
-                if (_findSpot(size, pos))
-                {
-                    _insertTexture(rgba, width, height, pos);
-                    _uvs[path] = aabb2i{.min = pos, .max = pos + size - vec2i(1)};
-                    _dirty = true;
-                    return ;
-                }
-                _sizeUp();
-            }
-            throw std::runtime_error("TextureAtlas: could not find a spot for " + path);
+	        int max_tries = 16;
+	        for (int tries = 0; tries < max_tries; tries++)
+	        {
+	            if (_findSpot(size, pos))
+	            {
+	                _insertTexture(rgba, width, height, pos);
+	                _uvs[path] = aabb2i{.min = pos, .max = pos + size - vec2i(1)};
+	                _dirty = true;
+	                return ;
+	            }
+	            _sizeUp();
+	        }
+	        throw std::runtime_error("TextureAtlas: could not find a spot for " + path);
         }
 
         void        upload()
@@ -82,6 +72,8 @@ class   TextureAtlas
         }
 
         void        bind(u32 unit) const {_texture.bind(unit);}
+
+        bool        has(const std::string& path) const {return (_uvs.find(path) != _uvs.end());}
 
         vec4f       uv(const std::string& path) const
         {
