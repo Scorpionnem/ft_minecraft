@@ -2,6 +2,7 @@
 #include "loader/mesh/OBJLoader.hpp"
 #include "loader/texture/STBLoader.hpp"
 #include "mat.hpp"
+#include "math.hpp"
 #include "ui/UI.hpp"
 #include <GL/gl.h>
 #include <string>
@@ -145,10 +146,13 @@ void    App::updateCamera(const Input& input)
         cam.pos = cam.pos + (vec3f(0, 1, 0) * move_speed);
     if (input.isDown(SDLK_LSHIFT))
         cam.pos = cam.pos + vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
+
+    vec3f right = vec3f(cos(radians(cam.yaw)), 0.0f, sin(radians(cam.yaw)));
+
     if (input.isDown(SDLK_a))
-        cam.pos = cam.pos + vec3f(-1.0) * (vec3f::normalize(vec3f::cross(cam.front(), vec3f(0, 1, 0))) * move_speed);
+        cam.pos = cam.pos - right * move_speed;
     if (input.isDown(SDLK_d))
-        cam.pos = cam.pos + (vec3f::normalize(vec3f::cross(cam.front(), vec3f(0, 1, 0))) * move_speed);
+        cam.pos = cam.pos + right * move_speed;
 
     if (input.isDown(SDLK_UP))
         cam.pitch += speed;
