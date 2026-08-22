@@ -1,15 +1,17 @@
 #include "ui/UI.hpp"
+#include "SDL_keycode.h"
 #include "SDL_mouse.h"
 #include "render/Mesh.hpp"
 #include "utils/AABB.hpp"
 #include "render/Font.hpp"
 
+#include <algorithm>
+#include <cmath>
 #include <vector>
-#include <map>
 
 namespace UI
 {
-    static const Input* input;
+    static const Input* input_ptr;
 
     static u32 target_width;
     static u32 target_height;
@@ -33,14 +35,9 @@ namespace UI
         vec4f	uv = vec4f(0, 0, 1, 1);
     };
 
-    struct ToggleInfo
-    {
-    	bool	pressed;
-    };
-
     static std::vector<DrawInfo>  draws;
-
-    static std::map<std::string, ToggleInfo>	toggle_infos;
+    static std::string	focused_text_input;
+    static std::string	dragging_slider;
 }
 
 void	UI::setTargetFontScale(u32 scale)
@@ -87,11 +84,11 @@ static vec2i	anchorOrigin(vec2i ssize, UI::Anchor anchor)
         case UI::Anchor::TOP_LEFT:
             return (vec2i(0, 0));
         case UI::Anchor::TOP_RIGHT:
-            return (vec2i(UI::input->width() - ssize.x(), 0));
+            return (vec2i(UI::input_ptr->width() - ssize.x(), 0));
         case UI::Anchor::BOTTOM_LEFT:
-            return (vec2i(0, UI::input->height() - ssize.y()));
+            return (vec2i(0, UI::input_ptr->height() - ssize.y()));
         case UI::Anchor::BOTTOM_RIGHT:
-            return (vec2i(UI::input->width() - ssize.x(), UI::input->height() - ssize.y()));
+            return (vec2i(UI::input_ptr->width() - ssize.x(), UI::input_ptr->height() - ssize.y()));
         default:
             return (vec2i(UI::offset_x, UI::offset_y));
     }
@@ -99,13 +96,13 @@ static vec2i	anchorOrigin(vec2i ssize, UI::Anchor anchor)
 
 void    UI::beginFrame(const Input& input)
 {
-    UI::input = &input;
+    UI::input_ptr = &input;
 
-    float scaleX = static_cast<float>(UI::input->width()) / UI::target_width;
-    float scaleY = static_cast<float>(UI::input->height()) / UI::target_height;
+    float scaleX = static_cast<float>(UI::input_ptr->width()) / UI::target_width;
+    float scaleY = static_cast<float>(UI::input_ptr->height()) / UI::target_height;
     UI::scale = std::min(scaleX, scaleY);
-    UI::offset_x = (UI::input->width()  - UI::target_width  * UI::scale) * 0.5f;
-    UI::offset_y = (UI::input->height() - UI::target_height * UI::scale) * 0.5f;
+    UI::offset_x = (UI::input_ptr->width()  - UI::target_width  * UI::scale) * 0.5f;
+    UI::offset_y = (UI::input_ptr->height() - UI::target_height * UI::scale) * 0.5f;
 }
 
 void    UI::render()
@@ -122,7 +119,7 @@ void    UI::render()
         UI::rect_shader.bind();
         mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
         UI::rect_shader.setMat4("uModel", model);
-        UI::rect_shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input->width(), UI::input->height(), 0.0f, -1.0f, 1.0f));
+        UI::rect_shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
         UI::rect_shader.setInt("uTex", 0);
         UI::rect_shader.setInt("uUseTex", d.textured ? 1 : 0);
 
@@ -144,25 +141,152 @@ void    UI::render()
     draws.clear();
 }
 
+static void	centeredScaledText(const std::string& label, vec2i pos, vec2i size, UI::Anchor anchor)
+{
+	vec2i	text_pos;
+    text_pos.x() = pos.x() + size.x() / 2 - (UI::font.get_width(label) * (int)UI::target_font_scale) / 2;
+    text_pos.y() = pos.y() + size.y() / 2 - (UI::font.get_char_size() * (int)UI::target_font_scale) / 2;
+    UI::text(label, text_pos, anchor);
+}
+
+static void	centeredScaledTextY(const std::string& label, vec2i pos, vec2i size, UI::Anchor anchor)
+{
+	vec2i	text_pos;
+    text_pos.x() = pos.x();
+    text_pos.y() = pos.y() + size.y() / 2 - (UI::font.get_char_size() * (int)UI::target_font_scale) / 2;
+    UI::text(label, text_pos, anchor);
+}
+
+static void	scalePosAndSize(vec2i& spos, vec2i& ssize, vec2i pos, vec2i size, UI::Anchor anchor)
+{
+	ssize = vec2i(size.x() * UI::scale, size.y() * UI::scale);
+    vec2i origin = anchorOrigin(ssize, anchor);
+    spos = vec2i(pos.x() * UI::scale + origin.x(), pos.y() * UI::scale + origin.y());
+}
+
+static bool	isOnBox(vec2i spos, vec2i ssize)
+{
+	aabb2i  box = {.min = spos, .max = spos + ssize};
+
+	return (aabb2i::contains(box, vec2i(UI::input_ptr->mouseX(), UI::input_ptr->mouseY())));
+}
+
 bool    UI::button(const std::string& label, vec2i pos, vec2i size, Anchor anchor)
 {
-    vec2i ssize = vec2i(size.x() * UI::scale, size.y() * UI::scale);
-    vec2i origin = anchorOrigin(ssize, anchor);
-    vec2i spos = vec2i(pos.x() * UI::scale + origin.x(), pos.y() * UI::scale + origin.y());
+    vec2i spos;
+    vec2i ssize;
+    scalePosAndSize(spos, ssize, pos, size, anchor);
 
-    aabb2i  box = {.min = spos, .max = spos + ssize};
-    bool	hovered = aabb2i::contains(box, vec2i(UI::input->mouseX(), UI::input->mouseY()));
+    bool	hovered = isOnBox(spos, ssize);
 
     UI::draws.push_back({.pos = spos, .size = ssize, .hovered = hovered});
 
-    vec2i	text_pos;
-    text_pos.x() = pos.x() + size.x() / 2 - (UI::font.get_width(label) * (int)target_font_scale) / 2;
-    text_pos.y() = pos.y() + size.y() / 2 - (UI::font.get_char_size() * (int)target_font_scale) / 2;
-    UI::text(label, text_pos, anchor);
+    centeredScaledText(label, pos, size, anchor);
 
-    if (UI::input->wasPressed(SDL_BUTTON_LEFT)
-        && hovered)
+    if (UI::input_ptr->wasPressed(SDL_BUTTON_LEFT) && hovered)
         return (true);
+    return (false);
+}
+
+bool	UI::toggle(const std::string& label, bool& state, vec2i pos, vec2i size, Anchor anchor)
+{
+    vec2i spos;
+	vec2i ssize;
+    scalePosAndSize(spos, ssize, pos, size, anchor);
+
+    bool	hovered = isOnBox(spos, ssize);
+
+    UI::draws.push_back({.pos = spos, .size = ssize, .hovered = state});
+
+    centeredScaledText(label, pos, size, anchor);
+
+    if (UI::input_ptr->wasPressed(SDL_BUTTON_LEFT) && hovered)
+    {
+    	state = !state;
+     	return (true);
+    }
+
+    return (false);
+}
+
+bool    UI::input(const std::string& label, std::string& input, vec2i pos, vec2i size, Anchor anchor)
+{
+	vec2i spos;
+	vec2i ssize;
+    scalePosAndSize(spos, ssize, pos, size, anchor);
+
+    bool	hovered = isOnBox(spos, ssize);
+    bool	focused = UI::focused_text_input == label;
+
+    UI::draws.push_back({.pos = spos, .size = ssize, .hovered = focused});
+
+    std::string	render_input = input;
+    if (focused)
+    	render_input += "_";
+    centeredScaledTextY(render_input, pos, size, anchor);
+
+    if (UI::input_ptr->wasPressed(SDL_BUTTON_LEFT))
+    {
+    	if (focused)
+     		UI::focused_text_input = "";
+    	else if (hovered)
+    		UI::focused_text_input = label;
+    }
+
+    const std::string	&text_input = UI::input_ptr->textInput();
+    if (!text_input.empty() && focused)
+    	input += text_input;
+
+    if (UI::input_ptr->wasPressed(SDLK_BACKSPACE) && focused && !input.empty())
+    	input = input.substr(0, input.size() - 1);
+
+    return (false);
+}
+
+bool	UI::slider(const std::string& label, int& input, int min, int max, vec2i pos, vec2i size, Anchor anchor)
+{
+	vec2i spos;
+	vec2i ssize;
+    scalePosAndSize(spos, ssize, pos, size, anchor);
+
+    float	frac = (max != min) ? static_cast<float>(input - min) / static_cast<float>(max - min) : 0.0f;
+    frac = std::clamp(frac, 0.0f, 1.0f);
+
+    int	handleWidth = std::max(1, size.x() / 10);
+    vec2i	sliderpos = vec2i(pos.x() + static_cast<int>(std::round(frac * (size.x() - handleWidth))), pos.y());
+    vec2i	slidersize = vec2i(handleWidth, size.y());
+
+    vec2i	sliderspos;
+    vec2i	sliderssize;
+    scalePosAndSize(sliderspos, sliderssize, sliderpos, slidersize, anchor);
+
+    bool	hovered = isOnBox(spos, ssize);
+    bool	dragging = UI::dragging_slider == label;
+
+    UI::draws.push_back({.pos = spos, .size = ssize, .hovered = false});
+    UI::draws.push_back({.pos = sliderspos, .size = sliderssize, .hovered = hovered || dragging});
+
+    centeredScaledText(std::to_string(input), pos, size, anchor);
+
+    if (UI::input_ptr->isDown(SDL_BUTTON_LEFT))
+    {
+    	if (!dragging && hovered && UI::dragging_slider.empty())
+    	{
+    		UI::dragging_slider = label;
+    		dragging = true;
+    	}
+
+    	if (dragging)
+    	{
+    		float	offset = (static_cast<float>(UI::input_ptr->mouseX()) - static_cast<float>(spos.x())) / static_cast<float>(ssize.x());
+    		offset = std::clamp(offset, 0.0f, 1.0f);
+
+    		input = min + static_cast<int>(std::round((max - min) * offset));
+    	}
+    }
+    else if (dragging)
+    	UI::dragging_slider = "";
+
     return (false);
 }
 

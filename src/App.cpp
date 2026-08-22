@@ -41,8 +41,7 @@ void    App::init()
 	screen_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
 	screen_mesh.upload();
 
-	// OBJLoader::load("assets/models/camel/camel.obj", test_mesh, test_texture);
-	OBJLoader::load("assets/models/star_destroyer/Destructor_imperial_ISD_1.obj", test_mesh, test_texture);
+	OBJLoader::load("assets/models/camel/camel.obj", test_mesh, test_texture);
 	test_mesh.upload();
 
 	cam.fov = 70;
@@ -106,6 +105,12 @@ void	App::render_running()
 
 void    App::update_loading(const Input& input)
 {
+	static std::string	in = "lol";
+	static int inf = 50;
+	static bool tog = false;
+	UI::input("input text", in, vec2i(0), vec2i(128, 32), UI::Anchor::TOP_LEFT);
+	UI::slider("slider", inf, 0, 100, vec2i(0, 48), vec2i(128, 32), UI::Anchor::TOP_LEFT);
+	UI::toggle("toggle", tog, vec2i(0, 96), vec2i(128, 32));
 	if (threads.active_tasks() == 0
 	    && UI::button("START", vec2i(TARGET_WINDOW_WIDTH / 2 - 64, TARGET_WINDOW_HEIGHT / 2 - 32), vec2i(128, 64), UI::Anchor::CENTER))
 	{
