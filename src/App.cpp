@@ -159,7 +159,7 @@ void    App::updateCamera(const Input& input)
     if (input.isDown(SDLK_LEFT))
         cam.yaw -= speed;
 
-    cam.pitch = std::clamp(cam.pitch, -89.0f, 89.0f);
+    cam.pitch = std::clamp(cam.pitch, -90.0f, 90.0f);
 
     if (cam.yaw > 360)
         cam.yaw = 0;

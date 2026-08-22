@@ -6,7 +6,7 @@ struct   Camera
 {
     mat4f	getViewMatrix()
     {
-        return (mat4f::lookAt(pos, pos + front(), vec3f(0, 1, 0)));
+    	return (mat4f::rotateX(radians(-pitch)) * mat4f::rotateY(radians(yaw)) * mat4f::translate(-pos));
     }
     mat4f	getProjectionMatrix()
     {
