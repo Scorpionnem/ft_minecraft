@@ -271,26 +271,26 @@ void	OBJLoader::load(const std::string& path, Mesh& mesh, TextureAtlas &atlas)
 			{
 				parse_face(mesh, iss, pos_vec, normal_vec, uv_vec, current_uv_off);
 			}
-			// else if (prefix == "mtllib")
-			// {
-			// 	loadMTL(path, mtl_tex_path, atlas, iss);
-			// }
-			// else if (prefix == "usemtl")
-			// {
-			// 	std::string	mtllib;
-			// 	if (!(iss >> mtllib))
-			// 		throw std::runtime_error("invalid usemtl");
+			else if (prefix == "mtllib")
+			{
+				loadMTL(path, mtl_tex_path, atlas, iss);
+			}
+			else if (prefix == "usemtl")
+			{
+				std::string	mtllib;
+				if (!(iss >> mtllib))
+					throw std::runtime_error("invalid usemtl");
 
-			// 	std::string tex_path = mtl_tex_path[mtllib];
+				std::string tex_path = mtl_tex_path[mtllib];
 
-			// 	if (!atlas.has(tex_path))
-			// 	{
-			// 		std::cout << mtllib << std::endl;
-			// 		continue ;
-			// 	}
+				if (!atlas.has(tex_path))
+				{
+					std::cout << mtllib << std::endl;
+					continue ;
+				}
 
-			// 	current_uv_off = atlas.uv(tex_path);
-			// }
+				current_uv_off = atlas.uv(tex_path);
+			}
 		}
 	}
 	catch (const std::exception &e)
