@@ -33,11 +33,44 @@ static vec2f	remap_uv(const vec2f& uv, const vec4f& atlas_rect)
 	));
 }
 
-static void	parse_face(Mesh& mesh, std::istringstream& iss, std::vector<vec3f>& pos_vec, std::vector<vec2f>& uv_vec, const vec4f& current_uv_off)
+static void	fix_invalid_uvs(vec2f& uv1, vec2f& uv2, vec2f& uv3, const vec3f& normal, const vec3f& pos1, const vec3f& pos2, const vec3f& pos3)
+{
+	vec3f	absNormal = abs(normal);
+	if (absNormal.x() > absNormal.y() && absNormal.x() > absNormal.z())
+	{
+		if (uv1.x() == -1 && uv1.y() == -1)
+			uv1 = vec2f(pos1.z(), pos1.y());
+		if (uv2.x() == -1 && uv2.y() == -1)
+			uv2 = vec2f(pos2.z(), pos2.y());
+		if (uv3.x() == -1 && uv3.y() == -1)
+			uv3 = vec2f(pos3.z(), pos3.y());
+	}
+	else if (absNormal.y() > absNormal.z())
+	{
+		if (uv1.x() == -1 && uv1.y() == -1)
+			uv1 = vec2f(pos1.x(), pos1.z());
+		if (uv2.x() == -1 && uv2.y() == -1)
+			uv2 = vec2f(pos2.x(), pos2.z());
+		if (uv3.x() == -1 && uv3.y() == -1)
+			uv3 = vec2f(pos3.x(), pos3.z());
+	}
+	else
+	{
+		if (uv1.x() == -1 && uv1.y() == -1)
+			uv1 = vec2f(pos1.x(), pos1.y());
+		if (uv2.x() == -1 && uv2.y() == -1)
+			uv2 = vec2f(pos2.x(), pos2.y());
+		if (uv3.x() == -1 && uv3.y() == -1)
+			uv3 = vec2f(pos3.x(), pos3.y());
+	}
+}
+
+static void	parse_face(Mesh& mesh, std::istringstream& iss, std::vector<vec3f>& pos_vec, std::vector<vec3f>& normal_vec, std::vector<vec2f>& uv_vec, const vec4f& current_uv_off)
 {
 	struct FaceVertex
 	{
 		int pos_index;
+		int normal_index;
 		int uv_index;
 	};
 
@@ -47,17 +80,20 @@ static void	parse_face(Mesh& mesh, std::istringstream& iss, std::vector<vec3f>& 
 	while (iss >> token)
 	{
 		std::istringstream ss(token);
-		std::string pos_str, uv_str;
+		std::string pos_str, uv_str, normal_str;
 
 		std::getline(ss, pos_str, '/');
 		std::getline(ss, uv_str, '/');
+		std::getline(ss, normal_str, '/');
 
-		FaceVertex fv = { -1, -1 };
+		FaceVertex fv = {.pos_index = -1, .normal_index = -1, .uv_index = -1};
 
 		try {
 			fv.pos_index = std::stoi(pos_str) - 1;
 			if (!uv_str.empty())
 				fv.uv_index = std::stoi(uv_str) - 1;
+			if (!normal_str.empty())
+				fv.normal_index = std::stoi(normal_str) - 1;
 		}
 		catch (...) {
 			throw std::runtime_error("stoi");
@@ -84,30 +120,40 @@ static void	parse_face(Mesh& mesh, std::istringstream& iss, std::vector<vec3f>& 
 		vec3f	pos2 = pos_vec[fv2.pos_index];
 		vec3f	pos3 = pos_vec[fv3.pos_index];
 
+		if (fv1.normal_index < -1 || fv2.normal_index < -1 || fv3.normal_index < -1
+			|| fv1.normal_index > (int)normal_vec.size() - 1
+			|| fv2.normal_index > (int)normal_vec.size() - 1
+			|| fv3.normal_index > (int)normal_vec.size() - 1)
+			throw std::runtime_error("Invalid vertice normal index");
+		vec3f	normal1 = fv1.normal_index == -1 ? vec3f::normalize(vec3f::cross(pos2 - pos1, pos3 - pos1)) : normal_vec[fv1.normal_index];
+		vec3f	normal2 = fv1.normal_index == -1 ? vec3f::normalize(vec3f::cross(pos2 - pos1, pos3 - pos1)) : normal_vec[fv2.normal_index];
+		vec3f	normal3 = fv1.normal_index == -1 ? vec3f::normalize(vec3f::cross(pos2 - pos1, pos3 - pos1)) : normal_vec[fv3.normal_index];
+
 		if (fv1.uv_index < -1 || fv2.uv_index < -1 || fv3.uv_index < -1
 			|| fv1.uv_index > (int)uv_vec.size() - 1
 			|| fv2.uv_index > (int)uv_vec.size() - 1
 			|| fv3.uv_index > (int)uv_vec.size() - 1)
 			throw std::runtime_error("Invalid vertice uv index");
-		vec2f	uv1 = fv1.uv_index == -1 ? vec2f(0) : remap_uv(uv_vec[fv1.uv_index], current_uv_off);
-		vec2f	uv2 = fv1.uv_index == -1 ? vec2f(0) : remap_uv(uv_vec[fv2.uv_index], current_uv_off);
-		vec2f	uv3 = fv1.uv_index == -1 ? vec2f(0) : remap_uv(uv_vec[fv3.uv_index], current_uv_off);
+		vec2f	uv1 = fv1.uv_index == -1 ? vec2f(-1) : remap_uv(uv_vec[fv1.uv_index], current_uv_off);
+		vec2f	uv2 = fv1.uv_index == -1 ? vec2f(-1) : remap_uv(uv_vec[fv2.uv_index], current_uv_off);
+		vec2f	uv3 = fv1.uv_index == -1 ? vec2f(-1) : remap_uv(uv_vec[fv3.uv_index], current_uv_off);
+		fix_invalid_uvs(uv1, uv2, uv3, normal1, pos1, pos2, pos3);
 
 		OBJLoader::Vertex	triangle[3] =
 		{
 			{
 				.pos = pos1,
-				.normal = vec3f(0),
+				.normal = normal1,
 				.uv = uv1,
 			},
 			{
 				.pos = pos2,
-				.normal = vec3f(0),
+				.normal = normal2,
 				.uv = uv2,
 			},
 			{
 				.pos = pos3,
-				.normal = vec3f(0),
+				.normal = normal3,
 				.uv = uv3,
 			}
 		};
@@ -190,6 +236,7 @@ void	OBJLoader::load(const std::string& path, Mesh& mesh, TextureAtlas &atlas)
 	mesh.add_vertex_layout(2, 2, GL_FLOAT, offsetof(OBJLoader::Vertex, uv));
 
 	std::vector<vec3f>	pos_vec;
+	std::vector<vec3f>	normal_vec;
 	std::vector<vec2f>	uv_vec;
 
 	std::map<std::string, std::string>	mtl_tex_path;
@@ -212,34 +259,38 @@ void	OBJLoader::load(const std::string& path, Mesh& mesh, TextureAtlas &atlas)
 			{
 				parse_vert(iss, pos_vec);
 			}
-			if (prefix == "vt")
+			else if (prefix == "vt")
 			{
 				parse_uv(iss, uv_vec);
 			}
+			else if (prefix == "vn")
+			{
+				parse_vert(iss, normal_vec);
+			}
 			else if (prefix == "f")
 			{
-				parse_face(mesh, iss, pos_vec, uv_vec, current_uv_off);
+				parse_face(mesh, iss, pos_vec, normal_vec, uv_vec, current_uv_off);
 			}
-			else if (prefix == "mtllib")
-			{
-				loadMTL(path, mtl_tex_path, atlas, iss);
-			}
-			else if (prefix == "usemtl")
-			{
-				std::string	mtllib;
-				if (!(iss >> mtllib))
-					throw std::runtime_error("invalid usemtl");
+			// else if (prefix == "mtllib")
+			// {
+			// 	loadMTL(path, mtl_tex_path, atlas, iss);
+			// }
+			// else if (prefix == "usemtl")
+			// {
+			// 	std::string	mtllib;
+			// 	if (!(iss >> mtllib))
+			// 		throw std::runtime_error("invalid usemtl");
 
-				std::string tex_path = mtl_tex_path[mtllib];
+			// 	std::string tex_path = mtl_tex_path[mtllib];
 
-				if (!atlas.has(tex_path))
-				{
-					std::cout << mtllib << std::endl;
-					continue ;
-				}
+			// 	if (!atlas.has(tex_path))
+			// 	{
+			// 		std::cout << mtllib << std::endl;
+			// 		continue ;
+			// 	}
 
-				current_uv_off = atlas.uv(tex_path);
-			}
+			// 	current_uv_off = atlas.uv(tex_path);
+			// }
 		}
 	}
 	catch (const std::exception &e)
