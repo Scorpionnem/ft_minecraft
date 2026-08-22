@@ -22,6 +22,10 @@ namespace UI
     void    setTargetSize(u32 width, u32 height);
     void    setTargetFontScale(u32 scale);
 
+    u32	getFontSizeY();
+    u32	getFontSizeX(char c);
+    u32	getFontSizeX(const std::string &s);
+
     bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER);
     // takes state of the toggle as input, returns true when toggle is clicked

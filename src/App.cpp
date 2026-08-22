@@ -81,6 +81,8 @@ void    App::loop()
 void	App::update_running(const Input& input)
 {
 	UI::text(std::to_string(static_cast<int>(1.0 / input.delta())) + " fps", vec2i(0), UI::Anchor::TOP_LEFT);
+	UI::text("pos xyz " + std::to_string(cam.pos.x()) + " " + std::to_string(cam.pos.y()) + " " + std::to_string(cam.pos.z()), vec2i(0, UI::getFontSizeY()), UI::Anchor::TOP_LEFT);
+	UI::text("yaw pitch " + std::to_string(cam.yaw) + " " + std::to_string(cam.pitch), vec2i(0, 2 * UI::getFontSizeY()), UI::Anchor::TOP_LEFT);
 
     cam.aspect = input.aspect();
 	updateCamera(input);

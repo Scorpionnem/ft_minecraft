@@ -105,6 +105,22 @@ void    UI::beginFrame(const Input& input)
     UI::offset_y = (UI::input_ptr->height() - UI::target_height * UI::scale) * 0.5f;
 }
 
+u32	UI::getFontSizeY()
+{
+	return (UI::font.get_char_size() * UI::target_font_scale);
+}
+
+u32	UI::getFontSizeX(char c)
+{
+	return (UI::font.get_width(c) * UI::target_font_scale);
+}
+
+u32	UI::getFontSizeX(const std::string &s)
+{
+	return (UI::font.get_width(s) * UI::target_font_scale);
+}
+
+
 void    UI::render()
 {
     for (UI::DrawInfo &d : UI::draws)
