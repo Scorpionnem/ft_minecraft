@@ -6,7 +6,12 @@ in vec2 vUv;
 
 out vec4    fragColor;
 
+uniform sampler2D uTex;
+
 void main()
 {
-	fragColor = vec4(mod(vFragPos, 1.0), 1);
+	vec4	color = texture(uTex, vUv);
+	if (color.a <= 0)
+		discard ;
+	fragColor = color;
 }

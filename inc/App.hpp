@@ -59,5 +59,5 @@ class   App
         Shader  mesh_shader;
 
         Mesh    screen_mesh;
-		Mesh	teapot_mesh;
+		Mesh	test_mesh;
 };

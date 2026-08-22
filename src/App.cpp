@@ -3,6 +3,7 @@
 #include "loader/texture/STBLoader.hpp"
 #include "mat.hpp"
 #include "ui/UI.hpp"
+#include <GL/gl.h>
 #include <string>
 
 void    App::init()
@@ -40,8 +41,9 @@ void    App::init()
 	screen_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
 	screen_mesh.upload();
 
-	OBJLoader::load("assets/models/teapot.obj", teapot_mesh);
-	teapot_mesh.upload();
+	// OBJLoader::load("assets/models/camel/camel.obj", test_mesh, test_texture);
+	OBJLoader::load("assets/models/star_destroyer/Destructor_imperial_ISD_1.obj", test_mesh, test_texture);
+	test_mesh.upload();
 
 	cam.fov = 70;
 	cam.far = 1000;
@@ -87,31 +89,19 @@ void	App::update_running(const Input& input)
 
 void	App::render_running()
 {
-	frame_buffer.bind();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
 	skybox_shader.bind();
 	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
 	skybox_shader.setMat4("uView", cam.getViewMatrix());
 	screen_mesh.draw();
 
+	test_texture.bind(0);
+
 	mesh_shader.bind();
 	mesh_shader.setMat4("uModel", mat4f::identity());
 	mesh_shader.setMat4("uView", cam.getViewMatrix());
 	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
-	teapot_mesh.draw();
-
-	frame_buffer.unbind();
-	glViewport(0, 0, win.width(), win.height());
-
-	screen_shader.bind();
-	frame_buffer.bindColor(0);
-	frame_buffer.bindDepth(1);
-	screen_shader.setInt("uColorFrameBuffer", 0);
-	screen_shader.setInt("uDepthFrameBuffer", 1);
-	screen_shader.setInt("uScreenWidth", win.width());
-	screen_shader.setInt("uScreenHeight", win.height());
-	screen_mesh.draw();
+	mesh_shader.setInt("uTex", 0);
+	test_mesh.draw();
 }
 
 void    App::update_loading(const Input& input)

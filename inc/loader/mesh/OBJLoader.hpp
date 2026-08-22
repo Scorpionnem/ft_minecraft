@@ -1,6 +1,7 @@
 #pragma once
 
 #include "render/Mesh.hpp"
+#include "render/TextureAtlas.hpp"
 #include <string>
 
 namespace	OBJLoader
@@ -12,5 +13,5 @@ namespace	OBJLoader
 		vec2f	uv;
 	};
 
-	void	load(const std::string& path, Mesh& mesh);
+	void	load(const std::string& path, Mesh& mesh, TextureAtlas &atlas);
 };
