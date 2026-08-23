@@ -26,9 +26,10 @@ namespace UI
     u32	getFontSizeX(char c);
     u32	getFontSizeX(const std::string &s);
 
-    bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER);
-    // takes state of the toggle as input, returns true when toggle is clicked
+    // takes advance [0, 1]
+    void	progress_bar(float advance, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
+    bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     bool	toggle(const std::string& label, bool& state, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     bool    input(const std::string& label, std::string& input, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
     bool	slider(const std::string& label, int& input, int min, int max, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
