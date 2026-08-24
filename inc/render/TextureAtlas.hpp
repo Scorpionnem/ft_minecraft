@@ -51,7 +51,6 @@ class   TextureAtlas
 	            {
 	                _insertTexture(rgba, width, height, pos);
 	                _uvs[path] = aabb2i{.min = pos, .max = pos + size - vec2i(1)};
-	                _dirty = true;
 	                return ;
 	            }
 	            _sizeUp();
@@ -61,14 +60,10 @@ class   TextureAtlas
 
         void        upload()
         {
-            if (!_dirty)
-                return ;
-
             _texture.clear_pixel_data();
             _texture.set_format(_size, _size, GL_RGBA8, GL_RGBA, GL_UNSIGNED_BYTE);
             _texture.add_pixel_data(_pixels.data(), _pixels.size());
             _texture.upload();
-            _dirty = false;
         }
 
         void        bind(u32 unit) const {_texture.bind(unit);}
@@ -164,7 +159,6 @@ class   TextureAtlas
         }
 
         Texture     _texture;
-        bool        _dirty = false;
 
         std::vector<u8> _pixels;
         u32             _n = 1; // power of 2 size of the atlas

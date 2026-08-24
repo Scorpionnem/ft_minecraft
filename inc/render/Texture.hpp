@@ -37,6 +37,9 @@ class	Texture
 
 		void	upload()
 		{
+		    if (_pixels.empty())
+				_generateUnknownTexture();
+
 			if (_id != 0)
 				glDeleteTextures(1, &_id);
 
@@ -75,6 +78,13 @@ class	Texture
 		u32		width() const {return (_width);}
 		u32		height() const {return (_height);}
 	private:
+	    void    _generateUnknownTexture()
+		{
+    		_pixels = {255, 0, 255, 255, 0, 0, 0, 255, 0, 0, 0, 255, 255, 0, 255, 255};
+    		_width = 2;
+    		_height = 2;
+    		_format = GL_RGBA;
+		}
 		u32				_id = 0;
 
 		std::vector<u8>	_pixels;

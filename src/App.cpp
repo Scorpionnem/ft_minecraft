@@ -42,7 +42,7 @@ void    App::init()
 	screen_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
 	screen_mesh.upload();
 
-	OBJLoader::load("assets/models/camel/camel.obj", test_mesh, test_texture);
+	OBJLoader::load("assets/models/teapot.obj", test_mesh, test_texture);
 	test_mesh.upload();
 
 	cam.fov = 70;
