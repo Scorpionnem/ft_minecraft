@@ -39,6 +39,8 @@ class   App
         void    render_running();
 
         void    updateCamera(const Input& input);
+
+        void	genScreenMesh();
     private:
    		ThreadPool	threads;
 
@@ -55,9 +57,10 @@ class   App
         TextureAtlas test_texture;
 
         Shader  skybox_shader;
-        Shader  screen_shader;
         Shader  mesh_shader;
+        Shader  post_process_shader;
+        Shader  clouds_shader;
 
         Mesh    screen_mesh;
-		Mesh	test_mesh;
+		Mesh	teapot_mesh;
 };

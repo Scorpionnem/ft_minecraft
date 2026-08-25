@@ -12,7 +12,7 @@ uniform float   uTime;
 void    getRay(out vec3 rayOrig, out vec3 rayDir, vec2 uv, mat4 proj, mat4 view)
 {
     vec2 clipSpace = vUV * 2.0 - 1.0;
-   
+
     mat4    invViewProj = inverse(proj * view);
     vec4 nearPointWorld = invViewProj * vec4(clipSpace, -1.0, 1.0);
     vec4 farPointWorld  = invViewProj * vec4(clipSpace,  1.0, 1.0);
