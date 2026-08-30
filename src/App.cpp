@@ -9,6 +9,8 @@
 #include <GL/gl.h>
 #include <string>
 
+#include "vox/Positions.hpp"
+
 void    App::init()
 {
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
@@ -40,7 +42,7 @@ void    App::init()
 
 	cam.fov = 70;
 	cam.near = 0.01;
-	cam.far = 100;
+	cam.far = 1000;
 	cam.pos = vec3f(0, 0, 0);
 }
 
@@ -77,35 +79,23 @@ void    App::loop()
 
 void	App::render_running()
 {
-	frame_buffer.bind();
+	drawn_vertices = 0;
 
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+	frame_buffer.bind();
+	FrameBuffer::clear();
 
 	skybox_shader.bind();
 	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
 	skybox_shader.setMat4("uView", cam.getViewMatrix());
-	screen_mesh.draw();
+	drawn_vertices += screen_mesh.draw();
 
-	// mesh_shader.bind();
-	// mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
-	// mesh_shader.setMat4("uView", cam.getViewMatrix());
-	// mesh_shader.setMat4("uModel", mat4f::identity());
-	// test_texture.bind(0);
-	// mesh_shader.setInt("uTex", 0);
-	// teapot_mesh.draw();
-
-	glDepthMask(GL_FALSE);
-	glEnable(GL_BLEND);
-	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-	clouds_shader.bind();
-	clouds_shader.setMat4("uProj", cam.getProjectionMatrix());
-	clouds_shader.setMat4("uView", cam.getViewMatrix());
-	clouds_shader.setVec3("uBoundsMin", vec3f(-2000, -10, -2000));
-	clouds_shader.setVec3("uBoundsMax", vec3f(2000, 60, 2000));
-	clouds_shader.setFloat("uNear", cam.near);
-	clouds_shader.setFloat("uFar", cam.far);
-	screen_mesh.draw();
-	glDepthMask(GL_TRUE);
+	mesh_shader.bind();
+	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
+	mesh_shader.setMat4("uView", cam.getViewMatrix());
+	mesh_shader.setMat4("uModel", mat4f::identity());
+	test_texture.bind(0);
+	mesh_shader.setInt("uTex", 0);
+	drawn_vertices += teapot_mesh.draw();
 
 	frame_buffer.unbind();
 	frame_buffer.bindColor(0);
@@ -115,7 +105,7 @@ void	App::render_running()
 	post_process_shader.setInt("uDepthFrameBuffer", 1);
 	post_process_shader.setFloat("uNear", cam.near);
 	post_process_shader.setFloat("uFar", cam.far);
-	screen_mesh.draw();
+	drawn_vertices += screen_mesh.draw();
 }
 
 void	App::update_running(const Input& input)
@@ -135,7 +125,13 @@ void	App::update_running(const Input& input)
 	}
 
 	std::string	fps_str = std::to_string(static_cast<int>(1.0 / input.delta())) + " fps";
-	UI::text(fps_str, vec2i(TARGET_WINDOW_WIDTH / 2 - UI::getFontSizeX(fps_str) / 2, 0), UI::Anchor::CENTER);
+	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
+	std::string	dir_str = "Facing: " + std::to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + std::to_string(facing(cam.front())) + ")";
+	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
+	UI::text(fps_str, vec2i(0, UI::getFontSizeY() * 0), UI::Anchor::TOP_LEFT);
+	UI::text(pos_str, vec2i(0, UI::getFontSizeY() * 1), UI::Anchor::TOP_LEFT);
+	UI::text(dir_str, vec2i(0, UI::getFontSizeY() * 2), UI::Anchor::TOP_LEFT);
+	UI::text(triangles_str, vec2i(0, UI::getFontSizeY() * 3), UI::Anchor::TOP_LEFT);
 }
 
 void    App::update_loading(const Input& input)

@@ -63,4 +63,6 @@ class   App
 
         Mesh    screen_mesh;
 		Mesh	teapot_mesh;
+
+		u64	drawn_vertices = 0;
 };

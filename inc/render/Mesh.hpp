@@ -71,11 +71,12 @@ class   Mesh
 
 			glBindVertexArray(0);
 		}
-		void	draw()
+		u64	draw()
 		{
 			glBindVertexArray(_VAO);
 			glDrawArrays(GL_TRIANGLES, 0, _vertices);
 			glBindVertexArray(0);
+			return (_vertices);
 		}
     private:
     	u32				_VAO = 0;

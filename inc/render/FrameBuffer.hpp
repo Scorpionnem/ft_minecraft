@@ -33,6 +33,10 @@ class   FrameBuffer
         {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
         }
+        static void	clear()
+        {
+        	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        }
 
         u32     id() const {return (_FBO);}
         void	bindColor(u32 unit) {Texture::bind(_colorTex, unit);}
