@@ -94,13 +94,19 @@ static vec2i	anchorOrigin(vec2i ssize, UI::Anchor anchor)
     }
 }
 
+float	UI::getScale()
+{
+	float scaleX = static_cast<float>(UI::input_ptr->width()) / UI::target_width;
+	float scaleY = static_cast<float>(UI::input_ptr->height()) / UI::target_height;
+
+	return (std::min(scaleX, scaleY));
+}
+
 void    UI::beginFrame(const Input& input)
 {
     UI::input_ptr = &input;
 
-    float scaleX = static_cast<float>(UI::input_ptr->width()) / UI::target_width;
-    float scaleY = static_cast<float>(UI::input_ptr->height()) / UI::target_height;
-    UI::scale = std::min(scaleX, scaleY);
+    UI::scale = getScale();
     UI::offset_x = (UI::input_ptr->width()  - UI::target_width  * UI::scale) * 0.5f;
     UI::offset_y = (UI::input_ptr->height() - UI::target_height * UI::scale) * 0.5f;
 }
@@ -150,7 +156,7 @@ void    UI::render()
             UI::rect_shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
         }
 
-        UI::rect_mesh.draw();
+        UI::rect_mesh.draw(GL_TRIANGLES);
         glDisable(GL_BLEND);
         glEnable(GL_CULL_FACE);
     }

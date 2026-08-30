@@ -22,6 +22,7 @@ namespace UI
     void    setTargetSize(u32 width, u32 height);
     void    setTargetFontScale(u32 scale);
 
+    float	getScale();
     u32	getFontSizeY();
     u32	getFontSizeX(char c);
     u32	getFontSizeX(const std::string &s);

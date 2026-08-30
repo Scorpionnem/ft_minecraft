@@ -3,6 +3,7 @@
 #include "math.hpp"
 #include "render/Shader.hpp"
 
+#include <GL/gl.h>
 #include <vector>
 
 class   Mesh
@@ -71,10 +72,10 @@ class   Mesh
 
 			glBindVertexArray(0);
 		}
-		u64	draw()
+		u64	draw(GLenum mode)
 		{
 			glBindVertexArray(_VAO);
-			glDrawArrays(GL_TRIANGLES, 0, _vertices);
+			glDrawArrays(mode, 0, _vertices);
 			glBindVertexArray(0);
 			return (_vertices);
 		}

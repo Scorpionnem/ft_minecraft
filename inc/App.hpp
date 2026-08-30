@@ -41,6 +41,7 @@ class   App
         void    updateCamera(const Input& input);
 
         void	genScreenMesh();
+        void	genDebugCrosshair();
     private:
    		ThreadPool	threads;
 
@@ -60,8 +61,10 @@ class   App
         Shader  mesh_shader;
         Shader  post_process_shader;
         Shader  clouds_shader;
+        Shader	debug_crosshair_shader;
 
         Mesh    screen_mesh;
+        Mesh    debug_crosshair_mesh;
 		Mesh	teapot_mesh;
 
 		u64	drawn_vertices = 0;

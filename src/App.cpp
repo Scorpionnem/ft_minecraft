@@ -33,8 +33,10 @@ void    App::init()
 	mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
 	post_process_shader.load("assets/shaders/post/screen.vert", "assets/shaders/post/screen.frag");
 	clouds_shader.load("assets/shaders/post/clouds.vert", "assets/shaders/post/clouds.frag");
+	debug_crosshair_shader.load("assets/shaders/debug_crosshair.vert", "assets/shaders/debug_crosshair.frag");
 
 	genScreenMesh();
+	genDebugCrosshair();
 
 	OBJLoader::load("assets/models/teapot.obj", teapot_mesh, test_texture);
 	teapot_mesh.upload();
@@ -87,7 +89,7 @@ void	App::render_running()
 	skybox_shader.bind();
 	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
 	skybox_shader.setMat4("uView", cam.getViewMatrix());
-	drawn_vertices += screen_mesh.draw();
+	drawn_vertices += screen_mesh.draw(GL_TRIANGLES);
 
 	mesh_shader.bind();
 	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
@@ -95,7 +97,7 @@ void	App::render_running()
 	mesh_shader.setMat4("uModel", mat4f::identity());
 	test_texture.bind(0);
 	mesh_shader.setInt("uTex", 0);
-	drawn_vertices += teapot_mesh.draw();
+	drawn_vertices += teapot_mesh.draw(GL_TRIANGLES);
 
 	frame_buffer.unbind();
 	frame_buffer.bindColor(0);
@@ -105,7 +107,21 @@ void	App::render_running()
 	post_process_shader.setInt("uDepthFrameBuffer", 1);
 	post_process_shader.setFloat("uNear", cam.near);
 	post_process_shader.setFloat("uFar", cam.far);
-	drawn_vertices += screen_mesh.draw();
+	drawn_vertices += screen_mesh.draw(GL_TRIANGLES);
+
+	mat4f rotView = cam.getViewMatrix();
+	rotView(3, 0) = 0;
+	rotView(3, 1) = 0;
+	rotView(3, 2) = 0;
+	mat4f gizmoView = mat4f::translate(vec3f(0,0,-3)) * rotView;
+
+	glDisable(GL_DEPTH_TEST);
+	debug_crosshair_shader.bind();
+	debug_crosshair_shader.setMat4("uProj", cam.getProjectionMatrix());
+	debug_crosshair_shader.setMat4("uView", gizmoView);
+	debug_crosshair_shader.setMat4("uModel", mat4f::scale(vec3f(0.2)));
+	debug_crosshair_mesh.draw(GL_LINES);
+	glEnable(GL_DEPTH_TEST);
 }
 
 void	App::update_running(const Input& input)
@@ -196,4 +212,19 @@ void	App::genScreenMesh()
 	screen_mesh.add_vertex_layout(0, 2, GL_FLOAT, 0);
 	screen_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
 	screen_mesh.upload();
+}
+
+void	App::genDebugCrosshair()
+{
+	vec3f verts[] = {
+		{0,0,0}, {1,0,0}, {1,0,0}, {1,0,0},
+		{0,0,0}, {0,1,0}, {0,1,0}, {0,1,0},
+		{0,0,0}, {0,0,1}, {0,0,1}, {0,0,1},
+	};
+
+	debug_crosshair_mesh.set_sizeof_layout(2 * sizeof(vec3f));
+	debug_crosshair_mesh.add_vertex_layout(0, 3, GL_FLOAT, 0);
+	debug_crosshair_mesh.add_vertex_layout(1, 3, GL_FLOAT, sizeof(vec3f));
+	debug_crosshair_mesh.add_vertex_data(reinterpret_cast<u8*>(verts), sizeof(verts));
+	debug_crosshair_mesh.upload();
 }
