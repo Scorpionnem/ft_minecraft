@@ -25,6 +25,12 @@ SRCS :=	src/main.cpp						\
 		src/loader/mesh/OBJLoader.cpp		\
 		src/loader/texture/STBLoader.cpp	\
 		src/ui/UI.cpp	\
+		src/ui/elements/button.cpp			\
+		src/ui/elements/toggle.cpp			\
+		src/ui/elements/input.cpp			\
+		src/ui/elements/text.cpp			\
+		src/ui/elements/slider.cpp			\
+		src/ui/elements/progress_bar.cpp			\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

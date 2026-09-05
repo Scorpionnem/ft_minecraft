@@ -17,7 +17,6 @@ class   App
     private:
         enum class State
         {
-            LOADING,
             RUNNING,
         };
     public:
@@ -32,9 +31,6 @@ class   App
         void    init();
         void    loop();
 
-        void    update_loading(const Input& input);
-        void    render_loading();
-
         void    update_running(const Input& input);
         void    render_running();
 
@@ -45,7 +41,7 @@ class   App
     private:
    		ThreadPool	threads;
 
-        State   state = State::LOADING;
+        State   state = State::RUNNING;
 
         Window  win;
         Camera  cam;

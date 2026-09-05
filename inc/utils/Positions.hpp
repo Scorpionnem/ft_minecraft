@@ -2,13 +2,6 @@
 
 #include "math.hpp"
 
-// position inside of a chunk
-using localVec3i = vec3i;
-// position in the world
-using worldVec3i = vec3i;
-// chunk position in the world
-using chunkVec3i = vec3i;
-
 enum class Facing
 {
 	POS_X,
@@ -64,7 +57,7 @@ namespace std
 				return ("south");
 			case FacingCardinal::NORTH:
 				return ("north");
-			case FacingCardinal::INVALID:
+			default:
 				return ("invalid");
 		}
 	}
@@ -84,7 +77,7 @@ namespace std
 				return ("+Z");
 			case Facing::NEG_Z:
 				return ("-Z");
-			case Facing::INVALID:
+			default:
 				return ("invalid");
 		}
 	}

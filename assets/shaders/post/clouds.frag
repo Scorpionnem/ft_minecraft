@@ -79,7 +79,7 @@ float	cloudDensity(vec3 pos)
 	float	e = 0.3;
 
 	if (n < e)
-		return (0);
+		return (0.0);
 	return (n * 0.05);
 }
 

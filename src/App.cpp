@@ -9,7 +9,7 @@
 #include <GL/gl.h>
 #include <string>
 
-#include "vox/Positions.hpp"
+#include "utils/Positions.hpp"
 
 void    App::init()
 {
@@ -67,8 +67,6 @@ void    App::loop()
 
         switch (state)
         {
-            case State::LOADING:
-                update_loading(input); render_loading(); break ;
             case State::RUNNING:
             	update_running(input); render_running(); break ;
         }
@@ -133,7 +131,7 @@ void	App::update_running(const Input& input)
 	if (input.wasPressed(SDLK_r))
 	{
 		try {
-		clouds_shader.reload();
+			clouds_shader.reload();
 		} catch (...)
 		{
 
@@ -148,18 +146,6 @@ void	App::update_running(const Input& input)
 	UI::text(pos_str, vec2i(0, UI::getFontSizeY() * 1), UI::Anchor::TOP_LEFT);
 	UI::text(dir_str, vec2i(0, UI::getFontSizeY() * 2), UI::Anchor::TOP_LEFT);
 	UI::text(triangles_str, vec2i(0, UI::getFontSizeY() * 3), UI::Anchor::TOP_LEFT);
-}
-
-void    App::update_loading(const Input& input)
-{
-	if (UI::button("START", vec2i(TARGET_WINDOW_WIDTH / 2 - 64, TARGET_WINDOW_HEIGHT / 2 - 32), vec2i(128, 64), UI::Anchor::CENTER))
-	{
-		state = State::RUNNING;
-	}
-}
-
-void    App::render_loading()
-{
 }
 
 void    App::updateCamera(const Input& input)
