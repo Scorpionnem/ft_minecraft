@@ -53,7 +53,9 @@ class	Font
 
 				widths[(u8)c] = width;
 
-				if (left >= char_size)
+				if (c == ' ')
+					left = 0;
+				else if (left >= char_size)
 					continue ;
 
 				std::vector<u8> char_data = _cropTexture(cell, font_channels, left, width);

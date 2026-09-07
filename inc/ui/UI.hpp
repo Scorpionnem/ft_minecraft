@@ -37,7 +37,7 @@ class UI
         static u32	getFontSizeX(char c);
         static u32	getFontSizeX(const std::string &s);
 
-        static void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER);
+        static void	text(const std::string& label, vec2i pos, Anchor anchor = Anchor::CENTER, vec3f color = vec3f(1), bool background = false, vec3f background_color = vec3f(1));
         // takes advance [0, 1]
         static void	progress_bar(float advance, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
         static bool    button(const std::string& label, vec2i pos, vec2i size, Anchor anchor = Anchor::CENTER);
@@ -58,6 +58,10 @@ class UI
             bool	hovered;
             bool	textured = false;
             vec4f	uv = vec4f(0, 0, 1, 1);
+            bool	text = false;
+            bool	text_background = false;
+            vec3f	text_color = vec3f(1);
+            vec3f	text_background_color = vec3f(1);
         };
     private:
         static const Input* input_ptr;
@@ -72,6 +76,7 @@ class UI
 
         static Mesh    rect_mesh;
         static Shader  rect_shader;
+        static Shader	text_shader;
 
         static Font	font;
 

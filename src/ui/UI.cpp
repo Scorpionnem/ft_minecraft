@@ -12,6 +12,7 @@ float    UI::offset_y;
 
 Mesh    UI::rect_mesh;
 Shader  UI::rect_shader;
+Shader  UI::text_shader;
 Font	UI::font;
 
 std::vector<UI::DrawInfo>  UI::draws;
@@ -54,6 +55,7 @@ void    UI::init(const std::string& font_path)
 	UI::rect_mesh.add_vertex_data(reinterpret_cast<u8*>(rect_verts), sizeof(rect_verts));
 	UI::rect_mesh.upload();
 	UI::rect_shader.load("assets/shaders/ui/rect.vert", "assets/shaders/ui/rect.frag");
+	UI::text_shader.load("assets/shaders/ui/text.vert", "assets/shaders/ui/text.frag");
 }
 
 vec2i	UI::anchorOrigin(vec2i ssize, UI::Anchor anchor)
@@ -78,7 +80,7 @@ float	UI::getScale()
 	float scaleX = static_cast<float>(UI::input_ptr->width()) / UI::target_width;
 	float scaleY = static_cast<float>(UI::input_ptr->height()) / UI::target_height;
 
-	return (std::min(scaleX, scaleY));
+	return (std::max(1.0f, std::round(std::min(scaleX, scaleY))));
 }
 
 void    UI::beginFrame(const Input& input)
@@ -97,26 +99,30 @@ void    UI::render()
         const vec2i &pos = d.pos;
         const vec2i &size = d.size;
 
+        Shader	&shader = d.text ? UI::text_shader : UI::rect_shader;
+
         glDisable(GL_CULL_FACE);
         glEnable(GL_BLEND);
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-        UI::rect_shader.bind();
+        shader.bind();
         mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
-        UI::rect_shader.setMat4("uModel", model);
-        UI::rect_shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
-        UI::rect_shader.setInt("uTex", 0);
-        UI::rect_shader.setInt("uUseTex", d.textured ? 1 : 0);
+        shader.setMat4("uModel", model);
+        shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
+        shader.setInt("uTex", 0);
+        shader.setInt("uUseTex", d.textured ? 1 : 0);
+        shader.setVec3("uColor", d.text_color);
+        shader.setInt("uBackground", d.text_background);
+        shader.setVec3("uBackgroundColor", d.text_background_color);
 
         if (d.textured)
         {
             UI::font.get_atlas().bind(0);
-            UI::rect_shader.setVec4("uUV", d.uv);
-            UI::rect_shader.setVec3("uColor", vec3f(1, 1, 1));
+            shader.setVec4("uUV", d.uv);
         }
         else
         {
-            UI::rect_shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
+            shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
         }
 
         UI::rect_mesh.draw(GL_TRIANGLES);

@@ -1,6 +1,6 @@
 #include "ui/UI.hpp"
 
-void	UI::text(const std::string& label, vec2i pos, Anchor anchor)
+void	UI::text(const std::string& label, vec2i pos, Anchor anchor, vec3f color, bool background, vec3f background_color)
 {
 	int	char_size = UI::font.get_char_size();
 	float	char_scale = target_font_scale * UI::scale;
@@ -22,7 +22,7 @@ void	UI::text(const std::string& label, vec2i pos, Anchor anchor)
 			vec2i spos = vec2i(cursor_x, base_y);
 			vec2i ssize = vec2i(width * char_scale, char_size * char_scale);
 
-			UI::draws.push_back({.pos = spos, .size = ssize, .hovered = false, .textured = true, .uv = UI::font.get_atlas().uv(key)});
+			UI::draws.push_back({.pos = spos, .size = ssize, .hovered = false, .textured = true, .uv = UI::font.get_atlas().uv(key), .text = true, .text_background = background, .text_color = color, .text_background_color = background_color});
 		}
 
 		cursor_x += width * char_scale;
