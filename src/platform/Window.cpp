@@ -50,7 +50,7 @@ void    Window::close()
 		_window = nullptr;
 	}
 	if (SDL_WasInit(SDL_INIT_VIDEO))
-		SDL_Quit();
+		SDL_QuitSubSystem(SDL_INIT_VIDEO);
 }
 
 const Input&    Window::pollEvents()
@@ -125,7 +125,7 @@ void    Window::_initSDL()
 {
 	if (SDL_WasInit(SDL_INIT_VIDEO))
 		return ;
-	if (SDL_Init(SDL_INIT_VIDEO) != 0)
+	if (SDL_InitSubSystem(SDL_INIT_VIDEO) != 0)
 		throw std::runtime_error(std::string("SDL_Init: ") + SDL_GetError());
 }
 
