@@ -23,7 +23,6 @@ class   Shader
         }
         void    reload()
         {
-            unload();
             load(_vert_path.c_str(), _frag_path.c_str());
         }
         void    bind() const

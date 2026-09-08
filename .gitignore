@@ -1,6 +1,6 @@
 lib/math
 lib/stb_image
 .obj/
-shaderpixel
+ft_minecraft
 compile_commands.json
 assets/textures/test

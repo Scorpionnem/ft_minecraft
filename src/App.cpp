@@ -15,7 +15,7 @@ void    App::init()
 {
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
 
-	win.open("shaderpixel", TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
+	win.open("ft_minecraft", TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
 
 	glEnable(GL_CULL_FACE);
 	glEnable(GL_DEPTH_TEST);
@@ -131,10 +131,10 @@ void	App::update_running(const Input& input)
 	if (input.wasPressed(SDLK_r))
 	{
 		try {
-			clouds_shader.reload();
+			post_process_shader.reload();
 		} catch (...)
 		{
-
+			std::cerr << "Failed to reload shaders" << std::endl;
 		}
 	}
 

@@ -63,6 +63,16 @@ class UI
             vec3f	text_color = vec3f(1);
             vec3f	text_background_color = vec3f(1);
         };
+        struct	TextDrawInfo
+        {
+	        vec2i   pos;
+			vec2i   size;
+			vec4f	uv = vec4f(0, 0, 1, 1);
+
+			bool	background = false;
+            vec3f	color = vec3f(1);
+            vec3f	background_color = vec3f(1);
+        };
     private:
         static const Input* input_ptr;
 
@@ -81,6 +91,7 @@ class UI
         static Font	font;
 
         static std::vector<DrawInfo>  draws;
+        static std::vector<TextDrawInfo>  text_draws;
         static std::string	focused_text_input;
         static std::string	dragging_slider;
 };

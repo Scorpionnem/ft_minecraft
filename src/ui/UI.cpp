@@ -15,7 +15,8 @@ Shader  UI::rect_shader;
 Shader  UI::text_shader;
 Font	UI::font;
 
-std::vector<UI::DrawInfo>  UI::draws;
+std::vector<UI::DrawInfo>		UI::draws;
+std::vector<UI::TextDrawInfo>	UI::text_draws;
 
 std::string	UI::focused_text_input;
 std::string	UI::dragging_slider;
@@ -94,42 +95,60 @@ void    UI::beginFrame(const Input& input)
 
 void    UI::render()
 {
+    glDisable(GL_CULL_FACE);
+    glEnable(GL_BLEND);
+    glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     for (UI::DrawInfo &d : UI::draws)
     {
         const vec2i &pos = d.pos;
         const vec2i &size = d.size;
 
-        Shader	&shader = d.text ? UI::text_shader : UI::rect_shader;
-
-        glDisable(GL_CULL_FACE);
-        glEnable(GL_BLEND);
-        glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
-
-        shader.bind();
+        rect_shader.bind();
         mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
-        shader.setMat4("uModel", model);
-        shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
-        shader.setInt("uTex", 0);
-        shader.setInt("uUseTex", d.textured ? 1 : 0);
-        shader.setVec3("uColor", d.text_color);
-        shader.setInt("uBackground", d.text_background);
-        shader.setVec3("uBackgroundColor", d.text_background_color);
+        rect_shader.setMat4("uModel", model);
+        rect_shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
+        rect_shader.setInt("uTex", 0);
+        rect_shader.setInt("uUseTex", d.textured ? 1 : 0);
+        rect_shader.setVec3("uColor", d.text_color);
+        rect_shader.setInt("uBackground", d.text_background);
+        rect_shader.setVec3("uBackgroundColor", d.text_background_color);
 
         if (d.textured)
         {
             UI::font.get_atlas().bind(0);
-            shader.setVec4("uUV", d.uv);
+            rect_shader.setVec4("uUV", d.uv);
         }
         else
         {
-            shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
+            rect_shader.setVec3("uColor", d.hovered ? vec3f(0, 1, 0) : vec3f(1, 0, 0));
         }
 
         UI::rect_mesh.draw(GL_TRIANGLES);
-        glDisable(GL_BLEND);
-        glEnable(GL_CULL_FACE);
     }
+    for (UI::TextDrawInfo& d : UI::text_draws)
+    {
+	    const vec2i &pos = d.pos;
+	    const vec2i &size = d.size;
+
+	    text_shader.bind();
+	    mat4f model = mat4f::translate(vec3f(pos.x(), pos.y(), 0.0f)) * mat4f::scale(vec3f(size.x(), size.y(), 1.0f));
+	    text_shader.setMat4("uModel", model);
+	    text_shader.setMat4("uProj", mat4f::ortho(0.0f, UI::input_ptr->width(), UI::input_ptr->height(), 0.0f, -1.0f, 1.0f));
+	    text_shader.setInt("uTex", 0);
+	    text_shader.setVec3("uColor", d.color);
+	    text_shader.setInt("uBackground", d.background);
+	    text_shader.setVec3("uBackgroundColor", d.background_color);
+        UI::font.get_atlas().bind(0);
+        text_shader.setVec4("uUV", d.uv);
+
+	    UI::rect_mesh.draw(GL_TRIANGLES);
+    }
+
+    glDisable(GL_BLEND);
+    glEnable(GL_CULL_FACE);
+
     draws.clear();
+    text_draws.clear();
 }
 
 u32	UI::getFontSizeY()

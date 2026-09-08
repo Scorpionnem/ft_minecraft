@@ -22,7 +22,7 @@ void	UI::text(const std::string& label, vec2i pos, Anchor anchor, vec3f color, b
 			vec2i spos = vec2i(cursor_x, base_y);
 			vec2i ssize = vec2i(width * char_scale, char_size * char_scale);
 
-			UI::draws.push_back({.pos = spos, .size = ssize, .hovered = false, .textured = true, .uv = UI::font.get_atlas().uv(key), .text = true, .text_background = background, .text_color = color, .text_background_color = background_color});
+			UI::text_draws.push_back({.pos = spos, .size = ssize, .uv = UI::font.get_atlas().uv(key), .background = background, .color = color, .background_color = background_color});
 		}
 
 		cursor_x += width * char_scale;

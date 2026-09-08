@@ -1,4 +1,4 @@
-NAME :=	shaderpixel
+NAME :=	ft_minecraft
 
 CXX := c++
 CXXFLAGS :=	-g -MP -MMD -std=c++20# -Wall -Wextra -Werror
