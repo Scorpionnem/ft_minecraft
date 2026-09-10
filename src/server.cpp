@@ -46,9 +46,7 @@ int	main(void)
 					case 2:
 					{
 						Packet::RTTReply	repl;
-						repl.time = Packet::getmsts();
 						server.send(fd, &repl, sizeof(repl));
-						std::cout << "Rtt" << std::endl;
 						break ;
 					}
 					default:

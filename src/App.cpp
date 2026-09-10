@@ -158,9 +158,7 @@ void	App::update_running(const Input& input)
 				}
 				case 3:
 				{
-					Packet::RTTReply *rtt_packet = reinterpret_cast<Packet::RTTReply*>(buf);
-					rtt = rtt_packet->time - rtt_send;
-					std::cout << "Rtt" << std::endl;
+					rtt = Packet::getmsts() - rtt_send;
 					break ;
 				}
 				default:
@@ -175,7 +173,6 @@ void	App::update_running(const Input& input)
 		rtt_send = Packet::getmsts();
 		Packet::RTTRequest	req;
 		client.send(&req, sizeof(req));
-		std::cout << "rtt req " << req.hdr.type << std::endl;
 	}
 
 	float	lerp_speed = 16 * input.delta();

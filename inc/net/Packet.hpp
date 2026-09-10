@@ -35,6 +35,5 @@ namespace	Packet
 	struct	RTTReply
 	{
 		Packet::Header	hdr = {.type = 3};
-		u64	time;
 	} __attribute__((packed));
 };
