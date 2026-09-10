@@ -63,7 +63,8 @@ class   App
         Mesh    screen_mesh;
         Mesh    debug_crosshair_mesh;
 		Mesh	teapot_mesh;
-		vec3f	teapot_pos;
+		vec3f	target_teapot_pos;
+		vec3f	cur_teapot_pos;
 
 		net::Client	client;
 

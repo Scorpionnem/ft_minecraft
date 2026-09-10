@@ -39,13 +39,13 @@ int	main(void)
 			else if (event == net::Server::Event::DISCONNECT)
 				std::cout << "client " << fd << " disconnected" << std::endl;
 
-			if (c.get() > 0.0)
+			if (c.get() > 0.3)
 			{
 				c.start();
 				Packet::Position	pos;
-				pos.x = rand() % 10;
-				pos.y = rand() % 10;
-				pos.z = rand() % 10;
+				pos.x = rand() % 32;
+				pos.y = rand() % 32;
+				pos.z = rand() % 32;
 				server.send_all(&pos, sizeof(pos));
 			}
 		} while (event != net::Server::Event::NONE);

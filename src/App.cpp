@@ -99,7 +99,7 @@ void	App::render_running()
 	mesh_shader.bind();
 	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
 	mesh_shader.setMat4("uView", cam.getViewMatrix());
-	mesh_shader.setMat4("uModel", mat4f::translate(teapot_pos));
+	mesh_shader.setMat4("uModel", mat4f::translate(cur_teapot_pos));
 	test_texture.bind(0);
 	mesh_shader.setInt("uTex", 0);
 	drawn_vertices += teapot_mesh.draw(GL_TRIANGLES);
@@ -148,9 +148,12 @@ void	App::update_running(const Input& input)
 		if (event == net::Client::Event::RECV)
 		{
 			Packet::Position *pos_packet = reinterpret_cast<Packet::Position*>(buf);
-			teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
+			target_teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
 		}
 	} while (event != net::Client::Event::NONE);
+
+	float	lerp_speed = 16 * input.delta();
+	cur_teapot_pos = lerp(cur_teapot_pos, target_teapot_pos, lerp_speed);
 
 	cam.aspect = input.aspect();
 
