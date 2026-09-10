@@ -4,15 +4,22 @@
 #include "loader/texture/STBLoader.hpp"
 #include "mat.hpp"
 #include "math.hpp"
+#include "net/Client.hpp"
 #include "render/FrameBuffer.hpp"
 #include "ui/UI.hpp"
-#include <GL/gl.h>
+#include <cstring>
+#include <stdexcept>
 #include <string>
 
+#include "net/Server.hpp"
 #include "utils/Positions.hpp"
+#include "net/Packet.hpp"
 
 void    App::init()
 {
+	if (client.connect("0.0.0.0", 6767) == -1)
+		throw std::runtime_error("connect " + std::string(strerror(errno)));
+
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
 
 	win.open("ft_minecraft", TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
@@ -92,7 +99,7 @@ void	App::render_running()
 	mesh_shader.bind();
 	mesh_shader.setMat4("uProj", cam.getProjectionMatrix());
 	mesh_shader.setMat4("uView", cam.getViewMatrix());
-	mesh_shader.setMat4("uModel", mat4f::identity());
+	mesh_shader.setMat4("uModel", mat4f::translate(teapot_pos));
 	test_texture.bind(0);
 	mesh_shader.setInt("uTex", 0);
 	drawn_vertices += teapot_mesh.draw(GL_TRIANGLES);
@@ -124,6 +131,27 @@ void	App::render_running()
 
 void	App::update_running(const Input& input)
 {
+	net::Client::Event	event;
+	u8					buf[4096];
+	u64					size;
+
+	do
+	{
+		if (client.recv(buf, sizeof(buf), event, size) == -1)
+		{
+			throw std::runtime_error("recv");
+		}
+		if (event == net::Client::Event::DISCONNECT)
+		{
+			throw std::runtime_error("disconnected");
+		}
+		if (event == net::Client::Event::RECV)
+		{
+			Packet::Position *pos_packet = reinterpret_cast<Packet::Position*>(buf);
+			teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
+		}
+	} while (event != net::Client::Event::NONE);
+
 	cam.aspect = input.aspect();
 
 	updateCamera(input);

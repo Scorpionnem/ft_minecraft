@@ -8,6 +8,7 @@
 #include "utils/Chrono.hpp"
 #include "utils/ThreadPool.hpp"
 #include "ui/UI.hpp"
+#include "net/Client.hpp"
 
 class   App
 {
@@ -62,6 +63,9 @@ class   App
         Mesh    screen_mesh;
         Mesh    debug_crosshair_mesh;
 		Mesh	teapot_mesh;
+		vec3f	teapot_pos;
+
+		net::Client	client;
 
 		u64	drawn_vertices = 0;
 };
