@@ -23,13 +23,13 @@ class   App
     public:
         ~App() {UI::destroy(); threads.stop();}
 
-        void    run()
+        void    run(const std::string& ip)
         {
-            init();
+            init(ip);
             loop();
         }
     private:
-        void    init();
+        void    init(const std::string& ip);
         void    loop();
 
         void    update_running(const Input& input);

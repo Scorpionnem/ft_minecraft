@@ -15,9 +15,9 @@
 #include "utils/Positions.hpp"
 #include "net/Packet.hpp"
 
-void    App::init()
+void    App::init(const std::string& ip)
 {
-	if (client.connect("0.0.0.0", 6767) == -1)
+	if (client.connect(ip.c_str(), 6767) == -1)
 		throw std::runtime_error("connect " + std::string(strerror(errno)));
 
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
