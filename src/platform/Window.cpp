@@ -135,12 +135,12 @@ void    Window::_createWindow(const char *title, u32 width, u32 height)
 	int	my;
 	SDL_GetGlobalMouseState(&mx, &my);
 
-	SDL_Point	p = {mx, my};
-	int	disp = SDL_GetPointDisplayIndex(&p);
-	if (disp < 0)
-		disp = 0;
+	// SDL_Point	p = {mx, my};
+	// int	disp = SDL_GetPointDisplayIndex(&p);
+	// if (disp < 0)
+	// 	disp = 0;
 
-	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED_DISPLAY(disp), SDL_WINDOWPOS_CENTERED_DISPLAY(disp), width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
+	_window = SDL_CreateWindow(title, SDL_WINDOWPOS_CENTERED, SDL_WINDOWPOS_CENTERED, width, height, SDL_WINDOW_OPENGL | SDL_WINDOW_RESIZABLE);
 	if (!_window)
 	{
 		close();

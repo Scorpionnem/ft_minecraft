@@ -147,10 +147,36 @@ void	App::update_running(const Input& input)
 		}
 		if (event == net::Client::Event::RECV)
 		{
-			Packet::Position *pos_packet = reinterpret_cast<Packet::Position*>(buf);
-			target_teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
+			Packet::Header	*hdr = reinterpret_cast<Packet::Header*>(buf);
+			switch (hdr->type)
+			{
+				case 1:
+				{
+					Packet::Position *pos_packet = reinterpret_cast<Packet::Position*>(buf);
+					target_teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
+					break ;
+				}
+				case 3:
+				{
+					Packet::RTTReply *rtt_packet = reinterpret_cast<Packet::RTTReply*>(buf);
+					rtt = rtt_packet->time - rtt_send;
+					std::cout << "Rtt" << std::endl;
+					break ;
+				}
+				default:
+					break ;
+			}
 		}
 	} while (event != net::Client::Event::NONE);
+
+	if (rtt_chrono.get() > 1)
+	{
+		rtt_chrono.start();
+		rtt_send = Packet::getmsts();
+		Packet::RTTRequest	req;
+		client.send(&req, sizeof(req));
+		std::cout << "rtt req " << req.hdr.type << std::endl;
+	}
 
 	float	lerp_speed = 16 * input.delta();
 	cur_teapot_pos = lerp(cur_teapot_pos, target_teapot_pos, lerp_speed);
@@ -173,10 +199,12 @@ void	App::update_running(const Input& input)
 	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
 	std::string	dir_str = "Facing: " + std::to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + std::to_string(facing(cam.front())) + ")";
 	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
+	std::string	rtt_str = "RTT: " + std::to_string(rtt);
 	UI::text(fps_str, vec2i(0, UI::getFontSizeY() * 0), UI::Anchor::TOP_LEFT);
 	UI::text(pos_str, vec2i(0, UI::getFontSizeY() * 1), UI::Anchor::TOP_LEFT);
 	UI::text(dir_str, vec2i(0, UI::getFontSizeY() * 2), UI::Anchor::TOP_LEFT);
 	UI::text(triangles_str, vec2i(0, UI::getFontSizeY() * 3), UI::Anchor::TOP_LEFT);
+	UI::text(rtt_str, vec2i(0, UI::getFontSizeY() * 4), UI::Anchor::TOP_LEFT);
 }
 
 void    App::updateCamera(const Input& input)

@@ -38,6 +38,23 @@ int	main(void)
 				std::cout << "client " << fd << " connected" << std::endl;
 			else if (event == net::Server::Event::DISCONNECT)
 				std::cout << "client " << fd << " disconnected" << std::endl;
+			else if (event == net::Server::Event::RECV)
+			{
+				Packet::Header	*hdr = reinterpret_cast<Packet::Header*>(buf);
+				switch (hdr->type)
+				{
+					case 2:
+					{
+						Packet::RTTReply	repl;
+						repl.time = Packet::getmsts();
+						server.send(fd, &repl, sizeof(repl));
+						std::cout << "Rtt" << std::endl;
+						break ;
+					}
+					default:
+						break ;
+				}
+			}
 
 			if (c.get() > 0.3)
 			{
