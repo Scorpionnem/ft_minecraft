@@ -43,7 +43,7 @@ int	main(void)
 				mbl::net::Packet::Header	*hdr = reinterpret_cast<mbl::net::Packet::Header*>(buf);
 				switch (hdr->type)
 				{
-					case 2:
+					case RTTREQUEST_TYPE:
 					{
 						mbl::net::Packet::RTTReply	repl;
 						server.send(fd, &repl, sizeof(repl));
@@ -54,15 +54,6 @@ int	main(void)
 				}
 			}
 
-			if (c.get() > 0.3)
-			{
-				c.start();
-				mbl::net::Packet::Position	pos;
-				pos.x = rand() % 32;
-				pos.y = rand() % 32;
-				pos.z = rand() % 32;
-				server.send_all(&pos, sizeof(pos));
-			}
 		} while (event != mbl::net::Server::Event::NONE);
 	}
 	server.close();

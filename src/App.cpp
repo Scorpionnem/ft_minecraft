@@ -120,6 +120,7 @@ void	App::update_running(const mbl::platform::Input& input)
 	u8					buf[4096];
 	u64					size;
 
+	client.update();
 	do
 	{
 		if (client.recv(buf, sizeof(buf), event, size) == -1)
@@ -132,16 +133,9 @@ void	App::update_running(const mbl::platform::Input& input)
 		}
 		if (event == mbl::net::Client::Event::RECV)
 		{
+			std::cout << "received from server" << std::endl;
 		}
 	} while (event != mbl::net::Client::Event::NONE);
-
-	// if (rtt_chrono.get() > 1)
-	// {
-	// 	rtt_chrono.start();
-	// 	rtt_send = Packet::getmsts();
-	// 	mbl::Packet::RTTRequest	req;
-	// 	client.send(&req, sizeof(req));
-	// }
 
 	float	lerp_speed = 16 * input.delta();
 	cur_teapot_pos = lerp(cur_teapot_pos, target_teapot_pos, lerp_speed);
@@ -164,7 +158,7 @@ void	App::update_running(const mbl::platform::Input& input)
 	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
 	std::string	dir_str = "Facing: " + to_string(static_cast<mbl::utils::FacingCardinal>(mbl::utils::facing(cam.front()))) + " (" + to_string(mbl::utils::facing(cam.front())) + ")";
 	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
-	std::string	rtt_str = "RTT: " + std::to_string(rtt) + "ms";
+	std::string	rtt_str = "RTT: " + std::to_string(client.rtt()) + "ms";
 	mbl::ui::text(fps_str, vec2i(0, mbl::ui::getFontSizeY() * 0), mbl::ui::Anchor::TOP_LEFT);
 	mbl::ui::text(pos_str, vec2i(0, mbl::ui::getFontSizeY() * 1), mbl::ui::Anchor::TOP_LEFT);
 	mbl::ui::text(dir_str, vec2i(0, mbl::ui::getFontSizeY() * 2), mbl::ui::Anchor::TOP_LEFT);

@@ -58,10 +58,6 @@ class   App
 		vec3f	target_teapot_pos;
 		vec3f	cur_teapot_pos;
 
-		mbl::utils::Chrono	rtt_chrono;
-		u64	rtt_send = 0;
-		u64	rtt = 0;
-
 		mbl::net::Client	client;
 
 		u64	drawn_vertices = 0;
