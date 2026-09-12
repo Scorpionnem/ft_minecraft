@@ -1,13 +1,4 @@
 #include "App.hpp"
-#include "loader/mesh/obj.hpp"
-#include "utils/Positions.hpp"
-
-namespace OBJLoader = mbl::loader::mesh::obj;
-namespace Packet = mbl::net::Packet;
-using mbl::utils::Facing;
-using mbl::utils::FacingCardinal;
-using mbl::utils::facing;
-using mbl::utils::to_string;
 
 void    App::init(const std::string& ip)
 {
@@ -24,9 +15,9 @@ void    App::init(const std::string& ip)
 	glEnable(GL_BLEND);
 	glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
-	UI::init("assets/textures/font/ascii.png");
-	UI::setTargetSize(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
-	UI::setTargetFontScale(2);
+	mbl::ui::init("assets/textures/font/ascii.png");
+	mbl::ui::setTargetSize(TARGET_WINDOW_WIDTH, TARGET_WINDOW_HEIGHT);
+	mbl::ui::setTargetFontScale(1);
 
 	frame_buffer.create(win.width(), win.height());
 
@@ -39,7 +30,7 @@ void    App::init(const std::string& ip)
 	genScreenMesh();
 	genDebugCrosshair();
 
-	OBJLoader::load("assets/models/teapot.obj", teapot_mesh, test_texture);
+	mbl::loader::mesh::obj::load("assets/models/teapot.obj", teapot_mesh, test_texture);
 	teapot_mesh.upload();
 	test_texture.upload();
 
@@ -53,7 +44,7 @@ void    App::loop()
 {
     while (1)
     {
-        const Input &input = win.pollEvents();
+        const mbl::platform::Input &input = win.pollEvents();
 
         if (input.close() || input.isDown(SDLK_ESCAPE))
             break ;
@@ -64,7 +55,7 @@ void    App::loop()
             frame_buffer.resize(win.width(), win.height());
         }
 
-        UI::beginFrame(input);
+        mbl::ui::beginFrame(input);
 
         switch (state)
         {
@@ -72,7 +63,7 @@ void    App::loop()
             	update_running(input); render_running(); break ;
         }
 
-        UI::render();
+        mbl::ui::render();
 
         win.swapBuffers();
     }
@@ -83,7 +74,7 @@ void	App::render_running()
 	drawn_vertices = 0;
 
 	frame_buffer.bind();
-	FrameBuffer::clear();
+	mbl::render::FrameBuffer::clear();
 
 	skybox_shader.bind();
 	skybox_shader.setMat4("uProj", cam.getProjectionMatrix());
@@ -123,9 +114,9 @@ void	App::render_running()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void	App::update_running(const Input& input)
+void	App::update_running(const mbl::platform::Input& input)
 {
-	net::Client::Event	event;
+	mbl::net::Client::Event	event;
 	u8					buf[4096];
 	u64					size;
 
@@ -135,39 +126,22 @@ void	App::update_running(const Input& input)
 		{
 			throw std::runtime_error("recv");
 		}
-		if (event == net::Client::Event::DISCONNECT)
+		if (event == mbl::net::Client::Event::DISCONNECT)
 		{
 			throw std::runtime_error("disconnected");
 		}
-		if (event == net::Client::Event::RECV)
+		if (event == mbl::net::Client::Event::RECV)
 		{
-			Packet::Header	*hdr = reinterpret_cast<Packet::Header*>(buf);
-			switch (hdr->type)
-			{
-				case 1:
-				{
-					Packet::Position *pos_packet = reinterpret_cast<Packet::Position*>(buf);
-					target_teapot_pos = vec3f(pos_packet->x, pos_packet->y, pos_packet->z);
-					break ;
-				}
-				case 3:
-				{
-					rtt = Packet::getmsts() - rtt_send;
-					break ;
-				}
-				default:
-					break ;
-			}
 		}
-	} while (event != net::Client::Event::NONE);
+	} while (event != mbl::net::Client::Event::NONE);
 
-	if (rtt_chrono.get() > 1)
-	{
-		rtt_chrono.start();
-		rtt_send = Packet::getmsts();
-		Packet::RTTRequest	req;
-		client.send(&req, sizeof(req));
-	}
+	// if (rtt_chrono.get() > 1)
+	// {
+	// 	rtt_chrono.start();
+	// 	rtt_send = Packet::getmsts();
+	// 	mbl::Packet::RTTRequest	req;
+	// 	client.send(&req, sizeof(req));
+	// }
 
 	float	lerp_speed = 16 * input.delta();
 	cur_teapot_pos = lerp(cur_teapot_pos, target_teapot_pos, lerp_speed);
@@ -188,17 +162,17 @@ void	App::update_running(const Input& input)
 
 	std::string	fps_str = std::to_string(static_cast<int>(1.0 / input.delta())) + " fps";
 	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
-	std::string	dir_str = "Facing: " + to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + to_string(facing(cam.front())) + ")";
+	std::string	dir_str = "Facing: " + to_string(static_cast<mbl::utils::FacingCardinal>(mbl::utils::facing(cam.front()))) + " (" + to_string(mbl::utils::facing(cam.front())) + ")";
 	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
 	std::string	rtt_str = "RTT: " + std::to_string(rtt) + "ms";
-	UI::text(fps_str, vec2i(0, UI::getFontSizeY() * 0), UI::Anchor::TOP_LEFT);
-	UI::text(pos_str, vec2i(0, UI::getFontSizeY() * 1), UI::Anchor::TOP_LEFT);
-	UI::text(dir_str, vec2i(0, UI::getFontSizeY() * 2), UI::Anchor::TOP_LEFT);
-	UI::text(triangles_str, vec2i(0, UI::getFontSizeY() * 3), UI::Anchor::TOP_LEFT);
-	UI::text(rtt_str, vec2i(0, UI::getFontSizeY() * 4), UI::Anchor::TOP_LEFT);
+	mbl::ui::text(fps_str, vec2i(0, mbl::ui::getFontSizeY() * 0), mbl::ui::Anchor::TOP_LEFT);
+	mbl::ui::text(pos_str, vec2i(0, mbl::ui::getFontSizeY() * 1), mbl::ui::Anchor::TOP_LEFT);
+	mbl::ui::text(dir_str, vec2i(0, mbl::ui::getFontSizeY() * 2), mbl::ui::Anchor::TOP_LEFT);
+	mbl::ui::text(triangles_str, vec2i(0, mbl::ui::getFontSizeY() * 3), mbl::ui::Anchor::TOP_LEFT);
+	mbl::ui::text(rtt_str, vec2i(0, mbl::ui::getFontSizeY() * 4), mbl::ui::Anchor::TOP_LEFT);
 }
 
-void    App::updateCamera(const Input& input)
+void    App::updateCamera(const mbl::platform::Input& input)
 {
     float   move_speed = 20 * input.delta();
     float   speed = 100 * input.delta();

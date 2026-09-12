@@ -28,7 +28,7 @@ $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
 
 $(LIBMBL):
-	@make -C $(LIBMBL_PATH) all
+	@make -C $(LIBMBL_PATH) all --no-print-directory
 
 $(NAME): $(OBJS) $(LIBMBL)
 	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBMBL) $(LFLAGS)
@@ -38,9 +38,11 @@ $(OBJ_DIR)%.o: %.cpp
 	$(CXX) $(CXXFLAGS) $(INCLUDE_DIRS) $(SDL_CFLAGS) -c $< -o $@
 
 clean:
+	@make -C $(LIBMBL_PATH) clean --no-print-directory
 	rm -rf $(OBJ_DIR)
 
 fclean: clean
+	@make -C $(LIBMBL_PATH) fclean --no-print-directory
 	rm -rf $(NAME)
 
 re: fclean all
