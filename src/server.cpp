@@ -40,18 +40,7 @@ int	main(void)
 				std::cout << "client " << fd << " disconnected" << std::endl;
 			else if (event == mbl::net::Server::Event::RECV)
 			{
-				mbl::net::Packet::Header	*hdr = reinterpret_cast<mbl::net::Packet::Header*>(buf);
-				switch (hdr->type)
-				{
-					case RTTREQUEST_TYPE:
-					{
-						mbl::net::Packet::RTTReply	repl;
-						server.send(fd, &repl, sizeof(repl));
-						break ;
-					}
-					default:
-						break ;
-				}
+				std::cout << "recv" << std::endl;
 			}
 
 		} while (event != mbl::net::Server::Event::NONE);
