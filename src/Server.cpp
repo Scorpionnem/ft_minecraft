@@ -1,21 +1,17 @@
-#include "net/Server.hpp"
+#include "Server.hpp"
 
-#include <iostream>
-
-#include "net/Packet.hpp"
-#include "utils/Chrono.hpp"
-
-int	main(void)
+void    Server::init(int port)
 {
-	mbl::utils::Chrono	c;
-	mbl::net::Server	server;
+	if (server.open(port) == -1)
+		throw std::runtime_error("Failed to open server. (" + std::string(strerror(errno)) + ")");
 
-	if (server.open(6767) == -1)
-		return 1;
+	std::cout << "Server open: " << server.addr() << " " << server.port() << std::endl;
 
-	std::cout << server.addr() << ":" << server.port() << std::endl;
+	running = true;
+}
 
-	bool	running = true;
+void    Server::loop()
+{
 	while (running)
 	{
 		if (server.update() == -1)

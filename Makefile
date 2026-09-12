@@ -17,7 +17,8 @@ SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
 
 SRCS :=	src/main.cpp						\
-		src/App.cpp							\
+		src/Client.cpp						\
+		src/Server.cpp						\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

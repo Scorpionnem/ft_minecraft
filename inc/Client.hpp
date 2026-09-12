@@ -2,7 +2,7 @@
 
 #include "mbl.hpp"
 
-class   App
+class   Client
 {
     #define TARGET_WINDOW_WIDTH 860
     #define TARGET_WINDOW_HEIGHT 520
@@ -13,15 +13,15 @@ class   App
             RUNNING,
         };
     public:
-        ~App() {mbl::ui::destroy(); threads.stop();}
+        ~Client() {mbl::ui::destroy(); threads.stop();}
 
-        void    run(const std::string& ip)
+        void    run(const std::string& ip, int port)
         {
-            init(ip);
+            init(ip, port);
             loop();
         }
     private:
-        void    init(const std::string& ip);
+        void    init(const std::string& ip, int port);
         void    loop();
 
         void    update_running(const mbl::platform::Input& input);

@@ -1,8 +1,8 @@
-#include "App.hpp"
+#include "Client.hpp"
 
-void    App::init(const std::string& ip)
+void    Client::init(const std::string& ip, int port)
 {
-	if (client.connect(ip.c_str(), 6767) == -1)
+	if (client.connect(ip.c_str(), port) == -1)
 		throw std::runtime_error("connect " + std::string(strerror(errno)));
 
 	threads.add(std::max((u32)1, std::thread::hardware_concurrency()));
@@ -40,7 +40,7 @@ void    App::init(const std::string& ip)
 	cam.pos = vec3f(0, 0, 0);
 }
 
-void    App::loop()
+void    Client::loop()
 {
     while (1)
     {
@@ -69,7 +69,7 @@ void    App::loop()
     }
 }
 
-void	App::render_running()
+void	Client::render_running()
 {
 	drawn_vertices = 0;
 
@@ -114,7 +114,7 @@ void	App::render_running()
 	glEnable(GL_DEPTH_TEST);
 }
 
-void	App::update_running(const mbl::platform::Input& input)
+void	Client::update_running(const mbl::platform::Input& input)
 {
 	mbl::net::Client::Event	event;
 	u8					buf[4096];
@@ -166,7 +166,7 @@ void	App::update_running(const mbl::platform::Input& input)
 	mbl::ui::text(rtt_str, vec2i(0, mbl::ui::getFontSizeY() * 4), mbl::ui::Anchor::TOP_LEFT);
 }
 
-void    App::updateCamera(const mbl::platform::Input& input)
+void    Client::updateCamera(const mbl::platform::Input& input)
 {
     float   move_speed = 20 * input.delta();
     float   speed = 100 * input.delta();
@@ -204,7 +204,7 @@ void    App::updateCamera(const mbl::platform::Input& input)
         cam.yaw = 360;
 }
 
-void	App::genScreenMesh()
+void	Client::genScreenMesh()
 {
 	vec2f verts[] = {
 		{-1.0f, -1.0f},
@@ -218,7 +218,7 @@ void	App::genScreenMesh()
 	screen_mesh.upload();
 }
 
-void	App::genDebugCrosshair()
+void	Client::genDebugCrosshair()
 {
 	vec3f verts[] = {
 		{0,0,0}, {1,0,0}, {1,0,0}, {1,0,0},
