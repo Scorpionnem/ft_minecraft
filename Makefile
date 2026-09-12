@@ -27,8 +27,8 @@ all: $(NAME)
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
 
-$(LIBMBL)
-	make -C
+$(LIBMBL):
+	@make -C $(LIBMBL_PATH) all
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LFLAGS)

@@ -1,0 +1,3 @@
+[submodule "lib/mbl"]
+	path = lib/mbl
+	url = https://github.com/Scorpionnem/mbl
