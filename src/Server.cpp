@@ -36,7 +36,7 @@ void    Server::loop()
 				std::cout << "client " << fd << " disconnected" << std::endl;
 			else if (event == mbl::net::Server::Event::RECV)
 			{
-				std::cout << "recv" << std::endl;
+				std::cout << "recv from " << fd << std::endl;
 			}
 
 		} while (event != mbl::net::Server::Event::NONE);
