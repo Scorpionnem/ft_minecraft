@@ -4,52 +4,31 @@ CXX := c++
 CXXFLAGS :=	-g -MP -MMD -std=c++20# -Wall -Wextra -Werror
 
 LIB_DIR :=	lib/
+LIBMBL_PATH := $(LIB_DIR)mbl/
 INC_DIR :=	inc/
 SRC_DIR :=	src/
 OBJ_DIR :=	.obj/
 
-MATH_LIB_DIR :=	$(LIB_DIR)math
-STB_LIB_DIR :=	$(LIB_DIR)stb_image
+LIBMBL := $(LIBMBL_PATH)libmbl.a
 
-INCLUDE_DIRS :=	-I$(INC_DIR) -I$(LIB_DIR) -I$(MATH_LIB_DIR)/inc
+INCLUDE_DIRS :=	-I$(INC_DIR) -I$(LIB_DIR)
 SDL_CFLAGS :=	$(shell sdl2-config --cflags)
 SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
 
 SRCS :=	src/main.cpp						\
 		src/App.cpp							\
-		src/platform/Window.cpp				\
-		src/platform/Input.cpp				\
-		src/render/Shader.cpp				\
-		src/render/FrameBuffer.cpp			\
-		src/loader/mesh/OBJLoader.cpp		\
-		src/loader/texture/STBLoader.cpp	\
-		src/ui/UI.cpp	\
-		src/ui/elements/button.cpp			\
-		src/ui/elements/toggle.cpp			\
-		src/ui/elements/input.cpp			\
-		src/ui/elements/text.cpp			\
-		src/ui/elements/slider.cpp			\
-		src/ui/elements/progress_bar.cpp			\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)
 
-all: $(MATH_LIB_DIR) $(STB_LIB_DIR) $(NAME)
-
-$(MATH_LIB_DIR): | $(LIB_DIR)
-	git clone git@github.com:Scorpionnem/graphics_math.git $(MATH_LIB_DIR)
-
-$(STB_LIB_DIR): | $(LIB_DIR)
-	@if ls external/stb_image | grep -q "stb_image.h"; then \
-		printf ""; \
-	else\
-		mkdir -p $(STB_LIB_DIR); \
-		curl -o $(STB_LIB_DIR)/stb_image.h https://raw.githubusercontent.com/nothings/stb/master/stb_image.h;\
-	fi
+all: $(NAME)
 
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
+
+$(LIBMBL)
+	make -C
 
 $(NAME): $(OBJS)
 	$(CXX) $(CXXFLAGS) -o $@ $^ $(LFLAGS)

@@ -196,7 +196,7 @@ void	App::update_running(const Input& input)
 	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
 	std::string	dir_str = "Facing: " + std::to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + std::to_string(facing(cam.front())) + ")";
 	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
-	std::string	rtt_str = "RTT: " + std::to_string(rtt);
+	std::string	rtt_str = "RTT: " + std::to_string(rtt) + "ms";
 	UI::text(fps_str, vec2i(0, UI::getFontSizeY() * 0), UI::Anchor::TOP_LEFT);
 	UI::text(pos_str, vec2i(0, UI::getFontSizeY() * 1), UI::Anchor::TOP_LEFT);
 	UI::text(dir_str, vec2i(0, UI::getFontSizeY() * 2), UI::Anchor::TOP_LEFT);
