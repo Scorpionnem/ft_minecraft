@@ -1,19 +1,13 @@
 #include "App.hpp"
-#include "SDL_keycode.h"
-#include "loader/mesh/OBJLoader.hpp"
-#include "loader/texture/STBLoader.hpp"
-#include "mat.hpp"
-#include "math.hpp"
-#include "net/Client.hpp"
-#include "render/FrameBuffer.hpp"
-#include "ui/UI.hpp"
-#include <cstring>
-#include <stdexcept>
-#include <string>
-
-#include "net/Server.hpp"
+#include "loader/mesh/obj.hpp"
 #include "utils/Positions.hpp"
-#include "net/Packet.hpp"
+
+namespace OBJLoader = mbl::loader::mesh::obj;
+namespace Packet = mbl::net::Packet;
+using mbl::utils::Facing;
+using mbl::utils::FacingCardinal;
+using mbl::utils::facing;
+using mbl::utils::to_string;
 
 void    App::init(const std::string& ip)
 {
@@ -194,7 +188,7 @@ void	App::update_running(const Input& input)
 
 	std::string	fps_str = std::to_string(static_cast<int>(1.0 / input.delta())) + " fps";
 	std::string	pos_str = "XYZ: " + std::to_string(cam.pos.x()) + " / " + std::to_string(cam.pos.y()) + " / " + std::to_string(cam.pos.z());
-	std::string	dir_str = "Facing: " + std::to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + std::to_string(facing(cam.front())) + ")";
+	std::string	dir_str = "Facing: " + to_string(static_cast<FacingCardinal>(facing(cam.front()))) + " (" + to_string(facing(cam.front())) + ")";
 	std::string	triangles_str = "Triangles: " + std::to_string(drawn_vertices / 3);
 	std::string	rtt_str = "RTT: " + std::to_string(rtt) + "ms";
 	UI::text(fps_str, vec2i(0, UI::getFontSizeY() * 0), UI::Anchor::TOP_LEFT);

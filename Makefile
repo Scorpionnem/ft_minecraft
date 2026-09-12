@@ -1,7 +1,7 @@
 NAME :=	ft_minecraft
 
 CXX := c++
-CXXFLAGS :=	-g -MP -MMD -std=c++20# -Wall -Wextra -Werror
+CXXFLAGS :=	-g -MP -MMD -std=c++20 # -Wall -Wextra -Werror
 
 LIB_DIR :=	lib/
 LIBMBL_PATH := $(LIB_DIR)mbl/
@@ -11,7 +11,7 @@ OBJ_DIR :=	.obj/
 
 LIBMBL := $(LIBMBL_PATH)libmbl.a
 
-INCLUDE_DIRS :=	-I$(INC_DIR) -I$(LIB_DIR)
+INCLUDE_DIRS :=	-I$(INC_DIR) -I$(LIB_DIR) -I $(LIBMBL_PATH)inc
 SDL_CFLAGS :=	$(shell sdl2-config --cflags)
 SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
@@ -22,7 +22,7 @@ SRCS :=	src/main.cpp						\
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)
 
-all: $(NAME)
+all: $(LIBMBL) $(NAME)
 
 $(LIB_DIR):
 	mkdir -p $(LIB_DIR)
@@ -30,8 +30,8 @@ $(LIB_DIR):
 $(LIBMBL):
 	@make -C $(LIBMBL_PATH) all
 
-$(NAME): $(OBJS)
-	$(CXX) $(CXXFLAGS) -o $@ $^ $(LFLAGS)
+$(NAME): $(OBJS) $(LIBMBL)
+	$(CXX) $(CXXFLAGS) -o $@ $(OBJS) $(LIBMBL) $(LFLAGS)
 
 $(OBJ_DIR)%.o: %.cpp
 	@mkdir -p $(dir $@)

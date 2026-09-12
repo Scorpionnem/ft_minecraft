@@ -7,8 +7,8 @@
 
 int	main(void)
 {
-	Chrono	c;
-	net::Server	server;
+	mbl::utils::Chrono	c;
+	mbl::net::Server	server;
 
 	if (server.open(6767) == -1)
 		return 1;
@@ -21,7 +21,7 @@ int	main(void)
 		if (server.update() == -1)
 			break ;
 
-		net::Server::Event	event;
+		mbl::net::Server::Event	event;
 		u8					buf[4096];
 		u64					size;
 		int					fd;
@@ -34,18 +34,18 @@ int	main(void)
 				break ;
 			}
 
-			if (event == net::Server::Event::CONNECTION)
+			if (event == mbl::net::Server::Event::CONNECTION)
 				std::cout << "client " << fd << " connected" << std::endl;
-			else if (event == net::Server::Event::DISCONNECT)
+			else if (event == mbl::net::Server::Event::DISCONNECT)
 				std::cout << "client " << fd << " disconnected" << std::endl;
-			else if (event == net::Server::Event::RECV)
+			else if (event == mbl::net::Server::Event::RECV)
 			{
-				Packet::Header	*hdr = reinterpret_cast<Packet::Header*>(buf);
+				mbl::net::Packet::Header	*hdr = reinterpret_cast<mbl::net::Packet::Header*>(buf);
 				switch (hdr->type)
 				{
 					case 2:
 					{
-						Packet::RTTReply	repl;
+						mbl::net::Packet::RTTReply	repl;
 						server.send(fd, &repl, sizeof(repl));
 						break ;
 					}
@@ -57,13 +57,13 @@ int	main(void)
 			if (c.get() > 0.3)
 			{
 				c.start();
-				Packet::Position	pos;
+				mbl::net::Packet::Position	pos;
 				pos.x = rand() % 32;
 				pos.y = rand() % 32;
 				pos.z = rand() % 32;
 				server.send_all(&pos, sizeof(pos));
 			}
-		} while (event != net::Server::Event::NONE);
+		} while (event != mbl::net::Server::Event::NONE);
 	}
 	server.close();
 }

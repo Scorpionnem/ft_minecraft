@@ -1,14 +1,19 @@
 #pragma once
 
-#include "platform/Window.hpp"
-#include "render/Camera.hpp"
-#include "render/FrameBuffer.hpp"
-#include "render/Mesh.hpp"
-#include "render/TextureAtlas.hpp"
-#include "utils/Chrono.hpp"
-#include "utils/ThreadPool.hpp"
-#include "ui/UI.hpp"
-#include "net/Client.hpp"
+#include "mbl/inc/mbl.hpp"
+
+using mbl::platform::Input;
+using mbl::platform::Window;
+using mbl::render::Camera;
+using mbl::render::FrameBuffer;
+using mbl::render::Texture;
+using mbl::render::TextureAtlas;
+using mbl::render::Shader;
+using mbl::render::Mesh;
+using mbl::utils::Chrono;
+using mbl::utils::ThreadPool;
+using UI = mbl::ui;
+namespace net = mbl::net;
 
 class   App
 {
