@@ -23,6 +23,7 @@ SRCS :=	src/main.cpp							\
 		src/app/scenes/MainScene.cpp			\
 		src/app/scenes/MultiplayerScene.cpp		\
 		src/app/scenes/SingleplayerScene.cpp	\
+		src/app/scenes/GameScene.cpp			\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

@@ -15,22 +15,29 @@ class   Client
         };
     public:
     	Client() {}
-        ~Client() {mbl::ui::destroy();}
+        ~Client()
+        {
+         	_sceneManager.unload(*this);
+        	mbl::ui::destroy();
+        }
 
         void    run()
         {
             init();
             loop();
         }
-    private:
+    public:
         void    init();
         void    loop();
 
-        void    updateCamera(const mbl::platform::Input& input);
-
-        void	genScreenMesh();
-        void	genDebugCrosshair();
+        bool&	singleplayer() {return (_singleplayer);}
+        std::string&	addr() {return (_addr);}
+        int&			port() {return (_port);}
     private:
+     	bool			_singleplayer = false;
+     	std::string		_addr;
+      	int				_port = 0;
+
 	   	SceneManager	_sceneManager;
 
 		bool			_running = false;
@@ -39,11 +46,6 @@ class   Client
 
 		mbl::platform::Window  _win;
 
-		mbl::render::Camera  _cam;
-
-		mbl::net::Client	_client;
-
 		std::string			_username;
-
-		std::string	_last_error;
+		std::string			_last_error;
 };

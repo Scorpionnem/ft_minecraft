@@ -9,14 +9,14 @@ SceneManager::SceneManager()
 	_scenes[SceneTag::MAIN] = std::make_shared<MainScene>();
 	_scenes[SceneTag::MULTIPLAYER] = std::make_shared<MultiplayerScene>();
 	_scenes[SceneTag::SINGLEPLAYER] = std::make_shared<SingleplayerScene>();
+	_scenes[SceneTag::GAME] = std::make_shared<GameScene>();
 }
 
 SceneManager::~SceneManager()
 {
-	unload();
 }
 
-bool SceneManager::update(Client & client, const mbl::platform::Input & input)
+bool SceneManager::update(Client& client, const mbl::platform::Input & input)
 {
 	if (_current == SceneTag::NONE)
 		return true;
@@ -25,20 +25,20 @@ bool SceneManager::update(Client & client, const mbl::platform::Input & input)
 	{
 		if (sceneCommand.targetScene == SceneTag::NONE)
 			throw std::runtime_error("TargetScene is set to NONE for a SWITCH action.");
-		switchScene(sceneCommand.targetScene);
+		switchScene(client, sceneCommand.targetScene);
 	}
 	else if (sceneCommand.action == SceneAction::QUIT)
 		return false;
 	return true;
 }
 
-void SceneManager::render()
+void SceneManager::render(Client& client)
 {
 	if (_current != SceneTag::NONE)
-		_scenes[_current]->render();
+		_scenes[_current]->render(client);
 }
 
-void SceneManager::switchScene(SceneTag nextScene)
+void SceneManager::switchScene(Client& client, SceneTag nextScene)
 {
 	if (_scenes.find(nextScene) == _scenes.end())
 	{
@@ -46,13 +46,13 @@ void SceneManager::switchScene(SceneTag nextScene)
 			+ " was never created in SceneManager's constructor.");
 	}
 	if (_current != SceneTag::NONE)
-		_scenes[_current]->unload();
-	_scenes[nextScene]->init();
+		_scenes[_current]->unload(client);
+	_scenes[nextScene]->init(client);
 	_current = nextScene;
 }
 
-void SceneManager::unload()
+void SceneManager::unload(Client& client)
 {
 	if (_current != SceneTag::NONE)
-		_scenes[_current]->unload();
+		_scenes[_current]->unload(client);
 }

@@ -1,7 +1,7 @@
 #include "app/scenes/MainScene.hpp"
 #include "app/scene/SceneManager.hpp"
 
-void MainScene::init() {}
+void MainScene::init(Client&) {}
 
 SceneCommand MainScene::update(Client &, const mbl::platform::Input& input)
 {
@@ -19,6 +19,6 @@ SceneCommand MainScene::update(Client &, const mbl::platform::Input& input)
 	return {};
 }
 
-void MainScene::render() {}
+void MainScene::render(Client&) {}
 
-void MainScene::unload() {}
+void MainScene::unload(Client&) {}

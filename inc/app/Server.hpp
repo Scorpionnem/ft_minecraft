@@ -5,18 +5,33 @@
 class	Server
 {
 	public:
+		Server()
+		{
+			_running = false;
+		}
 		~Server() {}
 
-		void    run(int port)
+		void    run(int port = 0)
         {
             init(port);
             loop();
         }
+        void	stop() {_running = false;}
+        bool	running() {return (_running);}
+
+        const mbl::net::Server&	netServer() {return (_server);}
 	private:
 		void    init(int port);
         void    loop();
-	private:
-		mbl::net::Server	server;
 
-		bool	running = false;
+        void	update_broadcaster();
+        void	update_server();
+		void	dispatch_packet(int fd, u8 *data, u64 size);
+	private:
+		mbl::net::Server	_server;
+
+		std::atomic_bool	_running;
+
+		mbl::net::MulticastSender	broadcast;
+		mbl::utils::Chrono  		broadcast_time;
 };

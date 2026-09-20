@@ -10,7 +10,7 @@ void    Client::init()
 
 	_running = true;
 
-	_sceneManager.switchScene(SceneTag::MAIN);
+	_sceneManager.switchScene(*this, SceneTag::MAIN);
 }
 
 void    Client::loop()
@@ -28,7 +28,7 @@ void    Client::loop()
 			_running = false;
 			continue;
 		}
-		_sceneManager.render();
+		_sceneManager.render(*this);
 
 		mbl::ui::render();
 		_win.swapBuffers();

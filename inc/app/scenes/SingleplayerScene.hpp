@@ -8,9 +8,9 @@ class SingleplayerScene: public Scene
 		SingleplayerScene() = default;
 		~SingleplayerScene() = default;
 
-		void			init() override;
+		void			init(Client& client) override;
 		SceneCommand	update(Client & client, const mbl::platform::Input& input) override;
-		void			render() override;
-		void			unload() override;
+		void			render(Client& client) override;
+		void			unload(Client& client) override;
 
 };

@@ -1,45 +1,96 @@
 #include "app/Server.hpp"
+#include "net/LAN.hpp"
+
+#include <unistd.h>
+#include <netdb.h>
+#include <arpa/inet.h>
 
 void    Server::init(int port)
 {
-	if (server.open(port) == -1)
+	if (broadcast.open("224.0.0.42", 6767) == -1)
+		throw std::runtime_error(std::string(strerror(errno)));
+
+	if (_server.open(port) == -1)
 		throw std::runtime_error("Failed to open server. (" + std::string(strerror(errno)) + ")");
 
-	std::cout << "Server open: " << server.addr() << " " << server.port() << std::endl;
+	std::cout << "Server open: " << _server.addr() << " " << _server.port() << std::endl;
 
-	running = true;
+	_running = true;
 }
 
 void    Server::loop()
 {
-	while (running)
+	while (_running)
 	{
-		if (server.update() == -1)
-			break ;
+		update_server();
 
-		mbl::net::Server::Event	event;
-		u8					buf[4096];
-		u64					size;
-		int					fd;
-
-		do
-		{
-			if (server.recv(buf, sizeof(buf), event, size, fd) == -1)
-			{
-				running = false;
-				break ;
-			}
-
-			if (event == mbl::net::Server::Event::CONNECTION)
-				std::cout << "client " << fd << " connected" << std::endl;
-			else if (event == mbl::net::Server::Event::DISCONNECT)
-				std::cout << "client " << fd << " disconnected" << std::endl;
-			else if (event == mbl::net::Server::Event::RECV)
-			{
-				std::cout << "recv from " << fd << std::endl;
-			}
-
-		} while (event != mbl::net::Server::Event::NONE);
+		update_broadcaster();
 	}
-	server.close();
+	_server.close();
+	_running = false;
+}
+
+static int	get_local_ip(char* buf, u64 size)
+{
+	char	host[256];
+	if (gethostname(host, sizeof(host)) == -1)
+        return (-1);
+
+    hostent*	he = gethostbyname(host);
+    if (!he)
+        return (-1);
+
+    in_addr*	addr = (in_addr*)he->h_addr_list[0];
+    char*		s = inet_ntoa(*addr);
+    memcpy(buf, s, std::min(strlen(s), size));
+
+    return (0);
+}
+
+void	Server::update_server()
+{
+	if (_server.update() == -1)
+		return ;
+
+	mbl::net::Server::Event	event;
+	u8					buf[4096];
+	u64					size;
+	int					fd;
+
+	do
+	{
+		if (_server.recv(buf, sizeof(buf), event, size, fd) == -1)
+		{
+			_running = false;
+			break ;
+		}
+
+		if (event == mbl::net::Server::Event::CONNECTION)
+		{
+			;//std::cout << "client " << fd << " connected" << std::endl;
+		}
+		else if (event == mbl::net::Server::Event::DISCONNECT)
+			;//std::cout << "client " << fd << " disconnected" << std::endl;
+		else if (event == mbl::net::Server::Event::RECV)
+		{
+			//std::cout << "recv from " << fd << std::endl;
+		}
+
+	} while (event != mbl::net::Server::Event::NONE);
+}
+
+void	Server::update_broadcaster()
+{
+	#define BROADCAST_DELAY (0.5)
+	if (broadcast_time.get() > BROADCAST_DELAY)
+	{
+		Packet::LANBroadcast	packet = {};
+
+		get_local_ip(packet.addr, sizeof(packet.addr));
+		packet.port = _server.port();
+
+		if (broadcast.send(&packet, sizeof(packet)) == -1)
+			throw std::runtime_error(std::string(strerror(errno)));
+		broadcast_time.start();
+	}
 }

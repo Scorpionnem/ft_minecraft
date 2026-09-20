@@ -33,9 +33,9 @@ class SceneManager
 		~SceneManager();
 
 		bool			update(Client& client, const mbl::platform::Input& input);
-		void			render();
-		void			switchScene(SceneTag nextScene);
-		void			unload();
+		void			render(Client& client);
+		void			switchScene(Client& client, SceneTag nextScene);
+		void			unload(Client& client);
 
 	private:
 		std::unordered_map<SceneTag, std::shared_ptr<Scene>>	_scenes;

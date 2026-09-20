@@ -9,8 +9,8 @@ class	Scene
 {
 	public:
 		virtual ~Scene() = default;
-		virtual void			init() = 0;
+		virtual void			init(Client& client) = 0;
 		virtual SceneCommand	update(Client & client, const mbl::platform::Input& input) = 0;
-		virtual void			render() = 0;
-		virtual void			unload() = 0;
+		virtual void			render(Client& client) = 0;
+		virtual void			unload(Client& client) = 0;
 };
