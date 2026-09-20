@@ -16,9 +16,13 @@ SDL_CFLAGS :=	$(shell sdl2-config --cflags)
 SDL_LIBS :=		$(shell sdl2-config --libs)
 LFLAGS :=		$(SDL_LIBS) -lGL
 
-SRCS :=	src/main.cpp						\
-		src/Client.cpp						\
-		src/Server.cpp						\
+SRCS :=	src/main.cpp							\
+		src/app/Client.cpp						\
+		src/app/Server.cpp						\
+		src/app/scene/SceneManager.cpp			\
+		src/app/scenes/MainScene.cpp			\
+		src/app/scenes/MultiplayerScene.cpp		\
+		src/app/scenes/SingleplayerScene.cpp	\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

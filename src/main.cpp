@@ -1,50 +1,31 @@
-#include "Client.hpp"
-#include "Server.hpp"
+#include "mbl.hpp"
 
-int main(int ac, char **av)
+#include "app/Client.hpp"
+#include "app/Server.hpp"
+
+int	main(int ac, char **av)
 {
-    if (ac < 2)
-    {
-    	std::cerr << "Usage: ./ft_minecraft client|server" << std::endl;
-    	return (1);
-    }
+	try
+	{
+		if (ac == 1 || (ac >= 2 && std::string(av[1]) == "client"))
+		{
+			Client	client;
 
-    std::string cmd = av[1];
+			client.run();
+		}
+		else if ((ac >= 2 && std::string(av[1]) == "server"))
+		{
+			Server	server;
 
-    try
-    {
-	    if (cmd == "client")
-	    {
-			if (ac != 4)
-			{
-				std::cerr << "Usage: ./ft_minecraft client ip port" << std::endl;
-				return (1);
-			}
-
-    		std::string	ip = av[2];
-      		int			port = std::atoi(av[3]);
-
-			Client client;
-
-			client.run(ip, port);
-	    }
-	    else if (cmd == "server")
-	    {
-			if (ac != 3)
-			{
-				std::cerr << "Usage: ./ft_minecraft server port" << std::endl;
-				return (1);
-			}
-
-			int			port = std::atoi(av[2]);
-
-			Server server;
+			int	port = ac == 3 ? std::atoi(av[2]) : 6767;
 
 			server.run(port);
-	    }
-    }
-    catch (const std::exception &e)
-    {
-        std::cerr << e.what() << std::endl;
-    }
+		}
+	}
+	catch (const std::exception& e)
+	{
+		std::cerr << e.what() << std::endl;
+		return (1);
+	}
+	return (0);
 }
