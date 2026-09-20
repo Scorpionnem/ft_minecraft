@@ -26,6 +26,8 @@ void GameScene::init(Client& client)
 			throw std::runtime_error(strerror(errno));
 	}
 
+	_entities.clear();
+
 	_paused = false;
 	client.window().captureMouse(!_paused);
 
@@ -122,7 +124,7 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 		{
 			Packet::EntityPos*	en_pckt = reinterpret_cast<Packet::EntityPos*>(data);
 
-			Entity*	en_p = client.entities.insert(en_pckt->id, {});
+			Entity*	en_p = _entities.insert(en_pckt->id, {});
 			en_p->id = en_pckt->id;
 			en_p->pos = en_pckt->pos;
 			en_p->pitch = en_pckt->pitch;
@@ -135,7 +137,7 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 
 void GameScene::render(Client& client)
 {
-	for (const auto& en : client.entities.get_all())
+	for (const auto& en : _entities.get_all())
 	{
 		_mesh_shader.bind();
 	    _mesh_shader.setMat4("uProj", _cam.getProjectionMatrix());

@@ -29,6 +29,7 @@ class GameScene: public Scene
 		mbl::render::Camera		_cam;
 
 		mbl::utils::Chrono	_server_updt_time;
+		EntityRegistry		_entities;
 
 		bool					_paused = false;
 

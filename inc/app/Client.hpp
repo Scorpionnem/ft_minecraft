@@ -35,8 +35,6 @@ class   Client
         std::string&	addr() {return (_addr);}
         int&			port() {return (_port);}
         mbl::platform::Window&	window() {return (_win);}
-
-        EntityRegistry	entities;
     private:
      	bool			_singleplayer = false;
      	std::string		_addr;

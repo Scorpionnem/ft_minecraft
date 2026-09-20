@@ -10,6 +10,11 @@ class	EntityRegistry
 		EntityRegistry() {}
 		~EntityRegistry() {}
 
+		void	clear()
+		{
+			_entities.clear();
+			_currentId = 0;
+		}
 		void	remove(u64 id)
 		{
 			_entities.erase(id);
