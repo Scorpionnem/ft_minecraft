@@ -20,9 +20,25 @@ void    Server::init(int port)
 
 void    Server::loop()
 {
+	mbl::utils::Chrono	c;
 	while (_running)
 	{
 		update_server();
+
+		if (c.get() > 0.05)
+		{
+			for (const auto& en : entities.get_all())
+			{
+				Packet::EntityPos	pos_pckt = {};
+
+				pos_pckt.pos = en.second.pos;
+				pos_pckt.yaw = en.second.yaw;
+				pos_pckt.pitch = en.second.pitch;
+				pos_pckt.id = en.second.id;
+				_server.send_all(&pos_pckt, sizeof(pos_pckt));
+			}
+			c.start();
+		}
 
 		update_broadcaster();
 	}
@@ -67,16 +83,54 @@ void	Server::update_server()
 
 		if (event == mbl::net::Server::Event::CONNECTION)
 		{
-			;//std::cout << "client " << fd << " connected" << std::endl;
+			Entity	tmp_en = {};
+			Entity*	en = entities.add(tmp_en);
+			Packet::EntityPos	en_pckt = {};
+			en_pckt.id = en->id;
+			_players[fd] = en->id;
+			_server.send(fd, &en_pckt, sizeof(en_pckt));
 		}
 		else if (event == mbl::net::Server::Event::DISCONNECT)
-			;//std::cout << "client " << fd << " disconnected" << std::endl;
+		{
+			Entity*	en = entities.get(_players[fd]);
+			if (!en)
+				return ;
+			Packet::EntityRemove	rm_pckt;
+			rm_pckt.id = en->id;
+			_server.send(fd, &rm_pckt, sizeof(rm_pckt));
+		}
 		else if (event == mbl::net::Server::Event::RECV)
 		{
+			_dispatch_packet(fd, buf, size);
 			//std::cout << "recv from " << fd << std::endl;
 		}
 
 	} while (event != mbl::net::Server::Event::NONE);
+}
+
+void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
+{
+	if (size < sizeof(Packet::Header))
+		return ;
+
+	Packet::Header*	hdr = reinterpret_cast<Packet::Header*>(data);
+	if (hdr->magic != MINECRAFT_PCKT_MAGIC) // invalid packet
+		return ;
+
+	switch (hdr->type)
+	{
+		case ENTITYPOS_TYPE:
+		{
+			Packet::EntityPos*	en_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+
+			Entity*	en = entities.get(_players[fd]);
+			en->pos = en_pckt->pos;
+			en->yaw = en_pckt->yaw;
+			en->pitch = en_pckt->pitch;
+		}
+		default :
+			return ;
+	}
 }
 
 void	Server::update_broadcaster()

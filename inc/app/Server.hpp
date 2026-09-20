@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mbl.hpp"
+#include "game/entity/EntityRegistry.hpp"
 
 class	Server
 {
@@ -19,6 +20,8 @@ class	Server
         void	stop() {_running = false;}
         bool	running() {return (_running);}
 
+        EntityRegistry	entities;
+
         const mbl::net::Server&	netServer() {return (_server);}
 	private:
 		void    init(int port);
@@ -26,8 +29,9 @@ class	Server
 
         void	update_broadcaster();
         void	update_server();
-		void	dispatch_packet(int fd, u8 *data, u64 size);
+		void	_dispatch_packet(int fd, u8 *data, u64 size);
 	private:
+		std::map<int, u64>	_players;
 		mbl::net::Server	_server;
 
 		std::atomic_bool	_running;

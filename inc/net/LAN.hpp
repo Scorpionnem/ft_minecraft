@@ -58,4 +58,22 @@ namespace Packet
 
 		char			name[MAX_NAME_LEN + 1] = {};
 	} __attribute__((packed));
+
+	#define ENTITYPOS_TYPE 5
+	struct	EntityPos
+	{
+		Packet::Header	hdr = {.type = ENTITYPOS_TYPE};
+
+		u64		id;
+		vec3f	pos;
+		float	yaw;
+		float	pitch;
+	} __attribute__((packed));
+	#define ENTITYREMOVE_TYPE 6
+	struct	EntityRemove
+	{
+		Packet::Header	hdr = {.type = ENTITYREMOVE_TYPE};
+
+		u64		id;
+	} __attribute__((packed));
 };

@@ -16,15 +16,22 @@ SceneCommand MultiplayerScene::update(Client& client, const mbl::platform::Input
 
 	mbl::ui::text("Play Multiplayer", vec2f(0, 4), vec2f(0.5, 0.0));
 
-	_update_broadcast();
+	try
+	{
+		_update_broadcast();
+	} catch (const std::exception& e)
+	{
+		return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MAIN};
+	}
+
 	_remove_outdated_servers();
-	SceneCommand cmd = _list_servers(client);
-	if (cmd.action != SceneAction::NONE)
+
+	if (_list_servers(client))
 	{
 		client.addr() = _addr;
 		client.port() = _port;
 		client.singleplayer() = false;
-		return (cmd);
+		return {.action = SceneAction::SWITCH, .targetScene = SceneTag::GAME};
 	}
 
 	if (mbl::ui::button("Cancel", vec2f(0, -4.0), vec2f(100, 20), vec2f(0.5, 1.0)))
@@ -32,7 +39,7 @@ SceneCommand MultiplayerScene::update(Client& client, const mbl::platform::Input
 	return {};
 }
 
-SceneCommand	MultiplayerScene::_list_servers(Client& client)
+int	MultiplayerScene::_list_servers(Client& client)
 {
 	float	offset = 0.0 - ((float)_servers.size() - 1.0) / 2.0;
 	for (auto& serv : _servers)
@@ -44,11 +51,11 @@ SceneCommand	MultiplayerScene::_list_servers(Client& client)
 		{
 			_addr = serv.addr;
 			_port = serv.port;
-			return { .action = SceneAction::SWITCH, .targetScene = SceneTag::GAME };
+			return (1);
 		}
 		offset += 1;
 	}
-	return {};
+	return (0);
 }
 
 void	MultiplayerScene::_remove_outdated_servers()
@@ -80,9 +87,7 @@ void	MultiplayerScene::_update_broadcast()
 	do
 	{
 		if (_broadcast.recv(buf, sizeof(buf), event, size) == -1)
-		{
 			throw std::runtime_error(std::string(strerror(errno)));
-		}
 		if (event == mbl::net::MulticastReceiver::Event::RECV)
 		{
 			_dispatch_packet(buf, size);

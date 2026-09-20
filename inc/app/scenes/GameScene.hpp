@@ -14,9 +14,23 @@ class GameScene: public Scene
 		void			render(Client& client) override;
 		void			unload(Client& client) override;
 	private:
-		void	_update_net();
+		void	_update_net(Client& client);
+		void    _updateCamera(const mbl::platform::Input& input);
+
+		void	_dispatch_packet(Client& client, u8 *data, u64 size);
+
+		mbl::render::Shader         _mesh_shader;
+    	mbl::render::Mesh           _mesh;
+    	mbl::render::TextureAtlas   _atlas;
+
 		std::thread				_serverThread;
 		std::shared_ptr<Server>	_server;
+
+		mbl::render::Camera		_cam;
+
+		mbl::utils::Chrono	_server_updt_time;
+
+		bool					_paused = false;
 
 		mbl::net::Client		_netClient;
 };

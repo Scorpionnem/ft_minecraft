@@ -2,6 +2,7 @@
 
 #include "mbl.hpp"
 #include "app/scene/SceneManager.hpp"
+#include "game/entity/EntityRegistry.hpp"
 
 class   Client
 {
@@ -33,6 +34,9 @@ class   Client
         bool&	singleplayer() {return (_singleplayer);}
         std::string&	addr() {return (_addr);}
         int&			port() {return (_port);}
+        mbl::platform::Window&	window() {return (_win);}
+
+        EntityRegistry	entities;
     private:
      	bool			_singleplayer = false;
      	std::string		_addr;
