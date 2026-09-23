@@ -10,7 +10,7 @@ void    Client::init()
 
 	_running = true;
 
-	_sceneManager.switchScene(*this, SceneTag::MAIN);
+	_sceneManager.switchScene(*this, SceneTag::GAME);
 }
 
 void    Client::loop()

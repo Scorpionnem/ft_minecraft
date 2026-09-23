@@ -1,7 +1,6 @@
 #pragma once
 
 #include "mbl.hpp"
-#include "game/entity/EntityRegistry.hpp"
 
 class	Server
 {
@@ -19,8 +18,6 @@ class	Server
         }
         void	stop() {_running = false;}
         bool	running() {return (_running);}
-
-        EntityRegistry	entities;
 
         const mbl::net::Server&	netServer() {return (_server);}
 	private:

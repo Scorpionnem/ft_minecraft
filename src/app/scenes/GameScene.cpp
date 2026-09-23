@@ -26,8 +26,6 @@ void GameScene::init(Client& client)
 			throw std::runtime_error(strerror(errno));
 	}
 
-	_entities.clear();
-
 	_paused = false;
 	client.window().captureMouse(!_paused);
 
@@ -35,18 +33,48 @@ void GameScene::init(Client& client)
 	_cam.near = 0.01;
     _cam.far = 1000.0;
     _cam.fov = 70;
+    _cam.pos = vec3f(-10);
+    _cam.yaw = 0;
+    _cam.pitch = 0;
 
     _mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
     mbl::loader::mesh::obj::load("assets/models/teapot.obj", _mesh, _atlas);
+
+    mbl::render::renderer::AABBRenderer::gen_render_data();
 
     _mesh.upload();
     _atlas.upload();
 }
 
+void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
+{
+	int	i = 0;
+	float	text_y_size = mbl::ui::getFontSizeY();
+
+	std::string	fps_str = std::to_string(static_cast<int>(1.0 / input.delta())) + " fps";
+	mbl::ui::text(fps_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
+
+	std::string	rtt_str = std::to_string(_netClient.rtt()) + " ms " + _netClient.addr() + ":" + std::to_string(_netClient.port());
+	mbl::ui::text(rtt_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
+
+	i++;
+
+	std::string	pos_str = "XYZ: " + std::to_string(_cam.pos.x()) + " / " + std::to_string(_cam.pos.y()) + " / " + std::to_string(_cam.pos.z());
+	mbl::ui::text(pos_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
+
+	std::string	yawpitch_str = "Yaw/Pitch: " + std::to_string(_cam.yaw) + " / " + std::to_string(_cam.pitch);
+	mbl::ui::text(yawpitch_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
+
+	std::string	dir_str = "Facing: " + to_string(static_cast<mbl::utils::FacingCardinal>(mbl::utils::facing(_cam.front()))) + " (" + to_string(mbl::utils::facing(_cam.front())) + ")";
+	mbl::ui::text(dir_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
+}
+
 SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input)
 {
-	if (input.close())
+	if (input.close() || input.wasPressed(SDLK_ESCAPE))
 		return { .action = SceneAction::QUIT };
+
+	_show_f3(client, input);
 
 	if (input.wasPressed(SDLK_ESCAPE))
 	{
@@ -75,14 +103,17 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MULTIPLAYER};
 	}
 
-	mbl::ui::text(std::to_string(_netClient.rtt()), 0, vec2f(0.5, 0.0));
-
 	if (_paused)
 	{
 		if (mbl::ui::button("Save and Quit to Title", 0, vec2f(200, 20), ANCHOR_CENTER))
 			return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MAIN};
 	}
 	return {};
+}
+
+void GameScene::render(Client& client)
+{
+
 }
 
 void	GameScene::_update_net(Client& client)
@@ -120,32 +151,8 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
-		case ENTITYPOS_TYPE:
-		{
-			Packet::EntityPos*	en_pckt = reinterpret_cast<Packet::EntityPos*>(data);
-
-			Entity*	en_p = _entities.insert(en_pckt->id, {});
-			en_p->id = en_pckt->id;
-			en_p->pos = en_pckt->pos;
-			en_p->pitch = en_pckt->pitch;
-			en_p->yaw = en_pckt->yaw;
-		}
 		default :
 			return ;
-	}
-}
-
-void GameScene::render(Client& client)
-{
-	for (const auto& en : _entities.get_all())
-	{
-		_mesh_shader.bind();
-	    _mesh_shader.setMat4("uProj", _cam.getProjectionMatrix());
-	    _mesh_shader.setMat4("uView", _cam.getViewMatrix());
-	    _mesh_shader.setMat4("uModel", mat4f::translate(en.second.pos) * mat4f::rotateX(radians(en.second.pitch)) * mat4f::rotateZ(radians(en.second.yaw)));
-	    _atlas.bind(0);
-	    _mesh_shader.setInt("uTex", 0);
-	    _mesh.draw(GL_TRIANGLES);
 	}
 }
 
@@ -163,6 +170,41 @@ void GameScene::unload(Client& client)
 	}
 }
 
+void    rayBoxDst(float& dstToBox, float& dstInsideBox, mbl::utils::aabb3f bounds, vec3f rayOrig, vec3f rayDir)
+{
+    vec3f	t0 = (bounds.pos - rayOrig) / rayDir;
+    vec3f	t1 = ((bounds.pos + bounds.size) - rayOrig) / rayDir;
+    vec3f	tmin = min(t0, t1);
+    vec3f	tmax = max(t0, t1);
+
+    float   dstA = std::max(std::max(tmin.x(), tmin.y()), tmin.z());
+    float   dstB = std::min(std::min(tmax.x(), tmax.y()), tmax.z());
+
+    dstToBox = std::max(0.0f, dstA);
+    dstInsideBox = std::max(0.0f, dstB - dstToBox);
+}
+
+vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, const mbl::utils::aabb3f& b, bool slide, mbl::render::Camera& cam)
+{
+	vec3f	res;
+	mbl::utils::aabb3f	test_box = {.pos = b.pos - (a.size / 2.0), .size = b.size + (a.size)};
+	mbl::render::renderer::AABBRenderer::draw_aabb(test_box, cam, vec3f(0, 0, 1));
+	for (int i = 0; i < 3; i++)
+	{
+		vec3f	vel = vec3f(i == 0 ? velocity.x() : 0, i == 1 ? velocity.y() : 0, i == 2 ? velocity.z() : 0);
+
+		float	dstToBox;
+		float	dstInsideBox;
+		rayBoxDst(dstToBox, dstInsideBox, test_box, cam.pos, vel);
+
+		if (dstInsideBox > 0) // hit box
+			res += (min(abs(vel), abs(vel * dstToBox)) * sign(vel));
+		else
+			res += vel;
+	}
+	return (res);
+}
+
 void    GameScene::_updateCamera(const mbl::platform::Input& input)
 {
 	_cam.aspect = input.aspect();
@@ -174,21 +216,36 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
     float   speed = 100 * input.delta();
     float	sensitivity = 0.3;
 
+    vec3f	velocity;
+
     if (input.isDown(SDLK_w))
-        _cam.pos = _cam.pos + (_cam.front() * move_speed);
+        velocity += (_cam.front() * move_speed);
     if (input.isDown(SDLK_s))
-        _cam.pos = _cam.pos + vec3f(-1.0) * (_cam.front() * move_speed);
+        velocity += vec3f(-1.0) * (_cam.front() * move_speed);
     if (input.isDown(SDLK_SPACE))
-        _cam.pos = _cam.pos + (vec3f(0, 1, 0) * move_speed);
+        velocity += (vec3f(0, 1, 0) * move_speed);
     if (input.isDown(SDLK_LSHIFT))
-        _cam.pos = _cam.pos + vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
+        velocity += vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
 
     vec3f right = vec3f(cos(radians(_cam.yaw)), 0.0f, sin(radians(_cam.yaw)));
 
     if (input.isDown(SDLK_a))
-        _cam.pos = _cam.pos - right * move_speed;
+        velocity += -(right * move_speed);
     if (input.isDown(SDLK_d))
-        _cam.pos = _cam.pos + right * move_speed;
+        velocity += right * move_speed;
+
+    vec3f	size = vec3f(0.8, 0.8, 0.8);
+    mbl::utils::aabb3f	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
+    mbl::utils::aabb3f	hit_box = {.pos = 0, .size = vec3f(10, 1, 10)};
+    mbl::utils::aabb3f	hit_box2 = {.pos = 0, .size = vec3f(10, 1, 10)};
+
+    velocity = resolve_collision(velocity, cam_box, hit_box, false, _cam);
+
+	_cam.pos += velocity;
+
+ 	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
+    mbl::render::renderer::AABBRenderer::draw_aabb(cam_box, _cam, vec3f(0, 1, 0));
+    mbl::render::renderer::AABBRenderer::draw_aabb(hit_box, _cam, vec3f(1, 0, 0));
 
     _cam.pitch += -input.mouseDY() * sensitivity;
     _cam.yaw += input.mouseDX() * sensitivity;

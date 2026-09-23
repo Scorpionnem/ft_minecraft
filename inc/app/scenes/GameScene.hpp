@@ -14,6 +14,7 @@ class GameScene: public Scene
 		void			render(Client& client) override;
 		void			unload(Client& client) override;
 	private:
+		void	_show_f3(Client& client, const mbl::platform::Input& input);
 		void	_update_net(Client& client);
 		void    _updateCamera(const mbl::platform::Input& input);
 
@@ -29,7 +30,6 @@ class GameScene: public Scene
 		mbl::render::Camera		_cam;
 
 		mbl::utils::Chrono	_server_updt_time;
-		EntityRegistry		_entities;
 
 		bool					_paused = false;
 

@@ -2,7 +2,6 @@
 
 #include "mbl.hpp"
 #include "app/scene/SceneManager.hpp"
-#include "game/entity/EntityRegistry.hpp"
 
 class   Client
 {
@@ -36,7 +35,7 @@ class   Client
         int&			port() {return (_port);}
         mbl::platform::Window&	window() {return (_win);}
     private:
-     	bool			_singleplayer = false;
+     	bool			_singleplayer = true;
      	std::string		_addr;
       	int				_port = 0;
 
