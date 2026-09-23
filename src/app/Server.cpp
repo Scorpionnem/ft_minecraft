@@ -94,6 +94,13 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
+		case ENTITYPOS_TYPE:
+		{
+			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+
+			_server.send_all_except(fd, pos_pckt, sizeof(*pos_pckt));
+			break ;
+		}
 		default :
 			return ;
 	}

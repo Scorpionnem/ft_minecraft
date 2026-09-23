@@ -76,7 +76,7 @@ void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
 
 SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input)
 {
-	if (input.close() || input.wasPressed(SDLK_ESCAPE))
+	if (input.close())
 		return { .action = SceneAction::QUIT };
 
 	_show_f3(client, input);
@@ -118,13 +118,10 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 void GameScene::render(Client& client)
 {
-	vec3f	size = vec3f(0.5, 0.5, 0.5);
+	vec3f	size = vec3f(0.5);
     mbl::utils::aabb3f	cam_box = {.pos = _fp_cam.pos - (size / 2), .size = size};
-    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(0, 1, 0));
-
-	vec3f	box_pos = vec3f(0.0, 0.0, 0.0);
-	vec3f	box_size = vec3f(32);
-    mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{box_pos - box_size / 2, box_size}, *_render_cam, vec3f(1, 0, 0.5));
+    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
+    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
 }
 
 void	GameScene::_update_net(Client& client)
@@ -162,6 +159,16 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
+		case ENTITYPOS_TYPE:
+		{
+			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+
+			vec3f	size = vec3f(0.5);
+		    mbl::utils::aabb3f	cam_box = {.pos = pos_pckt->pos - (size / 2), .size = size};
+		    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
+		    mbl::render::renderer::RayRenderer::draw(pos_pckt->pos, pos_pckt->pos + mbl::render::Camera::front(pos_pckt->yaw, pos_pckt->pitch), *_render_cam, vec3f(0, 0, 1));
+			break ;
+		}
 		default :
 			return ;
 	}
