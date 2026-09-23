@@ -30,7 +30,8 @@ class GameScene: public Scene
 		mbl::render::Camera		_cam;
 		mbl::render::Camera		_cam2;
 		bool	_f5_toggle = false;
-		float	_f5_distance = 0;
+		float	_f5_distance = 3;
+		float	_f5_distance_target = _f5_distance;
 
 		mbl::utils::Chrono	_server_updt_time;
 

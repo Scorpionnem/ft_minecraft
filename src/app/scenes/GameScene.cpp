@@ -100,15 +100,17 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		_f5_toggle = !_f5_toggle;
 	if (input.scrollY() != 0)
 	{
-		_f5_distance -= input.scrollY();
-		_f5_distance = std::clamp(_f5_distance, 0.0f, 128.0f);
+		_f5_distance_target -= input.scrollY();
+		_f5_distance_target = std::clamp(_f5_distance_target, 1.0f, 128.0f);
 	}
 
 	mbl::render::Camera&	cam = _f5_toggle ? _cam2 : _cam;
 
 	_updateCamera(input, _cam);
+
 	_cam2 = _cam;
 	_cam2.pos = _cam.pos - vec3f(_f5_distance) * _cam.front();
+	_f5_distance = lerp(_f5_distance, _f5_distance_target, 0.33);
 
 	vec3f	size = vec3f(0.8, 0.8, 0.8);
     mbl::utils::aabb3f	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
