@@ -97,7 +97,11 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 	}
 
 	if (input.wasPressed(SDLK_F5))
+	{
 		_f5_toggle = !_f5_toggle;
+		if (_f5_toggle)
+			_f5_distance = 0;
+	}
 	if (input.scrollY() != 0)
 	{
 		_f5_distance_target -= input.scrollY();
