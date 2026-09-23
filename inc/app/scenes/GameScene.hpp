@@ -16,7 +16,7 @@ class GameScene: public Scene
 	private:
 		void	_show_f3(Client& client, const mbl::platform::Input& input);
 		void	_update_net(Client& client);
-		void    _updateCamera(const mbl::platform::Input& input, mbl::render::Camera& cam);
+		void    _updateCamera(const mbl::platform::Input& input);
 
 		void	_dispatch_packet(Client& client, u8 *data, u64 size);
 
@@ -27,15 +27,19 @@ class GameScene: public Scene
 		std::thread				_serverThread;
 		std::shared_ptr<Server>	_server;
 
-		mbl::render::Camera		_cam;
-		mbl::render::Camera		_cam2;
-		bool	_f5_toggle = false;
-		float	_f5_distance = 3;
-		float	_f5_distance_target = _f5_distance;
+		mbl::render::Camera		_fp_cam; // first person
+		mbl::render::Camera		_tp_cam; // third person
+		mbl::render::Camera		_transition_cam; // third person
+		mbl::render::Camera*	_render_cam = nullptr; // third person
+		bool	_tp_toggle = false;
+		float	_tp_distance_target_set = 3;
+		float	_tp_distance = 3;
+		bool	_moving = false;
 
 		mbl::utils::Chrono	_server_updt_time;
 
 		bool					_paused = false;
 
 		mbl::net::Client		_netClient;
+	private:
 };

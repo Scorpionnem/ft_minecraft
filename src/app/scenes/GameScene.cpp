@@ -5,6 +5,7 @@
 
 void GameScene::init(Client& client)
 {
+	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
 		_server = std::make_shared<Server>();
@@ -29,15 +30,16 @@ void GameScene::init(Client& client)
 	_paused = false;
 	client.window().captureMouse(!_paused);
 
-	_cam = {};
-	_cam.near = 0.01;
-    _cam.far = 1000.0;
-    _cam.fov = 70;
-    _cam.pos = vec3f(-10);
-    _cam.yaw = 0;
-    _cam.pitch = 0;
-
-    _cam2 = _cam;
+	_fp_cam = {};
+	_fp_cam.near = 0.01;
+    _fp_cam.far = 1000.0;
+    _fp_cam.fov = 70;
+    _fp_cam.pos = vec3f(0);
+    _fp_cam.yaw = 0;
+    _fp_cam.pitch = 0;
+    _transition_cam = {};
+    _tp_cam = {};
+    _render_cam = &_fp_cam;
 
     _mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
     mbl::loader::mesh::obj::load("assets/models/teapot.obj", _mesh, _atlas);
@@ -62,13 +64,13 @@ void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
 
 	i++;
 
-	std::string	pos_str = "XYZ: " + std::to_string(_cam.pos.x()) + " / " + std::to_string(_cam.pos.y()) + " / " + std::to_string(_cam.pos.z());
+	std::string	pos_str = "XYZ: " + std::to_string(_fp_cam.pos.x()) + " / " + std::to_string(_fp_cam.pos.y()) + " / " + std::to_string(_fp_cam.pos.z());
 	mbl::ui::text(pos_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 
-	std::string	yawpitch_str = "Yaw/Pitch: " + std::to_string(_cam.yaw) + " / " + std::to_string(_cam.pitch);
+	std::string	yawpitch_str = "Yaw/Pitch: " + std::to_string(_fp_cam.yaw) + " / " + std::to_string(_fp_cam.pitch);
 	mbl::ui::text(yawpitch_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 
-	std::string	dir_str = "Facing: " + to_string(static_cast<mbl::utils::FacingCardinal>(mbl::utils::facing(_cam.front()))) + " (" + to_string(mbl::utils::facing(_cam.front())) + ")";
+	std::string	dir_str = "Facing: " + to_string(static_cast<mbl::utils::FacingCardinal>(mbl::utils::facing(_fp_cam.front()))) + " (" + to_string(mbl::utils::facing(_fp_cam.front())) + ")";
 	mbl::ui::text(dir_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 }
 
@@ -89,39 +91,14 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 	{
 		Packet::EntityPos	en_pos = {};
 
-		en_pos.pos = _cam.pos;
-		en_pos.yaw = _cam.yaw;
-		en_pos.pitch = _cam.pitch;
+		en_pos.pos = _fp_cam.pos;
+		en_pos.yaw = _fp_cam.yaw;
+		en_pos.pitch = _fp_cam.pitch;
 		_netClient.send(&en_pos, sizeof(en_pos));
 		_server_updt_time.start();
 	}
 
-	if (input.wasPressed(SDLK_F5))
-	{
-		_f5_toggle = !_f5_toggle;
-		if (_f5_toggle)
-			_f5_distance = 0;
-	}
-	if (input.scrollY() != 0)
-	{
-		_f5_distance_target -= input.scrollY();
-		_f5_distance_target = std::clamp(_f5_distance_target, 1.0f, 128.0f);
-	}
-
-	mbl::render::Camera&	cam = _f5_toggle ? _cam2 : _cam;
-
-	_updateCamera(input, _cam);
-
-	_cam2 = _cam;
-	_cam2.pos = _cam.pos - vec3f(_f5_distance) * _cam.front();
-	_f5_distance = lerp(_f5_distance, _f5_distance_target, 0.33);
-
-	vec3f	size = vec3f(0.8, 0.8, 0.8);
-    mbl::utils::aabb3f	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
-	mbl::render::renderer::AABBRenderer::draw(cam_box, cam, vec3f(0, 1, 0));
-    mbl::render::renderer::RayRenderer::draw(_cam.pos, _cam.pos + _cam.front(), cam, vec3f(1));
-
-    mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{0, 10}, cam, vec3f(1, 0, 0.5));
+	_updateCamera(input);
 
 	try
 	{
@@ -141,7 +118,13 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 void GameScene::render(Client& client)
 {
+	vec3f	size = vec3f(0.5, 0.5, 0.5);
+    mbl::utils::aabb3f	cam_box = {.pos = _fp_cam.pos - (size / 2), .size = size};
+    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(0, 1, 0));
 
+	vec3f	box_pos = vec3f(0.0, 0.0, 0.0);
+	vec3f	box_size = vec3f(32);
+    mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{box_pos - box_size / 2, box_size}, *_render_cam, vec3f(1, 0, 0.5));
 }
 
 void	GameScene::_update_net(Client& client)
@@ -233,9 +216,9 @@ vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, cons
 	return (res);
 }
 
-void    GameScene::_updateCamera(const mbl::platform::Input& input, mbl::render::Camera& cam)
+void    GameScene::_updateCamera(const mbl::platform::Input& input)
 {
-	cam.aspect = input.aspect();
+	_fp_cam.aspect = input.aspect();
 
 	if (_paused)
 		return ;
@@ -244,33 +227,78 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input, mbl::render:
     float   speed = 100 * input.delta();
     float	sensitivity = 0.3;
 
-    vec3f	velocity;
+    vec3f right = vec3f(cos(radians(_fp_cam.yaw)), 0.0f, sin(radians(_fp_cam.yaw)));
 
+    vec3f	velocity;
     if (input.isDown(SDLK_w))
-        velocity += (cam.front() * move_speed);
+        velocity += (_fp_cam.front() * move_speed);
     if (input.isDown(SDLK_s))
-        velocity += vec3f(-1.0) * (cam.front() * move_speed);
+        velocity += vec3f(-1.0) * (_fp_cam.front() * move_speed);
     if (input.isDown(SDLK_SPACE))
         velocity += (vec3f(0, 1, 0) * move_speed);
     if (input.isDown(SDLK_LSHIFT))
         velocity += vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
-
-    vec3f right = vec3f(cos(radians(cam.yaw)), 0.0f, sin(radians(cam.yaw)));
-
     if (input.isDown(SDLK_a))
         velocity += -(right * move_speed);
     if (input.isDown(SDLK_d))
         velocity += right * move_speed;
 
-	cam.pos += velocity;
+	_fp_cam.pos += velocity;
 
-	cam.pitch += -input.mouseDY() * sensitivity;
-	cam.yaw += input.mouseDX() * sensitivity;
+	_fp_cam.pitch += -input.mouseDY() * sensitivity;
+	_fp_cam.yaw += input.mouseDX() * sensitivity;
 
-	cam.pitch = std::clamp(cam.pitch, -90.0f, 90.0f);
+	_fp_cam.pitch = std::clamp(_fp_cam.pitch, -90.0f, 90.0f);
+	if (_fp_cam.yaw > 360) _fp_cam.yaw = 0;
+	if (_fp_cam.yaw < 0) _fp_cam.yaw = 360;
 
-	if (cam.yaw > 360)
-		cam.yaw = 0;
-	if (cam.yaw < 0)
-		cam.yaw = 360;
+	_tp_cam = _fp_cam;
+	_tp_cam.pos = _fp_cam.pos - vec3f(_tp_distance_target_set) * _fp_cam.front();
+	_transition_cam.yaw = _fp_cam.yaw;
+	_transition_cam.pitch = _fp_cam.pitch;
+	_transition_cam.aspect = _fp_cam.aspect;
+	_transition_cam.near = _fp_cam.near;
+	_transition_cam.far = _fp_cam.far;
+	_transition_cam.fov = _fp_cam.fov;
+
+	if (input.wasPressed(SDLK_F5))
+	{
+		_tp_toggle = !_tp_toggle;
+		_moving = true;
+	}
+
+	if (input.scrollY() != 0 && _tp_toggle)
+	{
+		_tp_distance_target_set -= input.scrollY();
+		_tp_distance_target_set = std::clamp(_tp_distance_target_set, 1.0f, 128.0f);
+	}
+
+	constexpr float	anim_speed = 0.33;
+	constexpr float	snap_distance = (1 / 64.0f);
+	if (_tp_toggle)
+	{
+		if (_moving)
+		{
+			_tp_distance = lerp(_tp_distance, _tp_distance_target_set, anim_speed);
+			_transition_cam.pos = _fp_cam.pos - vec3f(_tp_distance) * _fp_cam.front();
+			if (vec3f::distance(_transition_cam.pos, _tp_cam.pos) < snap_distance)
+				_moving = false;
+		}
+		else
+			_tp_distance = _tp_distance_target_set;
+	}
+	else if (!_tp_toggle)
+	{
+		if (_moving)
+		{
+			_tp_distance = lerp(_tp_distance, 0, anim_speed);
+			_transition_cam.pos = _fp_cam.pos - vec3f(_tp_distance) * _fp_cam.front();
+			if (vec3f::distance(_transition_cam.pos, _fp_cam.pos) < snap_distance)
+				_moving = false;
+		}
+		else
+			_tp_distance = 0;
+	}
+
+	_render_cam = (_tp_toggle && !_moving) ? &_tp_cam : (!_tp_toggle && !_moving) ? &_fp_cam : &_transition_cam;
 }
