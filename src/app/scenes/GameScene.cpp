@@ -37,10 +37,13 @@ void GameScene::init(Client& client)
     _cam.yaw = 0;
     _cam.pitch = 0;
 
+    _cam2 = _cam;
+
     _mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
     mbl::loader::mesh::obj::load("assets/models/teapot.obj", _mesh, _atlas);
 
     mbl::render::renderer::AABBRenderer::gen_render_data();
+    mbl::render::renderer::RayRenderer::gen_render_data();
 
     _mesh.upload();
     _atlas.upload();
@@ -93,7 +96,26 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		_server_updt_time.start();
 	}
 
-	_updateCamera(input);
+	if (input.wasPressed(SDLK_F5))
+		_f5_toggle = !_f5_toggle;
+	if (input.scrollY() != 0)
+	{
+		_f5_distance -= input.scrollY();
+		_f5_distance = std::clamp(_f5_distance, 0.0f, 128.0f);
+	}
+
+	mbl::render::Camera&	cam = _f5_toggle ? _cam2 : _cam;
+
+	_updateCamera(input, _cam);
+	_cam2 = _cam;
+	_cam2.pos = _cam.pos - vec3f(_f5_distance) * _cam.front();
+
+	vec3f	size = vec3f(0.8, 0.8, 0.8);
+    mbl::utils::aabb3f	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
+	mbl::render::renderer::AABBRenderer::draw(cam_box, cam, vec3f(0, 1, 0));
+    mbl::render::renderer::RayRenderer::draw(_cam.pos, _cam.pos + _cam.front(), cam, vec3f(1));
+
+    mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{0, 10}, cam, vec3f(1, 0, 0.5));
 
 	try
 	{
@@ -188,7 +210,7 @@ vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, cons
 {
 	vec3f	res;
 	mbl::utils::aabb3f	test_box = {.pos = b.pos - (a.size / 2.0), .size = b.size + (a.size)};
-	mbl::render::renderer::AABBRenderer::draw_aabb(test_box, cam, vec3f(0, 0, 1));
+	mbl::render::renderer::AABBRenderer::draw(test_box, cam, vec3f(0, 0, 1));
 	for (int i = 0; i < 3; i++)
 	{
 		vec3f	vel = vec3f(i == 0 ? velocity.x() : 0, i == 1 ? velocity.y() : 0, i == 2 ? velocity.z() : 0);
@@ -205,9 +227,9 @@ vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, cons
 	return (res);
 }
 
-void    GameScene::_updateCamera(const mbl::platform::Input& input)
+void    GameScene::_updateCamera(const mbl::platform::Input& input, mbl::render::Camera& cam)
 {
-	_cam.aspect = input.aspect();
+	cam.aspect = input.aspect();
 
 	if (_paused)
 		return ;
@@ -219,41 +241,30 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
     vec3f	velocity;
 
     if (input.isDown(SDLK_w))
-        velocity += (_cam.front() * move_speed);
+        velocity += (cam.front() * move_speed);
     if (input.isDown(SDLK_s))
-        velocity += vec3f(-1.0) * (_cam.front() * move_speed);
+        velocity += vec3f(-1.0) * (cam.front() * move_speed);
     if (input.isDown(SDLK_SPACE))
         velocity += (vec3f(0, 1, 0) * move_speed);
     if (input.isDown(SDLK_LSHIFT))
         velocity += vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
 
-    vec3f right = vec3f(cos(radians(_cam.yaw)), 0.0f, sin(radians(_cam.yaw)));
+    vec3f right = vec3f(cos(radians(cam.yaw)), 0.0f, sin(radians(cam.yaw)));
 
     if (input.isDown(SDLK_a))
         velocity += -(right * move_speed);
     if (input.isDown(SDLK_d))
         velocity += right * move_speed;
 
-    vec3f	size = vec3f(0.8, 0.8, 0.8);
-    mbl::utils::aabb3f	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
-    mbl::utils::aabb3f	hit_box = {.pos = 0, .size = vec3f(10, 1, 10)};
-    mbl::utils::aabb3f	hit_box2 = {.pos = 0, .size = vec3f(10, 1, 10)};
+	cam.pos += velocity;
 
-    velocity = resolve_collision(velocity, cam_box, hit_box, false, _cam);
+	cam.pitch += -input.mouseDY() * sensitivity;
+	cam.yaw += input.mouseDX() * sensitivity;
 
-	_cam.pos += velocity;
+	cam.pitch = std::clamp(cam.pitch, -90.0f, 90.0f);
 
- 	cam_box = {.pos = _cam.pos - (size / 2), .size = size};
-    mbl::render::renderer::AABBRenderer::draw_aabb(cam_box, _cam, vec3f(0, 1, 0));
-    mbl::render::renderer::AABBRenderer::draw_aabb(hit_box, _cam, vec3f(1, 0, 0));
-
-    _cam.pitch += -input.mouseDY() * sensitivity;
-    _cam.yaw += input.mouseDX() * sensitivity;
-
-    _cam.pitch = std::clamp(_cam.pitch, -90.0f, 90.0f);
-
-    if (_cam.yaw > 360)
-        _cam.yaw = 0;
-    if (_cam.yaw < 0)
-        _cam.yaw = 360;
+	if (cam.yaw > 360)
+		cam.yaw = 0;
+	if (cam.yaw < 0)
+		cam.yaw = 360;
 }
