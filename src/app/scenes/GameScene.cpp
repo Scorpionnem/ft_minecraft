@@ -5,6 +5,7 @@
 
 void GameScene::init(Client& client)
 {
+	// SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -87,7 +88,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		client.window().captureMouse(!_paused);
 	}
 
-	if (_server_updt_time.get() > 0.05)
+	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
 		Packet::EntityPos	en_pos = {};
 
@@ -105,6 +106,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		_update_net(client);
 	} catch (const std::exception& e)
 	{
+		std::cout << e.what() << std::endl;
 		return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MULTIPLAYER};
 	}
 
@@ -130,6 +132,9 @@ void	GameScene::_update_net(Client& client)
 	u8					buf[4096] = {};
 	u64					size;
 
+	int	MAX_PACKETS_PER_FRAME = 64;
+	int	packets_recvd = 0;
+
 	_netClient.update();
 	do
 	{
@@ -144,8 +149,10 @@ void	GameScene::_update_net(Client& client)
 		{
 			mbl::ui::text(std::to_string(size), 0, ANCHOR_TOP_RIGHT);
 			_dispatch_packet(client, buf, size);
+
+			packets_recvd++;
 		}
-	} while (event != mbl::net::Client::Event::NONE);
+	} while (event != mbl::net::Client::Event::NONE && packets_recvd < MAX_PACKETS_PER_FRAME);
 }
 
 void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)

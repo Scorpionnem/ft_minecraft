@@ -2,6 +2,7 @@
 
 #include "app/scene/Scene.hpp"
 #include "app/Server.hpp"
+#include "game/world/Chunk.hpp"
 
 class GameScene: public Scene
 {

@@ -23,7 +23,7 @@ void    Server::loop()
 	{
 		update_server();
 
-		if (c.get() > 0.05)
+		if (c.get() > (1.0f / 20.0f))
 		{
 			c.start();
 		}

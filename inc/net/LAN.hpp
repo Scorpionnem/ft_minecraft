@@ -76,4 +76,14 @@ namespace Packet
 
 		u64		id;
 	} __attribute__((packed));
+
+	#define CHUNKDATA_TYPE 7
+	struct	ChunkData
+	{
+		Packet::Header	hdr = {.type = CHUNKDATA_TYPE};
+
+		u64		chunk_hash = 0;
+		u16		id = 0;
+		u32		blocks[512] = {};
+	} __attribute__((packed));
 };
