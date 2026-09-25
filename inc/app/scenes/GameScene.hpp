@@ -2,7 +2,7 @@
 
 #include "app/scene/Scene.hpp"
 #include "app/Server.hpp"
-#include "game/world/Chunk.hpp"
+#include "game/world/World.hpp"
 
 class GameScene: public Scene
 {
@@ -21,6 +21,8 @@ class GameScene: public Scene
 
 		void	_dispatch_packet(Client& client, u8 *data, u64 size);
 
+		static constexpr u16	RENDER_DISTANCE = 4; // in chunks
+
 		mbl::render::Shader         _mesh_shader;
     	mbl::render::Mesh           _mesh;
     	mbl::render::TextureAtlas   _atlas;
@@ -37,10 +39,14 @@ class GameScene: public Scene
 		float	_tp_distance = 3;
 		bool	_moving = false;
 
+		int	_fps = 0;
+
 		mbl::utils::Chrono	_server_updt_time;
 
 		bool					_paused = false;
 
 		mbl::net::Client		_netClient;
+
+		World				_world;
 	private:
 };

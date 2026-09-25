@@ -39,3 +39,16 @@ inline chunkLocalVec3i	worldToChunkLocal(const worldVec3i &pos, int chunk_size)
 		floorMod(pos.z(), chunk_size)
 	);
 }
+
+inline u64	hash(const vec3i& v)
+{
+	const u64 BITS = 21;
+	const u64 MASK = (1ULL << BITS) - 1;
+	const i64  BIAS = 1LL << (BITS - 1);
+
+	u64 ux = static_cast<u64>(static_cast<i64>(v.x()) + BIAS) & MASK;
+	u64 uy = static_cast<u64>(static_cast<i64>(v.y()) + BIAS) & MASK;
+	u64 uz = static_cast<u64>(static_cast<i64>(v.z()) + BIAS) & MASK;
+
+	return (ux << (BITS * 2)) | (uy << (BITS * 1)) | (uz << (BITS * 0));
+}

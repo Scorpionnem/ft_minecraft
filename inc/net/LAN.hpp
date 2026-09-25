@@ -2,6 +2,7 @@
 
 #include <string>
 #include "mbl.hpp"
+#include "game/world/Chunk.hpp"
 
 #define DEFAULT_BROADCAST_ADDR "224.0.0.42"
 #define DEFAULT_BROADCAST_PORT (6767)
@@ -82,8 +83,15 @@ namespace Packet
 	{
 		Packet::Header	hdr = {.type = CHUNKDATA_TYPE};
 
-		u64		chunk_hash = 0;
-		u16		id = 0;
-		u32		blocks[512] = {};
+		chunkWorldVec3i		chunk_pos = 0;
+		u16					id = 0;
+		u32					blocks[512] = {};
+	} __attribute__((packed));
+	#define CHUNKREQUEST_TYPE 8
+	struct	ChunkRequest
+	{
+		Packet::Header	hdr = {.type = CHUNKREQUEST_TYPE};
+
+		chunkWorldVec3i		chunk_pos = 0;
 	} __attribute__((packed));
 };

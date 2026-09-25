@@ -44,6 +44,7 @@ class	Chunk
 	public:
 		Chunk()
 		{
+			_busy = false;
 			_blockMesh.add_vertex_layout(0, 3, GL_FLOAT, offsetof(Vertex, pos));
 			_blockMesh.add_vertex_layout(1, 3, GL_FLOAT, offsetof(Vertex, normal));
 			_blockMesh.add_vertex_layout(2, 2, GL_FLOAT, offsetof(Vertex, uv));
@@ -67,13 +68,15 @@ class	Chunk
 			for (blockPos.x() = 0; blockPos.x() < Chunk::SIZE; blockPos.x()++)
 				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 				{
-					worldVec3i worldPos = chunkLocalToWorld(_pos, blockPos, Chunk::SIZE);
-					float	scale = 256.0f;
+					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
+					float	scale = 32.0f;
 					int	y = (sinf((worldPos.x()) / scale) + cosf(worldPos.z() / scale)) * 32;
 
 					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
 					{
-						if (blockPos.y() < y)
+						worldVec3i worldPos2 = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
+
+						if (worldPos2.y() < y)
 							_setBlockUnsafe(blockPos, 1);
 					}
 				}
@@ -86,6 +89,9 @@ class	Chunk
 		}
 		void	draw(const mbl::render::Camera& cam, bool draw_bounds = false)
 		{
+			if (_blockMesh.vertices() == 0)
+				return ;
+
 			mbl::render::Shader*		shader = _ext_shader ? _ext_shader : &_int_shader;
 
 			if (_need_upload)
@@ -97,16 +103,20 @@ class	Chunk
 			shader->bind();
 			shader->setMat4("uView", cam.getViewMatrix());
 			shader->setMat4("uProj", cam.getProjectionMatrix());
-			shader->setMat4("uModel", mat4f::translate(_pos));
+			shader->setMat4("uModel", mat4f::translate(_pos * Chunk::SIZE));
 			shader->setInt("uAtlas", 0);
 			_blockMesh.draw(GL_TRIANGLES);
 
 			if (draw_bounds)
-				mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{.pos = _pos, .size = vec3f(Chunk::SIZE)}, cam, vec3f(0, 1, 0));
+				mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{.pos = _pos * Chunk::SIZE, .size = vec3f(Chunk::SIZE)}, cam, vec3f(0, 1, 0));
 		}
 
 		void	setPos(const chunkWorldVec3i& pos) {_pos = pos;}
 		chunkWorldVec3i	pos() const {return (_pos);}
+
+		bool	busy() {return (_busy);}
+		void	setBusy(bool state) {_busy = state;}
+		std::array<BlockState, Chunk::VOLUME>&	data() {return (_blocks);}
 	private:
 		inline BlockState	_getBlockUnsafe(const chunkLocalVec3i &pos) {return (_blocks[_blockIndex(pos)]);}
 		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, BlockState block) {_blocks[_blockIndex(pos)] = block;}
@@ -117,9 +127,11 @@ class	Chunk
 		static mbl::render::Shader			_int_shader;
 		static mbl::render::TextureAtlas*	_texture;
 
-		chunkWorldVec3i							_pos;
-		std::array<BlockState, Chunk::VOLUME>	_blocks;
+		chunkWorldVec3i							_pos = {};
+		std::array<BlockState, Chunk::VOLUME>	_blocks = {};
 
 		bool							_need_upload = false;
 		mbl::render::Mesh				_blockMesh;
+
+		std::atomic_bool				_busy = false;
 };

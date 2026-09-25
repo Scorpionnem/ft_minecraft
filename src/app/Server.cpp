@@ -1,5 +1,6 @@
 #include "app/Server.hpp"
 #include "net/LAN.hpp"
+#include "game/world/World.hpp"
 
 #include <unistd.h>
 #include <netdb.h>
@@ -14,6 +15,8 @@ void    Server::init(int port)
 		throw std::runtime_error("Failed to open server. (" + std::string(strerror(errno)) + ")");
 
 	_running = true;
+
+	_threads.add(16);
 }
 
 void    Server::loop()
@@ -97,6 +100,8 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 		case ENTITYPOS_TYPE:
 		{
 			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+
+			_world.generateInRange(worldToChunkWorld(pos_pckt->pos, Chunk::SIZE), 3);
 
 			_server.send_all_except(fd, pos_pckt, sizeof(*pos_pckt));
 			break ;

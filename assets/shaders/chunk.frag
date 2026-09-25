@@ -10,6 +10,5 @@ uniform sampler2D uTex;
 
 void main()
 {
-	vec4	color = texture(uTex, vUv);
 	fragColor = vec4(abs(vNormal), 1);
 }

@@ -1,8 +1,8 @@
 #include "game/world/Chunk.hpp"
 
-mbl::render::Shader*	Chunk::_ext_shader;
+mbl::render::Shader*	Chunk::_ext_shader = nullptr;
 mbl::render::Shader		Chunk::_int_shader;
-mbl::render::TextureAtlas*	Chunk::_texture;
+mbl::render::TextureAtlas*	Chunk::_texture = nullptr;
 
 const vec2f	UV00(0.f, 0.f);
 const vec2f	UV10(1.f, 0.f);

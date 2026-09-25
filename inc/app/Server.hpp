@@ -1,6 +1,7 @@
 #pragma once
 
 #include "mbl.hpp"
+#include "game/world/World.hpp"
 
 class	Server
 {
@@ -35,4 +36,7 @@ class	Server
 
 		mbl::net::MulticastSender	broadcast;
 		mbl::utils::Chrono  		broadcast_time;
+
+		mbl::utils::ThreadPool	_threads;
+		World					_world;
 };

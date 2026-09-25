@@ -5,7 +5,7 @@
 
 void GameScene::init(Client& client)
 {
-	// SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -48,6 +48,8 @@ void GameScene::init(Client& client)
     mbl::render::renderer::AABBRenderer::gen_render_data();
     mbl::render::renderer::RayRenderer::gen_render_data();
 
+    Chunk::load_shader();
+
     _mesh.upload();
     _atlas.upload();
 }
@@ -57,7 +59,7 @@ void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
 	int	i = 0;
 	float	text_y_size = mbl::ui::getFontSizeY();
 
-	std::string	fps_str = std::to_string(static_cast<int>(1.0 / input.delta())) + " fps";
+	std::string	fps_str = std::to_string(_fps) + " fps";
 	mbl::ui::text(fps_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 
 	std::string	rtt_str = std::to_string(_netClient.rtt()) + " ms " + _netClient.addr() + ":" + std::to_string(_netClient.port());
@@ -90,6 +92,9 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
+		_fps = 1.0 / input.delta();
+		// _world.generateInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE);
+
 		Packet::EntityPos	en_pos = {};
 
 		en_pos.pos = _fp_cam.pos;
@@ -124,6 +129,8 @@ void GameScene::render(Client& client)
     mbl::utils::aabb3f	cam_box = {.pos = _fp_cam.pos - (size / 2), .size = size};
     mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
     mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
+
+    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam);
 }
 
 void	GameScene::_update_net(Client& client)
