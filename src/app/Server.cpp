@@ -5,6 +5,7 @@
 #include <unistd.h>
 #include <netdb.h>
 #include <arpa/inet.h>
+#include <algorithm>
 
 void    Server::init(int port)
 {
@@ -17,6 +18,7 @@ void    Server::init(int port)
 	_running = true;
 
 	_threads.add(16);
+	_world.setThreadPool(&_threads);
 }
 
 void    Server::loop()
@@ -25,6 +27,7 @@ void    Server::loop()
 	while (_running)
 	{
 		update_server();
+		_service_pending_chunk_sends();
 
 		if (c.get() > (1.0f / 20.0f))
 		{
@@ -101,13 +104,55 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 		{
 			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
 
-			_world.generateInRange(worldToChunkWorld(pos_pckt->pos, Chunk::SIZE), 3);
-
 			_server.send_all_except(fd, pos_pckt, sizeof(*pos_pckt));
+			break ;
+		}
+		case CHUNKREQUEST_TYPE:
+		{
+			Packet::ChunkRequest*	req_pckt = reinterpret_cast<Packet::ChunkRequest*>(data);
+			chunkPtr				chunk = _world.generateChunk(req_pckt->chunk_pos);
+
+			if (chunk->busy())
+				_pendingChunkSends.push_back({fd, chunk});
+			else
+				_send_chunk(fd, chunk);
 			break ;
 		}
 		default :
 			return ;
+	}
+}
+
+void	Server::_send_chunk(int fd, chunkPtr chunk)
+{
+	chunkWorldVec3i	pos = chunk->pos();
+
+	for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)
+	{
+		Packet::ChunkData	pckt = {};
+
+		pckt.chunk_pos = pos;
+		pckt.id = i;
+		std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
+
+		_server.send(fd, &pckt, sizeof(pckt));
+	}
+}
+
+void	Server::_service_pending_chunk_sends()
+{
+	auto	it = _pendingChunkSends.begin();
+
+	while (it != _pendingChunkSends.end())
+	{
+		if (it->chunk->busy())
+		{
+			++it;
+			continue ;
+		}
+
+		_send_chunk(it->fd, it->chunk);
+		it = _pendingChunkSends.erase(it);
 	}
 }
 

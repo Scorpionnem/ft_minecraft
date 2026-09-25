@@ -41,6 +41,9 @@ class	Chunk
 	public:
 		static constexpr u32 SIZE = 32;
 		static constexpr u32 VOLUME = (Chunk::SIZE * Chunk::SIZE * Chunk::SIZE);
+
+		static constexpr u32 BLOCKS_PER_PACKET = 512;
+		static constexpr u32 PACKET_COUNT = Chunk::VOLUME / Chunk::BLOCKS_PER_PACKET;
 	public:
 		Chunk()
 		{

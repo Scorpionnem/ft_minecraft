@@ -28,9 +28,18 @@ class	Server
         void	update_broadcaster();
         void	update_server();
 		void	_dispatch_packet(int fd, u8 *data, u64 size);
+		void	_send_chunk(int fd, chunkPtr chunk);
+		void	_service_pending_chunk_sends();
 	private:
 		std::map<int, u64>	_players;
 		mbl::net::Server	_server;
+
+		struct	PendingChunkSend
+		{
+			int			fd;
+			chunkPtr	chunk;
+		};
+		std::vector<PendingChunkSend>	_pendingChunkSends;
 
 		std::atomic_bool	_running;
 

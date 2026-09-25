@@ -47,6 +47,7 @@ class GameScene: public Scene
 
 		mbl::net::Client		_netClient;
 
+		mbl::utils::ThreadPool	_chunkThreads;
 		World				_world;
 	private:
 };

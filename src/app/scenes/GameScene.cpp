@@ -28,6 +28,10 @@ void GameScene::init(Client& client)
 			throw std::runtime_error(strerror(errno));
 	}
 
+	if (_chunkThreads.threads() == 0)
+		_chunkThreads.add(2);
+	_world.setThreadPool(&_chunkThreads);
+
 	_paused = false;
 	client.window().captureMouse(!_paused);
 
@@ -93,7 +97,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
 		_fps = 1.0 / input.delta();
-		// _world.generateInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE);
+		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient);
 
 		Packet::EntityPos	en_pos = {};
 
@@ -181,6 +185,13 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 		    mbl::utils::aabb3f	cam_box = {.pos = pos_pckt->pos - (size / 2), .size = size};
 		    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
 		    mbl::render::renderer::RayRenderer::draw(pos_pckt->pos, pos_pckt->pos + mbl::render::Camera::front(pos_pckt->yaw, pos_pckt->pitch), *_render_cam, vec3f(0, 0, 1));
+			break ;
+		}
+		case CHUNKDATA_TYPE:
+		{
+			Packet::ChunkData*	chunk_pckt = reinterpret_cast<Packet::ChunkData*>(data);
+
+			_world.netChunkData(chunk_pckt);
 			break ;
 		}
 		default :
@@ -294,13 +305,13 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
 		_tp_distance_target_set = std::clamp(_tp_distance_target_set, 1.0f, 128.0f);
 	}
 
-	constexpr float	anim_speed = 0.33;
+	constexpr float	anim_speed = 8;
 	constexpr float	snap_distance = (1 / 64.0f);
 	if (_tp_toggle)
 	{
 		if (_moving)
 		{
-			_tp_distance = lerp(_tp_distance, _tp_distance_target_set, anim_speed);
+			_tp_distance = lerp(_tp_distance, _tp_distance_target_set, anim_speed * input.delta());
 			_transition_cam.pos = _fp_cam.pos - vec3f(_tp_distance) * _fp_cam.front();
 			if (vec3f::distance(_transition_cam.pos, _tp_cam.pos) < snap_distance)
 				_moving = false;
@@ -312,7 +323,7 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
 	{
 		if (_moving)
 		{
-			_tp_distance = lerp(_tp_distance, 0, anim_speed);
+			_tp_distance = lerp(_tp_distance, 0, anim_speed * input.delta());
 			_transition_cam.pos = _fp_cam.pos - vec3f(_tp_distance) * _fp_cam.front();
 			if (vec3f::distance(_transition_cam.pos, _fp_cam.pos) < snap_distance)
 				_moving = false;

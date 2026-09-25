@@ -2,7 +2,10 @@
 
 #include "game/world/Chunk.hpp"
 #include "net/LAN.hpp"
+
+#include <algorithm>
 #include <memory>
+#include <unordered_map>
 
 using chunkPosHash = u64;
 using chunkPtr = std::shared_ptr<Chunk>;
@@ -63,7 +66,7 @@ class	World
 						chunkPtr c = getChunk(pos);
 						if (c && !c->busy())
 						{
-							c->draw(cam, true);
+							c->draw(cam);
 						}
 					}
 		}
@@ -90,7 +93,6 @@ class	World
 			auto func = [c]()
 				{
 					c->generate();
-					c->mesh();
 					c->setBusy(false);
 				};
 
@@ -108,42 +110,84 @@ class	World
 			chunkPosHash	h = hash(pos);
 			chunkPtr		c = _chunkPool.get();
 
+			c->setPos(pos);
+
 			_chunks.insert({h, c});
 			return (c);
 		}
 
-		void	requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
+		bool	requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
 		{
 			chunkPosHash	h = hash(pos);
 
-			if (_chunkRequests.contains(h))
-				return ;
+			if (_chunkRequests.contains(h) || getChunk(pos))
+				return (false);
 
 			chunkPtr	c = addChunk(pos);
 			c->setBusy(true);
-			_chunkRequests.insert({h, c});
+			_chunkRequests.insert({h, PendingChunk{.chunk = c}});
 
-			Packet::ChunkRequest	crq_pclt = {};
+			Packet::ChunkRequest	crq_pckt = {};
 
-			crq_pclt.chunk_pos = pos;
-			net.send(&crq_pclt, sizeof(crq_pclt));
+			crq_pckt.chunk_pos = pos;
+			net.send(&crq_pckt, sizeof(crq_pckt));
+			return (true);
+		}
+		void	requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, u32 max_new_requests = 8)
+		{
+			chunkWorldVec3i	pos;
+			u32				sent = 0;
+
+			for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance && sent < max_new_requests; pos.x()++)
+				for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance && sent < max_new_requests; pos.y()++)
+					for (pos.z() = center_chunk.z() - render_distance; pos.z() <= center_chunk.z() + render_distance && sent < max_new_requests; pos.z()++)
+						if (requestChunk(pos, net))
+							sent++;
 		}
 		void	netChunkData(const Packet::ChunkData* pckt)
 		{
 			chunkPosHash	h = hash(pckt->chunk_pos);
+			auto			it = _chunkRequests.find(h);
 
-			if (!_chunkRequests.contains(h))
+			if (it == _chunkRequests.end() || pckt->id >= Chunk::PACKET_COUNT)
 				return ;
 
-			chunkPtr c = _chunkRequests.find(h)->second;
+			PendingChunk&	pending = it->second;
+			u64				bit = 1ULL << pckt->id;
 
-			memcpy(c->data().data() + pckt->id * 64, pckt->blocks, sizeof(pckt->blocks));
+			if (pending.receivedMask & bit)
+				return ;
+
+			std::copy(pckt->blocks, pckt->blocks + Chunk::BLOCKS_PER_PACKET, pending.chunk->data().begin() + pckt->id * Chunk::BLOCKS_PER_PACKET);
+			pending.receivedMask |= bit;
+
+			if (pending.receivedMask != (~0ULL >> (64 - Chunk::PACKET_COUNT)))
+				return ;
+
+			chunkPtr	c = pending.chunk;
+			auto		func = [c]()
+				{
+					c->mesh();
+					c->setBusy(false);
+				};
+
+			if (_threads)
+				_threads->queue_task(func);
+			else
+				func();
+
+			_chunkRequests.erase(it);
 		}
 	private:
+		struct	PendingChunk
+		{
+			chunkPtr	chunk;
+			u64			receivedMask = 0;
+		};
 
-		std::unordered_map<chunkPosHash, chunkPtr>	_chunkRequests;
-		std::unordered_map<chunkPosHash, chunkPtr>	_chunks;
-		ChunkPool									_chunkPool;
+		std::unordered_map<chunkPosHash, PendingChunk>	_chunkRequests;
+		std::unordered_map<chunkPosHash, chunkPtr>		_chunks;
+		ChunkPool										_chunkPool;
 
 		mbl::utils::ThreadPool*						_threads = nullptr;
 };
