@@ -5,7 +5,7 @@
 
 void GameScene::init(Client& client)
 {
-	SDL_GL_SetSwapInterval(0);
+	// SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -54,6 +54,8 @@ void GameScene::init(Client& client)
 
     Chunk::load_shader();
 
+    _entities.clear();
+
     _mesh.upload();
     _atlas.upload();
 }
@@ -99,11 +101,12 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		_fps = 1.0 / input.delta();
 		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient);
 
-		Packet::EntityPos	en_pos = {};
+		Packet::EntityInfo	en_pos = {};
 
-		en_pos.pos = _fp_cam.pos;
-		en_pos.yaw = _fp_cam.yaw;
-		en_pos.pitch = _fp_cam.pitch;
+		en_pos.entity = Player();
+		en_pos.entity.pos = _fp_cam.pos;
+		en_pos.entity.yaw = _fp_cam.yaw;
+		en_pos.entity.pitch = _fp_cam.pitch;
 		_netClient.send(&en_pos, sizeof(en_pos));
 		_server_updt_time.start();
 	}
@@ -135,6 +138,8 @@ void GameScene::render(Client& client)
     mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
 
     _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam);
+
+    _entities.draw(*_render_cam);
 }
 
 void	GameScene::_update_net(Client& client)
@@ -143,7 +148,7 @@ void	GameScene::_update_net(Client& client)
 	u8					buf[4096] = {};
 	u64					size;
 
-	int	MAX_PACKETS_PER_FRAME = 64;
+	int	MAX_PACKETS_PER_FRAME = 512;
 	int	packets_recvd = 0;
 
 	_netClient.update();
@@ -177,14 +182,12 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
-		case ENTITYPOS_TYPE:
+		case ENTITYINFO_TYPE:
 		{
-			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+			Packet::EntityInfo*	pos_pckt = reinterpret_cast<Packet::EntityInfo*>(data);
+			Entity	en = pos_pckt->entity;
 
-			vec3f	size = vec3f(0.5);
-		    mbl::utils::aabb3f	cam_box = {.pos = pos_pckt->pos - (size / 2), .size = size};
-		    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
-		    mbl::render::renderer::RayRenderer::draw(pos_pckt->pos, pos_pckt->pos + mbl::render::Camera::front(pos_pckt->yaw, pos_pckt->pitch), *_render_cam, vec3f(0, 0, 1));
+			_entities.set(en.id, en);
 			break ;
 		}
 		case CHUNKDATA_TYPE:

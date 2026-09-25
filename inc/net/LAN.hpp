@@ -3,6 +3,7 @@
 #include <string>
 #include "mbl.hpp"
 #include "game/world/Chunk.hpp"
+#include "game/entity/Entity.hpp"
 
 #define DEFAULT_BROADCAST_ADDR "224.0.0.42"
 #define DEFAULT_BROADCAST_PORT (6767)
@@ -60,15 +61,13 @@ namespace Packet
 		char			name[MAX_NAME_LEN + 1] = {};
 	} __attribute__((packed));
 
-	#define ENTITYPOS_TYPE 5
-	struct	EntityPos
+	#define ENTITYINFO_TYPE 5
+	struct	EntityInfo
 	{
-		Packet::Header	hdr = {.type = ENTITYPOS_TYPE};
+		Packet::Header	hdr = {.type = ENTITYINFO_TYPE};
 
 		u64		id;
-		vec3f	pos;
-		float	yaw;
-		float	pitch;
+		Entity	entity = {};
 	} __attribute__((packed));
 	#define ENTITYREMOVE_TYPE 6
 	struct	EntityRemove

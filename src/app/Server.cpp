@@ -77,9 +77,12 @@ void	Server::update_server()
 
 		if (event == mbl::net::Server::Event::CONNECTION)
 		{
+			_player_entities.insert({fd, _entities.add(Player())});
 		}
 		else if (event == mbl::net::Server::Event::DISCONNECT)
 		{
+			_entities.remove(_player_entities[fd]);
+			_player_entities.erase(fd);
 		}
 		else if (event == mbl::net::Server::Event::RECV)
 		{
@@ -100,11 +103,19 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
-		case ENTITYPOS_TYPE:
+		case ENTITYINFO_TYPE:
 		{
-			Packet::EntityPos*	pos_pckt = reinterpret_cast<Packet::EntityPos*>(data);
+			Packet::EntityInfo*	pos_pckt = reinterpret_cast<Packet::EntityInfo*>(data);
 
-			_server.send_all_except(fd, pos_pckt, sizeof(*pos_pckt));
+			Entity& en = _entities.get(_player_entities[fd]);
+
+			en.pos = pos_pckt->entity.pos;
+			en.yaw = pos_pckt->entity.yaw;
+			en.pitch = pos_pckt->entity.pitch;
+			Packet::EntityInfo	enpckt = {};
+			enpckt.entity = en;
+			enpckt.id = en.id;
+			_server.send_all_except(fd, &enpckt, sizeof(enpckt));
 			break ;
 		}
 		case CHUNKREQUEST_TYPE:

@@ -3,6 +3,7 @@
 #include "app/scene/Scene.hpp"
 #include "app/Server.hpp"
 #include "game/world/World.hpp"
+#include "game/entity/Entities.hpp"
 
 class GameScene: public Scene
 {
@@ -49,5 +50,6 @@ class GameScene: public Scene
 
 		mbl::utils::ThreadPool	_chunkThreads;
 		World				_world;
+		Entities			_entities;
 	private:
 };

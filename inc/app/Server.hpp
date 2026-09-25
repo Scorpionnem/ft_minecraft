@@ -2,6 +2,7 @@
 
 #include "mbl.hpp"
 #include "game/world/World.hpp"
+#include "game/entity/Entities.hpp"
 
 class	Server
 {
@@ -48,4 +49,6 @@ class	Server
 
 		mbl::utils::ThreadPool	_threads;
 		World					_world;
+		Entities				_entities;
+		std::map<int, u64>		_player_entities;
 };
