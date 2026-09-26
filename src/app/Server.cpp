@@ -71,6 +71,7 @@ void	Server::update_server()
 	{
 		if (_server.recv(buf, sizeof(buf), event, size, fd) == -1)
 		{
+			perror("recv");
 			_running = false;
 			break ;
 		}
@@ -112,6 +113,7 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 			en.pos = pos_pckt->entity.pos;
 			en.yaw = pos_pckt->entity.yaw;
 			en.pitch = pos_pckt->entity.pitch;
+			en.size = pos_pckt->entity.size;
 			Packet::EntityInfo	enpckt = {};
 			enpckt.entity = en;
 			enpckt.id = en.id;

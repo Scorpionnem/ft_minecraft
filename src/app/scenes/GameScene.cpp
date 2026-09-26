@@ -115,7 +115,8 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		en_pos.entity.pos = _fp_cam.pos;
 		en_pos.entity.yaw = _fp_cam.yaw;
 		en_pos.entity.pitch = _fp_cam.pitch;
-		netSend(&en_pos, sizeof(en_pos));
+		_tx_pckt++;
+		_netClient.send(&en_pos, sizeof(en_pos));
 		_server_updt_time.start();
 	}
 

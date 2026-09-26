@@ -20,12 +20,6 @@ class GameScene: public Scene
 		void	_update_net(Client& client);
 		void    _updateCamera(const mbl::platform::Input& input);
 
-		int netSend(const void *data, u64 size)
-		{
-			_tx_pckt++;
-			return (_netClient.send(data, size));
-		}
-
 		void	_dispatch_packet(Client& client, u8 *data, u64 size);
 
 		static constexpr u16	RENDER_DISTANCE = 12; // in chunks
