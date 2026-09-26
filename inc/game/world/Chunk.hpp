@@ -3,6 +3,7 @@
 #include "math/math.hpp"
 #include "game/world/utils/Positions.hpp"
 #include "mbl.hpp"
+#include "game/world/generation/noise/Noise.hpp"
 
 #include <array>
 
@@ -79,8 +80,9 @@ class	Chunk
 				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 				{
 					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-					float	scale = 32.0f;
-					int	y = (sinf((worldPos.x()) / scale) + cosf(worldPos.z() / scale)) * 32;
+
+					float	scale = 0.01f;
+					int	y = Noise::noise(vec2f(worldPos.x(), worldPos.z()), 0.0025, 1, 8) * 320;
 
 					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
 					{
