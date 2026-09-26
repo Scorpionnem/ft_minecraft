@@ -50,7 +50,7 @@ void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const
 			}
 }
 
-void	World::requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, u32 max_new_requests)
+void	World::requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, int& tx_pckt)
 {
 	chunkWorldVec3i	pos;
 	u32				sent = 0;
@@ -72,19 +72,14 @@ void	World::requestInRange(const chunkWorldVec3i& center_chunk, u16 render_dista
 		});
 
 	for (const auto& p : requests)
-	{
-		if (requestChunk(p, net))
-			sent++;
-		if (sent > max_new_requests)
-			break ;
-	}
+		requestChunk(p, net, tx_pckt);
 }
 
-bool	World::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
+bool	World::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net, int& tx_pckt)
 {
 	chunkPosHash	h = hash(pos);
 
-	if (_chunkRequests.contains(h) || getChunk(pos))
+	if (_chunkRequests.contains(h) || getChunk(pos) || _chunkRequests.size() >= MAX_CHUNK_REQUESTS)
 		return (false);
 
 	chunkPtr	c = addChunk(pos);
@@ -94,6 +89,7 @@ bool	World::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
 	Packet::ChunkRequest	crq_pckt = {};
 
 	crq_pckt.chunk_pos = pos;
+	tx_pckt++;
 	net.send(&crq_pckt, sizeof(crq_pckt));
 	return (true);
 }

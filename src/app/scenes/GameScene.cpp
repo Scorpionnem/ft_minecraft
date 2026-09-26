@@ -5,7 +5,7 @@
 
 void GameScene::init(Client& client)
 {
-	// SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -104,10 +104,10 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
-		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient);
-
 		_fps = 1.0 / input.delta();
 		_rx_pckt = 0; _tx_pckt = 0;
+
+		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
 
 		Packet::EntityInfo	en_pos = {};
 
@@ -159,6 +159,7 @@ void	GameScene::_update_net(Client& client)
 	int	packets_recvd = 0;
 
 	_netClient.update();
+
 	do
 	{
 		if (_netClient.recv(buf, sizeof(buf), event, size) == -1)

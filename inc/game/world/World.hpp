@@ -42,6 +42,8 @@ class	ChunkPool
 class	World
 {
 	public:
+		static constexpr int	MAX_CHUNK_REQUESTS = 8;
+	public:
 		World() {}
 		~World() {}
 
@@ -59,8 +61,8 @@ class	World
 		chunkPtr	addChunk(const chunkWorldVec3i& pos);
 		void		removeChunk(const chunkWorldVec3i& pos);
 
-		bool	requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net);
-		void	requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, u32 max_new_requests = 32);
+		bool	requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net, int& tx_pckt);
+		void	requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, int& tx_pckt);
 
 		void	netChunkData(const Packet::ChunkData* pckt);
 		void	netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt);
