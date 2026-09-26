@@ -40,8 +40,8 @@ class	Chunk
 			Chunk::Vertex	v3;
 		};
 	public:
-		static constexpr u32 SIZE = 32;
-		static constexpr u32 VOLUME = (Chunk::SIZE * Chunk::SIZE * Chunk::SIZE);
+		static constexpr int SIZE = 32;
+		static constexpr int VOLUME = (Chunk::SIZE * Chunk::SIZE * Chunk::SIZE);
 
 		static constexpr u32 BLOCKS_PER_PACKET = 512;
 		static constexpr u32 PACKET_COUNT = Chunk::VOLUME / Chunk::BLOCKS_PER_PACKET;
@@ -80,8 +80,6 @@ class	Chunk
 				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 				{
 					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-
-					float	scale = 0.01f;
 					int	y = Noise::noise(vec2f(worldPos.x(), worldPos.z()), 0.0025, 1, 8) * 320;
 
 					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)

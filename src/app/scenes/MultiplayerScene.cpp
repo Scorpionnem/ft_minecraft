@@ -26,7 +26,7 @@ SceneCommand MultiplayerScene::update(Client& client, const mbl::platform::Input
 
 	_remove_outdated_servers();
 
-	if (_list_servers(client))
+	if (_list_servers())
 	{
 		client.addr() = _addr;
 		client.port() = _port;
@@ -39,7 +39,7 @@ SceneCommand MultiplayerScene::update(Client& client, const mbl::platform::Input
 	return {};
 }
 
-int	MultiplayerScene::_list_servers(Client& client)
+int	MultiplayerScene::_list_servers()
 {
 	float	offset = 0.0 - ((float)_servers.size() - 1.0) / 2.0;
 	for (auto& serv : _servers)

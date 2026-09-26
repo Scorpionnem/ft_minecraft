@@ -17,17 +17,13 @@ class GameScene: public Scene
 		void			unload(Client& client) override;
 	private:
 		void	_show_f3(Client& client, const mbl::platform::Input& input);
-		void	_update_net(Client& client);
+		void	_update_net();
 		void    _updateCamera(const mbl::platform::Input& input);
 
-		void	_dispatch_packet(Client& client, u8 *data, u64 size);
+		void	_dispatch_packet(u8 *data, u64 size);
 
 		static constexpr u16	RENDER_DISTANCE = 12; // in chunks
-		static constexpr u32	MAX_PACKETS_PER_FRAME = 64;
-
-		mbl::render::Shader         _mesh_shader;
-    	mbl::render::Mesh           _mesh;
-    	mbl::render::TextureAtlas   _atlas;
+		static constexpr int	MAX_PACKETS_PER_FRAME = 64;
 
 		std::thread				_serverThread;
 		std::shared_ptr<Server>	_server;
@@ -50,8 +46,8 @@ class GameScene: public Scene
 		bool					_paused = false;
 
 		mbl::net::Client		_netClient;
-
 		mbl::utils::ThreadPool	_chunkThreads;
+
 		World				_world;
 		Entities			_entities;
 	private:

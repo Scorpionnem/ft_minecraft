@@ -24,7 +24,7 @@ namespace Noise
 	inline float	rand2dTo1d(vec2f value, vec2f dotDir = vec2f(12.9898, 78.233))
 	{
 		vec2f smallValue = sin(value);
-		float random = vec3f::dot(smallValue, dotDir);
+		float random = vec2f::dot(smallValue, dotDir);
 		random = frac(sin(random) * 143758.5453);
 		return (random);
 	}

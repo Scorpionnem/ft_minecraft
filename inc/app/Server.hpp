@@ -32,7 +32,6 @@ class	Server
 		void	_send_chunk(int fd, chunkPtr chunk);
 		void	_service_pending_chunk_sends();
 	private:
-		std::map<int, u64>	_players;
 		mbl::net::Server	_server;
 
 		struct	PendingChunkSend

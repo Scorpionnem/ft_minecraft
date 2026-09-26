@@ -53,7 +53,6 @@ void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const
 void	World::requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, int& tx_pckt)
 {
 	chunkWorldVec3i	pos;
-	u32				sent = 0;
 	render_distance /= 2;
 
 	std::vector<chunkWorldVec3i>	requests;

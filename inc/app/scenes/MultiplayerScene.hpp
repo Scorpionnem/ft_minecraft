@@ -17,7 +17,7 @@ class MultiplayerScene: public Scene
 		void	_update_broadcast();
 		void	_dispatch_packet(u8 *data, u64 size);
 		void	_remove_outdated_servers();
-		int	_list_servers(Client& client);
+		int	_list_servers();
 
 		std::vector<LANServer>		_servers;
 		mbl::net::MulticastReceiver	_broadcast;

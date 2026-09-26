@@ -1,7 +1,7 @@
 NAME :=	ft_minecraft
 
 CXX := c++
-CXXFLAGS :=	-g -MP -MMD -std=c++20 # -Wall -Wextra -Werror
+CXXFLAGS :=	-g -MP -MMD -std=c++20 -Wall -Wextra -Werror -O3
 
 LIB_DIR :=	lib/
 LIBMBL_PATH := $(LIB_DIR)mbl/

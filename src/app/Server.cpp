@@ -89,7 +89,6 @@ void	Server::update_server()
 		{
 			_dispatch_packet(fd, buf, size);
 		}
-
 	} while (event != mbl::net::Server::Event::NONE);
 }
 

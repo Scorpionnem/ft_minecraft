@@ -40,33 +40,21 @@ void GameScene::init(Client& client)
 	client.window().captureMouse(!_paused);
 
 	_fp_cam = {};
-	_fp_cam.near = 0.01;
-    _fp_cam.far = 1000.0;
-    _fp_cam.fov = 70;
-    _fp_cam.pos = vec3f(0);
-    _fp_cam.yaw = 0;
-    _fp_cam.pitch = 0;
     _transition_cam = {};
     _tp_cam = {};
-    _render_cam = &_fp_cam;
 
-    _mesh_shader.load("assets/shaders/mesh.vert", "assets/shaders/mesh.frag");
-    mbl::loader::mesh::obj::load("assets/models/teapot.obj", _mesh, _atlas);
+    _render_cam = &_fp_cam;
 
     mbl::render::renderer::AABBRenderer::gen_render_data();
     mbl::render::renderer::RayRenderer::gen_render_data();
-
     Chunk::load_shader();
 
     _entities.clear();
-
-    _mesh.upload();
-    _atlas.upload();
 }
 
-void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
+void	GameScene::_show_f3(Client&, const mbl::platform::Input&)
 {
-	int	i = 0;
+	int		i = 0;
 	float	text_y_size = mbl::ui::getFontSizeY();
 
 	std::string	fps_str = std::to_string(_fps) + " fps";
@@ -124,7 +112,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 	try
 	{
-		_update_net(client);
+		_update_net();
 	} catch (const std::exception& e)
 	{
 		std::cout << e.what() << std::endl;
@@ -139,19 +127,22 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 	return {};
 }
 
-void GameScene::render(Client& client)
+void GameScene::render(Client&)
 {
-	vec3f	size = vec3f(0.5);
-    mbl::utils::aabb3f	cam_box = {.pos = _fp_cam.pos - (size / 2), .size = size};
-    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
-    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
+	if (_tp_toggle || (!_tp_toggle && _moving))
+	{
+		vec3f	size = vec3f(0.5);
+	    mbl::utils::aabb3f	cam_box = {.pos = _fp_cam.pos - (size / 2), .size = size};
+	    mbl::render::renderer::AABBRenderer::draw(cam_box, *_render_cam, vec3f(1));
+	    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
+	}
 
     _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam);
 
     _entities.draw(*_render_cam);
 }
 
-void	GameScene::_update_net(Client& client)
+void	GameScene::_update_net()
 {
 	mbl::net::Client::Event	event;
 	u8					buf[4096] = {};
@@ -172,14 +163,14 @@ void	GameScene::_update_net(Client& client)
 		}
 		if (event == mbl::net::Client::Event::RECV)
 		{
-			_dispatch_packet(client, buf, size);
+			_dispatch_packet(buf, size);
 
 			packets_recvd++;
 		}
 	} while (event != mbl::net::Client::Event::NONE && packets_recvd < MAX_PACKETS_PER_FRAME);
 }
 
-void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
+void	GameScene::_dispatch_packet(u8 *data, u64 size)
 {
 	if (size < sizeof(Packet::Header))
 		return ;
@@ -233,40 +224,40 @@ void GameScene::unload(Client& client)
 	}
 }
 
-void    rayBoxDst(float& dstToBox, float& dstInsideBox, mbl::utils::aabb3f bounds, vec3f rayOrig, vec3f rayDir)
-{
-    vec3f	t0 = (bounds.pos - rayOrig) / rayDir;
-    vec3f	t1 = ((bounds.pos + bounds.size) - rayOrig) / rayDir;
-    vec3f	tmin = min(t0, t1);
-    vec3f	tmax = max(t0, t1);
+// void    rayBoxDst(float& dstToBox, float& dstInsideBox, mbl::utils::aabb3f bounds, vec3f rayOrig, vec3f rayDir)
+// {
+//     vec3f	t0 = (bounds.pos - rayOrig) / rayDir;
+//     vec3f	t1 = ((bounds.pos + bounds.size) - rayOrig) / rayDir;
+//     vec3f	tmin = min(t0, t1);
+//     vec3f	tmax = max(t0, t1);
 
-    float   dstA = std::max(std::max(tmin.x(), tmin.y()), tmin.z());
-    float   dstB = std::min(std::min(tmax.x(), tmax.y()), tmax.z());
+//     float   dstA = std::max(std::max(tmin.x(), tmin.y()), tmin.z());
+//     float   dstB = std::min(std::min(tmax.x(), tmax.y()), tmax.z());
 
-    dstToBox = std::max(0.0f, dstA);
-    dstInsideBox = std::max(0.0f, dstB - dstToBox);
-}
+//     dstToBox = std::max(0.0f, dstA);
+//     dstInsideBox = std::max(0.0f, dstB - dstToBox);
+// }
 
-vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, const mbl::utils::aabb3f& b, bool slide, mbl::render::Camera& cam)
-{
-	vec3f	res;
-	mbl::utils::aabb3f	test_box = {.pos = b.pos - (a.size / 2.0), .size = b.size + (a.size)};
-	mbl::render::renderer::AABBRenderer::draw(test_box, cam, vec3f(0, 0, 1));
-	for (int i = 0; i < 3; i++)
-	{
-		vec3f	vel = vec3f(i == 0 ? velocity.x() : 0, i == 1 ? velocity.y() : 0, i == 2 ? velocity.z() : 0);
+// vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, const mbl::utils::aabb3f& b, bool slide, mbl::render::Camera& cam)
+// {
+// 	vec3f	res;
+// 	mbl::utils::aabb3f	test_box = {.pos = b.pos - (a.size / 2.0), .size = b.size + (a.size)};
+// 	mbl::render::renderer::AABBRenderer::draw(test_box, cam, vec3f(0, 0, 1));
+// 	for (int i = 0; i < 3; i++)
+// 	{
+// 		vec3f	vel = vec3f(i == 0 ? velocity.x() : 0, i == 1 ? velocity.y() : 0, i == 2 ? velocity.z() : 0);
 
-		float	dstToBox;
-		float	dstInsideBox;
-		rayBoxDst(dstToBox, dstInsideBox, test_box, cam.pos, vel);
+// 		float	dstToBox;
+// 		float	dstInsideBox;
+// 		rayBoxDst(dstToBox, dstInsideBox, test_box, cam.pos, vel);
 
-		if (dstInsideBox > 0) // hit box
-			res += (min(abs(vel), abs(vel * dstToBox)) * sign(vel));
-		else
-			res += vel;
-	}
-	return (res);
-}
+// 		if (dstInsideBox > 0) // hit box
+// 			res += (min(abs(vel), abs(vel * dstToBox)) * sign(vel));
+// 		else
+// 			res += vel;
+// 	}
+// 	return (res);
+// }
 
 void    GameScene::_updateCamera(const mbl::platform::Input& input)
 {
@@ -276,24 +267,23 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
 		return ;
 
     float   move_speed = 20 * input.delta();
-    float   speed = 100 * input.delta();
     float	sensitivity = 0.3;
 
     vec3f right = vec3f(cos(radians(_fp_cam.yaw)), 0.0f, sin(radians(_fp_cam.yaw)));
 
-    vec3f	velocity;
-    if (input.isDown(SDLK_w))
-        velocity += (_fp_cam.front() * move_speed);
-    if (input.isDown(SDLK_s))
-        velocity += vec3f(-1.0) * (_fp_cam.front() * move_speed);
-    if (input.isDown(SDLK_SPACE))
-        velocity += (vec3f(0, 1, 0) * move_speed);
-    if (input.isDown(SDLK_LSHIFT))
-        velocity += vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
-    if (input.isDown(SDLK_a))
-        velocity += -(right * move_speed);
-    if (input.isDown(SDLK_d))
-        velocity += right * move_speed;
+	vec3f	velocity;
+	if (input.isDown(SDLK_w))
+		velocity += (_fp_cam.front() * move_speed);
+	if (input.isDown(SDLK_s))
+		velocity += vec3f(-1.0) * (_fp_cam.front() * move_speed);
+	if (input.isDown(SDLK_SPACE))
+		velocity += (vec3f(0, 1, 0) * move_speed);
+	if (input.isDown(SDLK_LSHIFT))
+		velocity += vec3f(-1.0) * (vec3f(0, 1, 0) * move_speed);
+	if (input.isDown(SDLK_a))
+		velocity += -(right * move_speed);
+	if (input.isDown(SDLK_d))
+		velocity += right * move_speed;
 
 	_fp_cam.pos += velocity;
 
