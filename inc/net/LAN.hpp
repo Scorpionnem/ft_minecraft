@@ -36,31 +36,6 @@ namespace Packet
 		int				port = 0;
 	} __attribute__((packed));
 
-	#define CONNECT_TYPE 2
-	struct	Connect // packet sent by player when connecting
-	{
-		Packet::Header	hdr = {.type = CONNECT_TYPE};
-
-		char			name[MAX_NAME_LEN + 1] = {};
-	} __attribute__((packed));
-
-	#define ANNOUNCECONNECT_TYPE 3
-	struct	AnnounceConnect // packet sent by server to announce new player
-	{
-		Packet::Header	hdr = {.type = ANNOUNCECONNECT_TYPE};
-
-		char			name[MAX_NAME_LEN + 1] = {};
-		u8				slot = 0; // player slot 0 -> 3
-	} __attribute__((packed));
-
-	#define ANNOUNCEDISCONNECT_TYPE 4
-	struct	AnnounceDisconnect // packet sent by server to announce player removed
-	{
-		Packet::Header	hdr = {.type = ANNOUNCEDISCONNECT_TYPE};
-
-		char			name[MAX_NAME_LEN + 1] = {};
-	} __attribute__((packed));
-
 	#define ENTITYINFO_TYPE 5
 	struct	EntityInfo
 	{
@@ -68,13 +43,6 @@ namespace Packet
 
 		u64		id;
 		Entity	entity = {};
-	} __attribute__((packed));
-	#define ENTITYREMOVE_TYPE 6
-	struct	EntityRemove
-	{
-		Packet::Header	hdr = {.type = ENTITYREMOVE_TYPE};
-
-		u64		id;
 	} __attribute__((packed));
 
 	#define CHUNKDATA_TYPE 7

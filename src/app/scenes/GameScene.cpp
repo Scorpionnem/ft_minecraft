@@ -5,7 +5,7 @@
 
 void GameScene::init(Client& client)
 {
-	SDL_GL_SetSwapInterval(0);
+	// SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -75,6 +75,8 @@ void	GameScene::_show_f3(Client& client, const mbl::platform::Input& input)
 	std::string	rtt_str = std::to_string(_netClient.rtt()) + " ms " + _netClient.addr() + ":" + std::to_string(_netClient.port());
 	mbl::ui::text(rtt_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 
+	std::string	net_data_str = "RX/TX: " + std::to_string(_rx_pckt) + " / " + std::to_string(_tx_pckt);
+	mbl::ui::text(net_data_str, vec2f(0, text_y_size * i++), ANCHOR_TOP_LEFT);
 	i++;
 
 	std::string	pos_str = "XYZ: " + std::to_string(_fp_cam.pos.x()) + " / " + std::to_string(_fp_cam.pos.y()) + " / " + std::to_string(_fp_cam.pos.z());
@@ -103,7 +105,9 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
 		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient);
+
 		_fps = 1.0 / input.delta();
+		_rx_pckt = 0; _tx_pckt = 0;
 
 		Packet::EntityInfo	en_pos = {};
 
@@ -111,7 +115,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		en_pos.entity.pos = _fp_cam.pos;
 		en_pos.entity.yaw = _fp_cam.yaw;
 		en_pos.entity.pitch = _fp_cam.pitch;
-		_netClient.send(&en_pos, sizeof(en_pos));
+		netSend(&en_pos, sizeof(en_pos));
 		_server_updt_time.start();
 	}
 
@@ -152,7 +156,6 @@ void	GameScene::_update_net(Client& client)
 	u8					buf[4096] = {};
 	u64					size;
 
-	int	MAX_PACKETS_PER_FRAME = 128;
 	int	packets_recvd = 0;
 
 	_netClient.update();
@@ -167,7 +170,6 @@ void	GameScene::_update_net(Client& client)
 		}
 		if (event == mbl::net::Client::Event::RECV)
 		{
-			mbl::ui::text(std::to_string(size), 0, ANCHOR_TOP_RIGHT);
 			_dispatch_packet(client, buf, size);
 
 			packets_recvd++;
@@ -183,6 +185,8 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 	Packet::Header*	hdr = reinterpret_cast<Packet::Header*>(data);
 	if (hdr->magic != MINECRAFT_PCKT_MAGIC) // invalid packet
 		return ;
+
+	_rx_pckt++;
 
 	switch (hdr->type)
 	{

@@ -25,6 +25,7 @@ SRCS :=	src/main.cpp							\
 		src/app/scenes/SingleplayerScene.cpp	\
 		src/app/scenes/GameScene.cpp			\
 		src/game/world/Chunk.cpp				\
+		src/game/world/World.cpp				\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

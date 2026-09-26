@@ -20,9 +20,16 @@ class GameScene: public Scene
 		void	_update_net(Client& client);
 		void    _updateCamera(const mbl::platform::Input& input);
 
+		int netSend(const void *data, u64 size)
+		{
+			_tx_pckt++;
+			return (_netClient.send(data, size));
+		}
+
 		void	_dispatch_packet(Client& client, u8 *data, u64 size);
 
 		static constexpr u16	RENDER_DISTANCE = 8; // in chunks
+		static constexpr u32	MAX_PACKETS_PER_FRAME = 512;
 
 		mbl::render::Shader         _mesh_shader;
     	mbl::render::Mesh           _mesh;
@@ -41,6 +48,8 @@ class GameScene: public Scene
 		bool	_moving = false;
 
 		int	_fps = 0;
+		int	_rx_pckt = 0;
+		int	_tx_pckt = 0;
 
 		mbl::utils::Chrono	_server_updt_time;
 
