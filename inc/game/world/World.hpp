@@ -22,6 +22,7 @@ class	ChunkPool
 			{
 				chunkPtr c = _freeChunksPool.back();
 				_freeChunksPool.pop_back();
+				c->clear();
 				return (c);
 			}
 			chunkPtr	c = std::make_shared<Chunk>();
@@ -30,6 +31,7 @@ class	ChunkPool
 		}
 		void	release(chunkPtr c)
 		{
+			c->clear();
 			_freeChunksPool.push_back(c);
 		}
 	private:
@@ -58,6 +60,8 @@ class	World
 		}
 		void	draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam)
 		{
+			render_distance /= 2;
+
 			chunkWorldVec3i	pos;
 			for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance; pos.x()++)
 				for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance; pos.y()++)
@@ -72,6 +76,8 @@ class	World
 		}
 		void	generateInRange(const chunkWorldVec3i& center_chunk, u16 render_distance)
 		{
+			render_distance /= 2;
+
 			chunkWorldVec3i	pos;
 			for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance; pos.x()++)
 				for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance; pos.y()++)
@@ -115,6 +121,17 @@ class	World
 			_chunks.insert({h, c});
 			return (c);
 		}
+		void	removeChunk(const chunkWorldVec3i& pos)
+		{
+			chunkPosHash	h = hash(pos);
+			chunkPtr	c = getChunk(pos);
+			if (!c)
+				return ;
+
+			_chunks.erase(h);
+			_chunkRequests.erase(h);
+			_chunkPool.release(c);
+		}
 
 		bool	requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
 		{
@@ -133,16 +150,41 @@ class	World
 			net.send(&crq_pckt, sizeof(crq_pckt));
 			return (true);
 		}
-		void	requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, u32 max_new_requests = 8)
+		void	requestInRange(const chunkWorldVec3i& center_chunk, u16 render_distance, mbl::net::Client& net, u32 max_new_requests = 32)
 		{
 			chunkWorldVec3i	pos;
 			u32				sent = 0;
+			render_distance /= 2;
 
 			for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance && sent < max_new_requests; pos.x()++)
 				for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance && sent < max_new_requests; pos.y()++)
 					for (pos.z() = center_chunk.z() - render_distance; pos.z() <= center_chunk.z() + render_distance && sent < max_new_requests; pos.z()++)
 						if (requestChunk(pos, net))
 							sent++;
+		}
+		void	netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt)
+		{
+			chunkPosHash	h = hash(pckt->chunk_pos);
+			auto			it = _chunkRequests.find(h);
+
+			if (it == _chunkRequests.end())
+				return ;
+
+			PendingChunk&	pending = it->second;
+
+			chunkPtr	c = pending.chunk;
+			auto		func = [c]()
+				{
+					c->mesh();
+					c->setBusy(false);
+				};
+
+			if (_threads)
+				_threads->queue_task(func);
+			else
+				func();
+
+			_chunkRequests.erase(it);
 		}
 		void	netChunkData(const Packet::ChunkData* pckt)
 		{

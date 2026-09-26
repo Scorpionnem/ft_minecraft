@@ -136,6 +136,16 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 
 void	Server::_send_chunk(int fd, chunkPtr chunk)
 {
+	if (chunk->empty())
+	{
+		Packet::ChunkDataSpecial	sp = {};
+
+		sp.type = Packet::ChunkDataSpecial::Type::EMPTY;
+		sp.chunk_pos = chunk->pos();
+		_server.send(fd, &sp, sizeof(sp));
+		return ;
+	}
+
 	chunkWorldVec3i	pos = chunk->pos();
 
 	for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)

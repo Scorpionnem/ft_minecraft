@@ -53,6 +53,13 @@ class	Chunk
 			_blockMesh.add_vertex_layout(2, 2, GL_FLOAT, offsetof(Vertex, uv));
 			_blockMesh.set_sizeof_layout(sizeof(Vertex));
 		}
+		void	clear()
+		{
+			_busy = false;
+			_non_air_blocks = 0;
+			_blockMesh.clear();
+			_blocks = {};
+		}
 		~Chunk() {}
 
 		static void	load_shader(const char* vert_path = "assets/shaders/chunk.vert", const char* frag_path = "assets/shaders/chunk.frag",
@@ -120,9 +127,10 @@ class	Chunk
 		bool	busy() {return (_busy);}
 		void	setBusy(bool state) {_busy = state;}
 		std::array<BlockState, Chunk::VOLUME>&	data() {return (_blocks);}
+		bool	empty() {return (_non_air_blocks == 0);}
 	private:
 		inline BlockState	_getBlockUnsafe(const chunkLocalVec3i &pos) {return (_blocks[_blockIndex(pos)]);}
-		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, BlockState block) {_blocks[_blockIndex(pos)] = block;}
+		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, BlockState block) {_blocks[_blockIndex(pos)] = block; if (block != 0) _non_air_blocks++;}
 		inline uint16_t		_blockIndex(const chunkLocalVec3i &pos) {return (pos.x() + pos.y() * Chunk::SIZE + pos.z() * Chunk::SIZE * Chunk::SIZE);}
 		inline bool			_isInBounds(const chunkLocalVec3i &pos) {return (pos.x() >= 0 && pos.y() >= 0 && pos.z() >= 0 && pos.x() < Chunk::SIZE && pos.y() < Chunk::SIZE && pos.z() < Chunk::SIZE);}
 	private:
@@ -132,6 +140,8 @@ class	Chunk
 
 		chunkWorldVec3i							_pos = {};
 		std::array<BlockState, Chunk::VOLUME>	_blocks = {};
+
+		u32	_non_air_blocks = 0;
 
 		bool							_need_upload = false;
 		mbl::render::Mesh				_blockMesh;

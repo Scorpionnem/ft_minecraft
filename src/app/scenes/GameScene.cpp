@@ -5,7 +5,7 @@
 
 void GameScene::init(Client& client)
 {
-	// SDL_GL_SetSwapInterval(0);
+	SDL_GL_SetSwapInterval(0);
 	glEnable(GL_DEPTH_TEST);
 	if (client.singleplayer())
 	{
@@ -30,6 +30,10 @@ void GameScene::init(Client& client)
 
 	if (_chunkThreads.threads() == 0)
 		_chunkThreads.add(2);
+
+	_world = {};
+	_entities = {};
+
 	_world.setThreadPool(&_chunkThreads);
 
 	_paused = false;
@@ -98,8 +102,8 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 	if (_server_updt_time.get() > (1.0 / 20.0))
 	{
-		_fps = 1.0 / input.delta();
 		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient);
+		_fps = 1.0 / input.delta();
 
 		Packet::EntityInfo	en_pos = {};
 
@@ -148,7 +152,7 @@ void	GameScene::_update_net(Client& client)
 	u8					buf[4096] = {};
 	u64					size;
 
-	int	MAX_PACKETS_PER_FRAME = 512;
+	int	MAX_PACKETS_PER_FRAME = 128;
 	int	packets_recvd = 0;
 
 	_netClient.update();
@@ -195,6 +199,13 @@ void	GameScene::_dispatch_packet(Client& client, u8 *data, u64 size)
 			Packet::ChunkData*	chunk_pckt = reinterpret_cast<Packet::ChunkData*>(data);
 
 			_world.netChunkData(chunk_pckt);
+			break ;
+		}
+		case CHUNKDATASPECIAL_TYPE:
+		{
+			Packet::ChunkDataSpecial*	chunk_pckt = reinterpret_cast<Packet::ChunkDataSpecial*>(data);
+
+			_world.netChunkDataSpecial(chunk_pckt);
 			break ;
 		}
 		default :
