@@ -28,7 +28,7 @@ class GameScene: public Scene
 
 		void	_dispatch_packet(Client& client, u8 *data, u64 size);
 
-		static constexpr u16	RENDER_DISTANCE = 8; // in chunks
+		static constexpr u16	RENDER_DISTANCE = 12; // in chunks
 		static constexpr u32	MAX_PACKETS_PER_FRAME = 512;
 
 		mbl::render::Shader         _mesh_shader;

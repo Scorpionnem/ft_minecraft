@@ -56,11 +56,28 @@ void	World::requestInRange(const chunkWorldVec3i& center_chunk, u16 render_dista
 	u32				sent = 0;
 	render_distance /= 2;
 
-	for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance && sent < max_new_requests; pos.x()++)
-		for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance && sent < max_new_requests; pos.y()++)
-			for (pos.z() = center_chunk.z() - render_distance; pos.z() <= center_chunk.z() + render_distance && sent < max_new_requests; pos.z()++)
-				if (requestChunk(pos, net))
-					sent++;
+	std::vector<chunkWorldVec3i>	requests;
+
+	for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance; pos.x()++)
+		for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance; pos.y()++)
+			for (pos.z() = center_chunk.z() - render_distance; pos.z() <= center_chunk.z() + render_distance; pos.z()++)
+			{
+				requests.push_back(pos);
+			}
+
+	std::sort(requests.begin(), requests.end(), [center_chunk]
+		(const chunkWorldVec3i& p1, const chunkWorldVec3i& p2)
+		{
+			return (vec3i::distance(p1, center_chunk) < vec3i::distance(p2, center_chunk));
+		});
+
+	for (const auto& p : requests)
+	{
+		if (requestChunk(p, net))
+			sent++;
+		if (sent > max_new_requests)
+			break ;
+	}
 }
 
 bool	World::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net)
