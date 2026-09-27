@@ -1,7 +1,7 @@
 NAME :=	ft_minecraft
 
 CXX := c++
-CXXFLAGS :=	-g -MP -MMD -std=c++20 -Wall -Wextra -Werror -O3
+CXXFLAGS :=	-g -MP -MMD -std=c++20 -Wall -Wextra -Werror -O3 # -fsanitize=address -fno-omit-frame-pointer
 
 LIB_DIR :=	lib/
 LIBMBL_PATH := $(LIB_DIR)mbl/

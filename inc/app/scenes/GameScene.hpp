@@ -20,6 +20,8 @@ class GameScene: public Scene
 		void	_update_net();
 		void    _updateCamera(const mbl::platform::Input& input);
 
+		void	_tick(Client& client, const mbl::platform::Input& input);
+
 		void	_dispatch_packet(u8 *data, u64 size);
 
 		static constexpr u16	RENDER_DISTANCE = 12; // in chunks
@@ -41,7 +43,7 @@ class GameScene: public Scene
 		int	_rx_pckt = 0;
 		int	_tx_pckt = 0;
 
-		mbl::utils::Chrono	_server_updt_time;
+		mbl::utils::Chrono	_tick_timer;
 
 		bool					_paused = false;
 
@@ -49,6 +51,5 @@ class GameScene: public Scene
 		mbl::utils::ThreadPool	_chunkThreads;
 
 		World				_world;
-		Entities			_entities;
 	private:
 };

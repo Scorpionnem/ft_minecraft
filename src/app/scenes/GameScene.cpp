@@ -10,14 +10,11 @@ void GameScene::init(Client& client)
 	if (client.singleplayer())
 	{
 		_server = std::make_shared<Server>();
-		_serverThread = std::thread(
-			[this](){_server->run();}
-		);
+		_server->init();
 
-		while (!_server->running())
-		{
-			usleep(500);
-		}
+		_serverThread = std::thread(
+			[this](){_server->loop();}
+		);
 
 		if (_netClient.connect(_server->netServer().addr().c_str(), _server->netServer().port()) == -1)
 			throw std::runtime_error(strerror(errno));
@@ -32,7 +29,6 @@ void GameScene::init(Client& client)
 		_chunkThreads.add(2);
 
 	_world = {};
-	_entities = {};
 
 	_world.setThreadPool(&_chunkThreads);
 
@@ -48,8 +44,6 @@ void GameScene::init(Client& client)
     mbl::render::renderer::AABBRenderer::gen_render_data();
     mbl::render::renderer::RayRenderer::gen_render_data();
     Chunk::load_shader();
-
-    _entities.clear();
 }
 
 void	GameScene::_show_f3(Client&, const mbl::platform::Input&)
@@ -79,7 +73,7 @@ void	GameScene::_show_f3(Client&, const mbl::platform::Input&)
 
 SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input)
 {
-	if (input.close())
+	if (input.close() || (input.wasPressed(SDLK_ESCAPE) && input.isDown(SDLK_LCTRL)))
 		return { .action = SceneAction::QUIT };
 
 	_show_f3(client, input);
@@ -90,21 +84,16 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		client.window().captureMouse(!_paused);
 	}
 
-	if (_server_updt_time.get() > (1.0 / 20.0))
+	if (_paused)
 	{
-		_fps = 1.0 / input.delta();
-		_rx_pckt = 0; _tx_pckt = 0;
+		if (mbl::ui::button("Save and Quit to Title", 0, vec2f(200, 20), ANCHOR_CENTER))
+			return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MAIN};
+	}
 
-		_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
-
-		Packet::EntityInfo	en_pos = {};
-
-		en_pos.pos = _fp_cam.pos;
-		en_pos.yaw = _fp_cam.yaw;
-		en_pos.pitch = _fp_cam.pitch;
-		_tx_pckt++;
-		_netClient.send(&en_pos, sizeof(en_pos));
-		_server_updt_time.start();
+	if (_tick_timer.get() > (1.0 / 20.0))
+	{
+		_tick(client, input);
+		_tick_timer.start();
 	}
 
 	_updateCamera(input);
@@ -117,13 +106,17 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		std::cout << e.what() << std::endl;
 		return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MULTIPLAYER};
 	}
-
-	if (_paused)
-	{
-		if (mbl::ui::button("Save and Quit to Title", 0, vec2f(200, 20), ANCHOR_CENTER))
-			return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MAIN};
-	}
 	return {};
+}
+
+void	GameScene::_tick(Client& client, const mbl::platform::Input& input)
+{
+	(void)client;
+
+	_fps = 1.0 / input.delta();
+	_rx_pckt = 0; _tx_pckt = 0;
+
+	_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
 }
 
 void GameScene::render(Client&)
@@ -137,8 +130,6 @@ void GameScene::render(Client&)
 	}
 
     _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam);
-
-    _entities.draw(*_render_cam);
 }
 
 void	GameScene::_update_net()
@@ -182,18 +173,6 @@ void	GameScene::_dispatch_packet(u8 *data, u64 size)
 
 	switch (hdr->type)
 	{
-		case ENTITYINFO_TYPE:
-		{
-			Packet::EntityInfo*	pos_pckt = reinterpret_cast<Packet::EntityInfo*>(data);
-			Entity	en = {};
-			en.yaw = pos_pckt->yaw;
-			en.pitch = pos_pckt->pitch;
-			en.pos = pos_pckt->pos;
-			en.id = pos_pckt->id;
-
-			_entities.set(en.id, en);
-			break ;
-		}
 		case CHUNKDATA_TYPE:
 		{
 			Packet::ChunkData*	chunk_pckt = reinterpret_cast<Packet::ChunkData*>(data);
@@ -226,41 +205,6 @@ void GameScene::unload(Client& client)
 		_server = nullptr;
 	}
 }
-
-// void    rayBoxDst(float& dstToBox, float& dstInsideBox, mbl::utils::aabb3f bounds, vec3f rayOrig, vec3f rayDir)
-// {
-//     vec3f	t0 = (bounds.pos - rayOrig) / rayDir;
-//     vec3f	t1 = ((bounds.pos + bounds.size) - rayOrig) / rayDir;
-//     vec3f	tmin = min(t0, t1);
-//     vec3f	tmax = max(t0, t1);
-
-//     float   dstA = std::max(std::max(tmin.x(), tmin.y()), tmin.z());
-//     float   dstB = std::min(std::min(tmax.x(), tmax.y()), tmax.z());
-
-//     dstToBox = std::max(0.0f, dstA);
-//     dstInsideBox = std::max(0.0f, dstB - dstToBox);
-// }
-
-// vec3f	resolve_collision(const vec3f& velocity, const mbl::utils::aabb3f& a, const mbl::utils::aabb3f& b, bool slide, mbl::render::Camera& cam)
-// {
-// 	vec3f	res;
-// 	mbl::utils::aabb3f	test_box = {.pos = b.pos - (a.size / 2.0), .size = b.size + (a.size)};
-// 	mbl::render::renderer::AABBRenderer::draw(test_box, cam, vec3f(0, 0, 1));
-// 	for (int i = 0; i < 3; i++)
-// 	{
-// 		vec3f	vel = vec3f(i == 0 ? velocity.x() : 0, i == 1 ? velocity.y() : 0, i == 2 ? velocity.z() : 0);
-
-// 		float	dstToBox;
-// 		float	dstInsideBox;
-// 		rayBoxDst(dstToBox, dstInsideBox, test_box, cam.pos, vel);
-
-// 		if (dstInsideBox > 0) // hit box
-// 			res += (min(abs(vel), abs(vel * dstToBox)) * sign(vel));
-// 		else
-// 			res += vel;
-// 	}
-// 	return (res);
-// }
 
 void    GameScene::_updateCamera(const mbl::platform::Input& input)
 {
