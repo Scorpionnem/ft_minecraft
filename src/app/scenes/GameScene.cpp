@@ -213,7 +213,7 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
 	if (_paused)
 		return ;
 
-    float   move_speed = 20 * input.delta();
+    float   move_speed = 96 * input.delta();
     float	sensitivity = 0.3;
 
     vec3f right = vec3f(cos(radians(_fp_cam.yaw)), 0.0f, sin(radians(_fp_cam.yaw)));

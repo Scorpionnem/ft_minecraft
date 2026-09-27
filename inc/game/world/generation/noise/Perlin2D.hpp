@@ -2,63 +2,140 @@
 
 #include "game/world/generation/noise/White.hpp"
 #include <algorithm>
+#include <array>
 
 namespace Noise
 {
-	inline float easeIn(float interpolator)
-	{
-		return (interpolator * interpolator);
-	}
+class	Perlin2D
+{
+	public:
+		Perlin2D() {}
+		~Perlin2D() {}
 
-	inline float easeOut(float interpolator)
-	{
-		return (1 - easeIn(1 - interpolator));
-	}
-
-	inline float easeInOut(float interpolator)
-	{
-		float	easeInValue = easeIn(interpolator);
-		float	easeOutValue = easeOut(interpolator);
-		return (lerp(easeInValue, easeOutValue, interpolator));
-	}
-
-	inline float perlin(vec2f value)
-	{
-		vec2f	lowerLeftDirection = rand2dTo2d(vec2f(floor(value.x()), floor(value.y()))) * 2 - 1;
-		vec2f	lowerRightDirection = rand2dTo2d(vec2f(ceil(value.x()), floor(value.y()))) * 2 - 1;
-		vec2f	upperLeftDirection = rand2dTo2d(vec2f(floor(value.x()), ceil(value.y()))) * 2 - 1;
-		vec2f	upperRightDirection = rand2dTo2d(vec2f(ceil(value.x()), ceil(value.y()))) * 2 - 1;
-
-		vec2f	fraction = frac(value);
-
-		float	lowerLeftFunctionValue = vec2f::dot(lowerLeftDirection, fraction - vec2f(0, 0));
-		float	lowerRightFunctionValue = vec2f::dot(lowerRightDirection, fraction - vec2f(1, 0));
-		float	upperLeftFunctionValue = vec2f::dot(upperLeftDirection, fraction - vec2f(0, 1));
-		float	upperRightFunctionValue = vec2f::dot(upperRightDirection, fraction - vec2f(1, 1));
-
-		float	interpolatorX = easeInOut(fraction.x());
-		float	interpolatorY = easeInOut(fraction.y());
-
-		float	lowerCells = lerp(lowerLeftFunctionValue, lowerRightFunctionValue, interpolatorX);
-		float	upperCells = lerp(upperLeftFunctionValue, upperRightFunctionValue, interpolatorX);
-
-		float	noise = lerp(lowerCells, upperCells, interpolatorY);
-		return (noise);
-	}
-
-	inline float	noise(const vec2f &pos, float freq, float amp, int noisiness)
-	{
-		float	res = 0;
-		for (int i = 0; i < noisiness; i++)
+		void	init(u32 seed)
 		{
-			res += perlin(vec2f(pos) * freq) * amp;
-
-			freq *= 2;
-			amp /= 2;
+			_shuffle_permutations(seed);
 		}
 
-		res = std::clamp(res, -1.0f, 1.0f);
+		double	sample(const vec2d& pos)
+		{
+			int _x = (int)floor(pos.x()) & 255;
+			int _y = (int)floor(pos.y()) & 255;
 
-		return (res);
-	}
+			double xf = pos.x() - floor(pos.x());
+			double yf = pos.y() - floor(pos.y());
+
+			vec2f topRight = vec2f(xf - 1.0, yf - 1.0);
+			vec2f topLeft = vec2f(xf, yf - 1.0);
+			vec2f bottomRight = vec2f(xf - 1.0, yf);
+			vec2f bottomLeft = vec2f(xf, yf);
+
+			int	valueTopRight = _permutations[_permutations[_x + 1] + _y + 1];
+			int	valueTopLeft = _permutations[_permutations[_x] + _y + 1];
+			int	valueBottomRight = _permutations[_permutations[_x + 1] + _y];
+			int	valueBottomLeft = _permutations[_permutations[_x] + _y];
+
+			double dotTopRight    = vec2f::dot(topRight, _constant_vector(valueTopRight));
+			double dotTopLeft     = vec2f::dot(topLeft, _constant_vector(valueTopLeft));
+			double dotBottomRight = vec2f::dot(bottomRight, _constant_vector(valueBottomRight));
+			double dotBottomLeft  = vec2f::dot(bottomLeft, _constant_vector(valueBottomLeft));
+
+			double u = _fade(xf);
+			double v = _fade(yf);
+
+			return (lerp(lerp(dotBottomLeft, dotTopLeft, v), lerp(dotBottomRight, dotTopRight, v), u));
+		}
+		double	sample_fbm(const vec2d& pos, float freq, int noisiness)
+		{
+			double	res = 0;
+			double	amp = 0.5;
+			for (int i = 0; i < noisiness; i++)
+			{
+				res += sample(vec2f(pos) * freq) * amp;
+
+				freq *= 2.0;
+				amp /= 2.0;
+			}
+
+			return (res);
+		}
+		double	sample_turbulence_fbm(const vec2d& pos, float freq, int noisiness)
+		{
+			double	res = 0;
+			double	amp = 0.5;
+			for (int i = 0; i < noisiness; i++)
+			{
+				res += std::abs(sample(vec2f(pos) * freq)) * amp;
+
+				freq *= 2.0;
+				amp /= 2.0;
+			}
+
+			return (res);
+		}
+		double	sample_ridge_fbm(const vec2d& pos, float freq, int noisiness)
+		{
+			double	res = 0;
+			double	amp = 0.5;
+			for (int i = 0; i < noisiness; i++)
+			{
+				res += sample(vec2f(pos) * freq) * amp;
+
+				freq *= 2.0;
+				amp /= 2.0;
+			}
+
+			return (1 - std::abs(res));
+		}
+	private:
+		vec2f _constant_vector(int v)
+		{
+			int h = v & 7;
+
+			switch (h)
+			{
+				case 0:
+					return (vec2f( 1.0,  0.0));
+				case 1:
+					return (vec2f(-1.0,  0.0));
+				case 2:
+					return (vec2f( 0.0,  1.0));
+				case 3:
+					return (vec2f( 0.0, -1.0));
+				case 4:
+					return (vec2f( 1.0,  1.0));
+				case 5:
+					return (vec2f(-1.0,  1.0));
+				case 6:
+					return (vec2f(-1.0, -1.0));
+				default:
+					return (vec2f( 1.0, -1.0));
+			}
+		}
+		double	_fade(double t)
+		{
+			return ((6 * t - 15) * t + 10) * t * t * t;
+		}
+		void	_shuffle_permutations(u32 seed)
+		{
+			std::array<int, 256>	base;
+
+			for (int i = 0; i < 256; i++)
+				base[i] = i;
+
+			for (size_t i = 0; i < base.size(); i++)
+			{
+				const size_t	index = static_cast<size_t>(Noise::rand1dTo1d(seed + i) * (float)i);
+
+				std::swap(base[i], base[index]);
+			}
+
+			for (int i = 0; i < 256; i++)
+			{
+				_permutations[i] = base[i];
+				_permutations[i + 256] = base[i];
+			}
+		}
+		std::array<int, 512>	_permutations;
+};
 };

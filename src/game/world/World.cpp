@@ -197,9 +197,10 @@ chunkPtr	World::generateChunk(const chunkWorldVec3i& pos)
 	c->setPos(pos);
 
 	c->setBusy(true);
-	auto func = [c]()
+	u32	s = seed();
+	auto func = [c, s]()
 		{
-			c->generate();
+			c->generate(s);
 			c->setBusy(false);
 		};
 

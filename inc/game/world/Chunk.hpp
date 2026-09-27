@@ -82,14 +82,17 @@ class	Chunk
 				shader->load(vert_path, frag_path);
 		}
 
-		void	generate(/*Generator*/)
+		void	generate(u32 seed/*Generator*/)
 		{
+			Noise::Perlin2D	noise;
+			noise.init(seed);
+
 			chunkLocalVec3i	blockPos;
 			for (blockPos.x() = 0; blockPos.x() < Chunk::SIZE; blockPos.x()++)
 				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 				{
 					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-					int	y = Noise::noise(vec2f(worldPos.x(), worldPos.z()), 0.0025, 1, 1) * 320;
+					int	y = -noise.sample_turbulence_fbm(vec2f(worldPos.x(), worldPos.z()), 0.0025, 4) * 320;
 
 					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
 					{

@@ -19,6 +19,7 @@ void    Server::init(int port)
 
 	_threads.add(16);
 	_world.setThreadPool(&_threads);
+	_world.setSeed(Noise::rand1dTo1d(_server.port()) * (double)UINT32_MAX);
 }
 
 void    Server::loop()

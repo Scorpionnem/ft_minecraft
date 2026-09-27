@@ -65,12 +65,17 @@ class	World
 
 		void	netChunkData(const Packet::ChunkData* pckt);
 		void	netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt);
+
+		u32	seed() {return (_seed);}
+		void	setSeed(u32 seed) {_seed = seed;}
 	private:
 		struct	PendingChunk
 		{
 			chunkPtr	chunk;
 			u64			receivedMask = 0;
 		};
+
+		u32	_seed = 0;
 
 		std::unordered_map<chunkPosHash, PendingChunk>	_chunkRequests;
 		std::unordered_map<chunkPosHash, chunkPtr>		_chunks;
