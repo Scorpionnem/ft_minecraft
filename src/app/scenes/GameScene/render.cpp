@@ -38,7 +38,7 @@ void GameScene::render(Client& c)
 	_post_shader.setFloat("uScreenWidth", c.window().width());
 	_post_shader.setFloat("uScreenHeight", c.window().height());
 	_post_shader.setInt("uDim", _paused);
-	_post_shader.setInt("uUnderwater", true); // need to detect wataaa soon
+	_post_shader.setInt("uUnderwater", false); // need to detect wataaa soon
 	_screen_mesh.draw(GL_TRIANGLES);
 }
 

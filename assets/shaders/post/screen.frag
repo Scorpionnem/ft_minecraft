@@ -36,6 +36,31 @@ float noise(vec2 st) {
     return mix(mix(a, b, u.x), mix(c, d, u.x), u.y);
 }
 
+vec3	blurImage(int kernelSize, sampler2D tex, vec2 uv)
+{
+	vec3	color;
+	int halfKernel = kernelSize / 2;
+	float pixelX = 1.0 / uScreenWidth;
+	float pixelY = 1.0 / uScreenHeight;
+
+	for (int x = -halfKernel; x < halfKernel; x++)
+	{
+		for (int y = -halfKernel; y < halfKernel; y++)
+		{
+			vec2 offset = vec2(float(x) * pixelX, float(y) * pixelY);
+			vec2 ouv = uv + offset;
+
+			ouv.x = clamp(ouv.x, pixelX, 1.0 - pixelX);
+			ouv.y = clamp(ouv.y, pixelX, 1.0 - pixelX);
+
+			color += texture(tex, ouv).rgb;
+		}
+	}
+
+	color /= float(kernelSize * kernelSize);
+	return (color);
+}
+
 void main()
 {
 	vec2 zoomedUV = vUV - vec2(0.5);
@@ -58,7 +83,10 @@ void main()
 	vec3 color = texture(uColorFrameBuffer, uv).rgb;
 
 	if (uDim)
-		color /= 4;
+	{
+		color = blurImage(8, uColorFrameBuffer, uv);
+	}
+
 	if (uUnderwater)
 		color += vec3(0.0, 0.0, 0.3);
 
