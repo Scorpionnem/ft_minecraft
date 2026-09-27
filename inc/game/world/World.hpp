@@ -7,9 +7,6 @@
 #include <memory>
 #include <unordered_map>
 
-using chunkPosHash = u64;
-using chunkPtr = std::shared_ptr<Chunk>;
-
 class	ChunkPool
 {
 	public:
@@ -42,7 +39,7 @@ class	ChunkPool
 class	World
 {
 	public:
-		static constexpr int	MAX_CHUNK_REQUESTS = 8;
+		static constexpr int	MAX_CHUNK_REQUESTS = 16;
 	public:
 		World() {}
 		~World() {}
@@ -52,6 +49,8 @@ class	World
 			_threads = t;
 		}
 		chunkPtr	getChunk(const chunkWorldVec3i& pos);
+
+		void	meshChunk(chunkPtr c);
 
 		void		draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam);
 

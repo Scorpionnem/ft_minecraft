@@ -99,10 +99,9 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 		Packet::EntityInfo	en_pos = {};
 
-		en_pos.entity = Player();
-		en_pos.entity.pos = _fp_cam.pos;
-		en_pos.entity.yaw = _fp_cam.yaw;
-		en_pos.entity.pitch = _fp_cam.pitch;
+		en_pos.pos = _fp_cam.pos;
+		en_pos.yaw = _fp_cam.yaw;
+		en_pos.pitch = _fp_cam.pitch;
 		_tx_pckt++;
 		_netClient.send(&en_pos, sizeof(en_pos));
 		_server_updt_time.start();
@@ -186,7 +185,11 @@ void	GameScene::_dispatch_packet(u8 *data, u64 size)
 		case ENTITYINFO_TYPE:
 		{
 			Packet::EntityInfo*	pos_pckt = reinterpret_cast<Packet::EntityInfo*>(data);
-			Entity	en = pos_pckt->entity;
+			Entity	en = {};
+			en.yaw = pos_pckt->yaw;
+			en.pitch = pos_pckt->pitch;
+			en.pos = pos_pckt->pos;
+			en.id = pos_pckt->id;
 
 			_entities.set(en.id, en);
 			break ;

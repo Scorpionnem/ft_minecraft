@@ -95,7 +95,7 @@ Chunk::Face	FACE2[6] =
 	),
 };
 
-void	Chunk::mesh()
+void	Chunk::mesh(std::array<chunkPtr, 6> neighbours)
 {
 	chunkLocalVec3i	blockPos;
 	for (blockPos.x() = 0; blockPos.x() < Chunk::SIZE; blockPos.x()++)
@@ -116,12 +116,15 @@ void	Chunk::mesh()
 						BlockState	cull_block = 0;
 
 						chunkLocalVec3i	thisChunkPos = blockPos + DIR_OFFSET[dir];
+						chunkLocalVec3i	neighbourChunkPos = blockPos + DIR_OFFSET[dir] - (vec3i(Chunk::SIZE) * DIR_OFFSET[dir]);
 
-						if (!_isInBounds(thisChunkPos))
+						if (!_isInBounds(thisChunkPos) && !neighbours[dir])
 							continue ;
 
 						if (_isInBounds(thisChunkPos))
 							cull_block = _getBlockUnsafe(thisChunkPos);
+						else if (neighbours[dir]->_isInBounds(neighbourChunkPos))
+							cull_block = neighbours[dir]->_getBlockUnsafe(neighbourChunkPos);
 
 						if (cull_block != 0)
 							continue ;
@@ -142,5 +145,6 @@ void	Chunk::mesh()
 			}
 		}
 	}
+	_state = State::MESHED;
 	_need_upload = true;
 }

@@ -93,9 +93,46 @@ bool	World::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net, int&
 	return (true);
 }
 
+void	World::meshChunk(chunkPtr c)
+{
+	if (!c)
+		return ;
+
+	chunkWorldVec3i	pos = c->pos();
+
+	std::array<chunkPtr, 6>	neighbours = {
+		getChunk(vec3i(pos.x(), pos.y() + 1, pos.z())),
+		getChunk(vec3i(pos.x(), pos.y() - 1, pos.z())),
+		getChunk(vec3i(pos.x(), pos.y(), pos.z() + 1)),
+		getChunk(vec3i(pos.x(), pos.y(), pos.z() - 1)),
+		getChunk(vec3i(pos.x() + 1, pos.y(), pos.z())),
+		getChunk(vec3i(pos.x() - 1, pos.y(), pos.z())),
+	};
+
+	for (int dir = 0; dir < 6; dir++)
+	{
+		if (!neighbours[dir])
+			continue ;
+		if (neighbours[dir]->state() < Chunk::State::GENERATED)
+			neighbours[dir] = nullptr;
+	}
+
+	auto		func = [c, neighbours]()
+		{
+			c->mesh(neighbours);
+			c->setBusy(false);
+		};
+
+	if (_threads)
+		_threads->queue_task(func);
+	else
+		func();
+}
+
 void	World::netChunkData(const Packet::ChunkData* pckt)
 {
-	chunkPosHash	h = hash(pckt->chunk_pos);
+	chunkWorldVec3i	pos = pckt->chunk_pos;
+	chunkPosHash	h = hash(pos);
 	auto			it = _chunkRequests.find(h);
 
 	if (it == _chunkRequests.end() || pckt->id >= Chunk::PACKET_COUNT)
@@ -114,16 +151,8 @@ void	World::netChunkData(const Packet::ChunkData* pckt)
 		return ;
 
 	chunkPtr	c = pending.chunk;
-	auto		func = [c]()
-		{
-			c->mesh();
-			c->setBusy(false);
-		};
 
-	if (_threads)
-		_threads->queue_task(func);
-	else
-		func();
+	meshChunk(c);
 
 	_chunkRequests.erase(it);
 }
@@ -139,16 +168,8 @@ void	World::netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt)
 	PendingChunk&	pending = it->second;
 
 	chunkPtr	c = pending.chunk;
-	auto		func = [c]()
-		{
-			c->mesh();
-			c->setBusy(false);
-		};
 
-	if (_threads)
-		_threads->queue_task(func);
-	else
-		func();
+	meshChunk(c);
 
 	_chunkRequests.erase(it);
 }

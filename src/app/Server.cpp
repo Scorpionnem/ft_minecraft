@@ -62,10 +62,10 @@ void	Server::update_server()
 	if (_server.update() == -1)
 		return ;
 
-	mbl::net::Server::Event	event;
-	u8					buf[4096];
-	u64					size;
-	int					fd;
+	mbl::net::Server::Event	event = mbl::net::Server::NONE;
+	u8					buf[4096] = {};
+	u64					size = 0;
+	int					fd = 0;
 
 	do
 	{
@@ -109,12 +109,13 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 
 			Entity& en = _entities.get(_player_entities[fd]);
 
-			en.pos = pos_pckt->entity.pos;
-			en.yaw = pos_pckt->entity.yaw;
-			en.pitch = pos_pckt->entity.pitch;
-			en.size = pos_pckt->entity.size;
+			en.pos = pos_pckt->pos;
+			en.yaw = pos_pckt->yaw;
+			en.pitch = pos_pckt->pitch;
 			Packet::EntityInfo	enpckt = {};
-			enpckt.entity = en;
+			enpckt.pos = en.pos;
+			enpckt.pitch = en.pitch;
+			enpckt.yaw = en.yaw;
 			enpckt.id = en.id;
 			_server.send_all_except(fd, &enpckt, sizeof(enpckt));
 			break ;

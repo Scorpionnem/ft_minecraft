@@ -8,10 +8,19 @@
 #include <array>
 
 using BlockState = u32;
+using chunkPosHash = u64;
+using chunkPtr = std::shared_ptr<class Chunk>;
 
 class	Chunk
 {
 	public:
+		enum	State
+		{
+			NONE,
+			GENERATED,
+			MESHED,
+			UPLOADED,
+		};
 		struct	Vertex
 		{
 			Vertex() {}
@@ -80,7 +89,7 @@ class	Chunk
 				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 				{
 					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-					int	y = Noise::noise(vec2f(worldPos.x(), worldPos.z()), 0.0025, 1, 8) * 320;
+					int	y = Noise::noise(vec2f(worldPos.x(), worldPos.z()), 0.0025, 1, 1) * 320;
 
 					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
 					{
@@ -91,7 +100,7 @@ class	Chunk
 					}
 				}
 		}
-		void	mesh();
+		void	mesh(std::array<chunkPtr, 6> neighbours);
 
 		void	update()
 		{
@@ -124,8 +133,14 @@ class	Chunk
 		void	setPos(const chunkWorldVec3i& pos) {_pos = pos;}
 		chunkWorldVec3i	pos() const {return (_pos);}
 
+		Chunk::State	state() {return (_state);}
+
 		bool	busy() {return (_busy);}
 		void	setBusy(bool state) {_busy = state;}
+
+		bool	need_remesh() {return (_need_remesh);}
+		void	setNeedRemesh(bool state) {_need_remesh = state;}
+
 		std::array<BlockState, Chunk::VOLUME>&	data() {return (_blocks);}
 		bool	empty() {return (_non_air_blocks == 0);}
 	private:
@@ -146,5 +161,10 @@ class	Chunk
 		bool							_need_upload = false;
 		mbl::render::Mesh				_blockMesh;
 
+		std::atomic_bool				_need_remesh = false;
+
+		// is chunk in a thread
 		std::atomic_bool				_busy = false;
+
+		std::atomic<Chunk::State>		_state = Chunk::State::NONE;
 };

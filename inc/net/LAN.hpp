@@ -41,8 +41,10 @@ namespace Packet
 	{
 		Packet::Header	hdr = {.type = ENTITYINFO_TYPE};
 
-		u64		id;
-		Entity	entity = {};
+		u64		id = 0;
+		vec3f	pos = {};
+		float	yaw = 0;
+		float	pitch = 0;
 	} __attribute__((packed));
 
 	#define CHUNKDATA_TYPE 7

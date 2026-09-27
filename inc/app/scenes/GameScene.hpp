@@ -23,7 +23,7 @@ class GameScene: public Scene
 		void	_dispatch_packet(u8 *data, u64 size);
 
 		static constexpr u16	RENDER_DISTANCE = 12; // in chunks
-		static constexpr int	MAX_PACKETS_PER_FRAME = 64;
+		static constexpr int	MAX_PACKETS_PER_FRAME = 256;
 
 		std::thread				_serverThread;
 		std::shared_ptr<Server>	_server;

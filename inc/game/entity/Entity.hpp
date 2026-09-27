@@ -6,7 +6,7 @@ struct	Entity
 {
 	u64		id = 0;
 
-	vec3f	size;
+	vec3f	size = vec3f(0.5);
 	vec3f	eye; // pos + eye = actual eye pos
 	vec3f	pos;
 	float	yaw = 0;
