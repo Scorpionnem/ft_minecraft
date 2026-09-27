@@ -23,7 +23,13 @@ SRCS :=	src/main.cpp							\
 		src/app/scenes/MainScene.cpp			\
 		src/app/scenes/MultiplayerScene.cpp		\
 		src/app/scenes/SingleplayerScene.cpp	\
-		src/app/scenes/GameScene.cpp			\
+		src/app/scenes/GameScene/init.cpp			\
+		src/app/scenes/GameScene/render.cpp			\
+		src/app/scenes/GameScene/unload.cpp			\
+		src/app/scenes/GameScene/update.cpp			\
+		src/app/scenes/GameScene/update/camera.cpp			\
+		src/app/scenes/GameScene/update/net.cpp			\
+		src/app/scenes/GameScene/update/options.cpp			\
 		src/game/world/Chunk.cpp				\
 		src/game/world/World.cpp				\
 

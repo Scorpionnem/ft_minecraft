@@ -16,9 +16,13 @@ class GameScene: public Scene
 		void			render(Client& client) override;
 		void			unload(Client& client) override;
 	private:
-		void	_show_f3(Client& client, const mbl::platform::Input& input);
+		void	_show_f3();
 		void	_update_net();
 		void    _updateCamera(const mbl::platform::Input& input);
+		void	_options_screen(Client& client, const mbl::platform::Input& input);
+
+		bool	_show_options = false;
+		void	_toggle_pause(Client& client);
 
 		void	_tick(Client& client, const mbl::platform::Input& input);
 
@@ -44,11 +48,16 @@ class GameScene: public Scene
 		int	_tx_pckt = 0;
 
 		mbl::utils::Chrono	_tick_timer;
+		mbl::utils::Chrono	_time;
 
 		bool					_paused = false;
 
 		mbl::net::Client		_netClient;
 		mbl::utils::ThreadPool	_chunkThreads;
+
+		mbl::render::FrameBuffer	_render_buffer;
+		mbl::render::Mesh			_screen_mesh;
+		mbl::render::Shader			_post_shader;
 
 		World				_world;
 	private:
