@@ -79,7 +79,10 @@ class	Chunk
 					{
 						worldVec3i worldPos2 = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
 
-						if (worldPos2.y() == y + 1 && Noise::rand2dTo1d(vec2i(worldPos.x(), worldPos.z())) < 0.1)
+						float	noise = Noise::rand2dTo1d(vec2i(worldPos.x(), worldPos.z()));
+						if (worldPos2.y() == y + 1 && noise < 0.01)
+							_setBlockUnsafe(blockPos, Block::BLUE_ORCHID);
+						else if (worldPos2.y() == y + 1 && noise < 0.1)
 							_setBlockUnsafe(blockPos, Block::GRASS);
 						if (worldPos2.y() == y)
 							_setBlockUnsafe(blockPos, Block::GRASS_BLOCK);

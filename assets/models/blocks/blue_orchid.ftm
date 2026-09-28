@@ -1,7 +1,7 @@
 face top
 cullface none
-texture assets/textures/blocks/short_grass.png
-color 0 0.75 0
+texture assets/textures/blocks/blue_orchid.png
+color 1 1 1
 v 0 0 0 -0.7071 0 0.7071 0 0
 v 1 0 1 -0.7071 0 0.7071 1 0
 v 1 1 1 -0.7071 0 0.7071 1 1

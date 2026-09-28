@@ -27,7 +27,9 @@ void GameScene::init(Client& client)
 		_chunkThreads.add(2);
 
 	_world = {};
+	_world.setAtlas(&_atlas);
 	_world.loadBlocks();
+	_atlas.upload();
 
 	_world.setThreadPool(&_chunkThreads);
 

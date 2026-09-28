@@ -61,5 +61,7 @@ class GameScene: public Scene
 		mbl::render::Shader			_post_shader;
 
 		World				_world;
+
+		mbl::render::TextureAtlas	_atlas;
 	private:
 };

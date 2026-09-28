@@ -37,6 +37,9 @@ void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const
 {
 	render_distance /= 2;
 
+	if (_atlas)
+		_atlas->bind(0);
+
 	chunkWorldVec3i	pos;
 	for (pos.x() = center_chunk.x() - render_distance; pos.x() <= center_chunk.x() + render_distance; pos.x()++)
 		for (pos.y() = center_chunk.y() - render_distance; pos.y() <= center_chunk.y() + render_distance; pos.y()++)

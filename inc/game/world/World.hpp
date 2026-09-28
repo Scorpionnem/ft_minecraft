@@ -51,6 +51,9 @@ class	World
 			Block::STONE = _blocks.registerBlock("stone", true, {}, "assets/models/blocks/stone_block.ftm")->getDefaultState().id();
 			Block::GRASS_BLOCK = _blocks.registerBlock("grass_block", true, {}, "assets/models/blocks/grass_block.ftm")->getDefaultState().id();
 			Block::GRASS = _blocks.registerBlock("grass", false, {}, "assets/models/blocks/grass.ftm")->getDefaultState().id();
+			Block::BLUE_ORCHID = _blocks.registerBlock("blue_orchid", false, {}, "assets/models/blocks/blue_orchid.ftm")->getDefaultState().id();
+
+			_blocks.computeBlocks();
 		}
 
 		void	setThreadPool(mbl::utils::ThreadPool* t)
@@ -77,6 +80,8 @@ class	World
 
 		u32	seed() {return (_seed);}
 		void	setSeed(u32 seed) {_seed = seed;}
+
+		void	setAtlas(mbl::render::TextureAtlas* atlas) {_atlas = atlas; _blocks.setAtlas(atlas);}
 	private:
 		struct	PendingChunk
 		{
@@ -93,4 +98,6 @@ class	World
 		mbl::utils::ThreadPool*						_threads = nullptr;
 
 		BlockRegistry		_blocks;
+
+		mbl::render::TextureAtlas*	_atlas = nullptr;
 };

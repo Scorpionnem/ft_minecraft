@@ -68,17 +68,22 @@ class	Block
 		static blockStateId	STONE;
 		static blockStateId	GRASS_BLOCK;
 		static blockStateId	GRASS;
+		static blockStateId	BLUE_ORCHID;
 	public:
-		Block(const std::string &name, bool solid, const std::vector<BlockProperty>& properties, const std::string &model_path)
+		Block(const std::string &name, bool solid, const std::vector<BlockProperty>& properties, const std::string &model_path, mbl::render::TextureAtlas* atlas)
 		{
 			_name = name;
 			_solid = solid;
 
 			if (!model_path.empty())
-				_model.load(model_path);
+				_model.load(model_path, atlas);
 
 			_processLayout(properties);
 			_generateStates(properties);
+		}
+		void	computeBlock(mbl::render::TextureAtlas* atlas)
+		{
+			_model.computeTextures(atlas);
 		}
 		~Block() {}
 
@@ -115,9 +120,13 @@ using blockId = u32;
 class	BlockRegistry
 {
 	public:
+		void	setAtlas(mbl::render::TextureAtlas* atlas)
+		{
+			_atlas = atlas;
+		}
 		blockPtr	registerBlock(const std::string& name, bool solid = true, const std::vector<BlockProperty>& properties = {}, const std::string& model_path = "")
 		{
-			blockPtr	b = std::make_shared<Block>(name, solid, properties, model_path);
+			blockPtr	b = std::make_shared<Block>(name, solid, properties, model_path, _atlas);
 			_blocks_map.insert({name, b});
 			_blocks.push_back(b);
 			_blocks.back()->setId(static_cast<blockId>(_blocks.size() - 1));
@@ -128,6 +137,11 @@ class	BlockRegistry
 			}
 			return (b);
 		}
+		void	computeBlocks()
+		{
+			for (blockPtr b : _blocks)
+				b->computeBlock(_atlas);
+		}
 
 		blockPtr	get(blockId id) {return (_blocks[id]);}
 		BlockState&	getState(blockStateId id) {return (*_blockStates[id]);}
@@ -137,4 +151,6 @@ class	BlockRegistry
 		std::vector<blockPtr>				_blocks;
 
 		std::vector<BlockState*>				_blockStates;
+
+		mbl::render::TextureAtlas*	_atlas = nullptr;
 };

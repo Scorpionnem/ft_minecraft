@@ -4,6 +4,7 @@ blockStateId	Block::AIR = 0;
 blockStateId	Block::STONE = 0;
 blockStateId	Block::GRASS_BLOCK = 0;
 blockStateId	Block::GRASS = 0;
+blockStateId	Block::BLUE_ORCHID = 0;
 
 u8	BlockState::getPropertyValue(BlockProperty::Id prop)
 {
