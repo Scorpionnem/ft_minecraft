@@ -32,6 +32,7 @@ SRCS :=	src/main.cpp							\
 		src/app/scenes/GameScene/update/options.cpp			\
 		src/game/world/Chunk.cpp				\
 		src/game/world/World.cpp				\
+		src/game/world/Block.cpp				\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

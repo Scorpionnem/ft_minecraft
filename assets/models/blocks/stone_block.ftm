@@ -1,0 +1,64 @@
+# face id
+# texture path
+# cullface none/up/down/north/south/east/west
+# v (pos) x y z (normal) x y z (uv) x y
+
+face top
+cullface up
+color 0.5 0.5 0.5
+v 0 1 1 0 1 0 0 1
+v 1 1 1 0 1 0 1 1
+v 0 1 0 0 1 0 0 0
+v 1 1 1 0 1 0 1 1
+v 1 1 0 0 1 0 1 0
+v 0 1 0 0 1 0 0 0
+
+face bottom
+cullface down
+color 0.5 0.5 0.5
+v 0 0 0 0 -1 0 0 1
+v 1 0 1 0 -1 0 1 0
+v 0 0 1 0 -1 0 0 0
+v 0 0 0 0 -1 0 0 1
+v 1 0 0 0 -1 0 1 1
+v 1 0 1 0 -1 0 1 0
+
+face north
+cullface north
+color 0.5 0.5 0.5
+v 0 0 1 0 0 1 0 0
+v 1 1 1 0 0 1 1 1
+v 0 1 1 0 0 1 0 1
+v 0 0 1 0 0 1 0 0
+v 1 0 1 0 0 1 1 0
+v 1 1 1 0 0 1 1 1
+
+face south
+cullface south
+color 0.5 0.5 0.5
+v 0 0 0 0 0 -1 0 0
+v 0 1 0 0 0 -1 0 1
+v 1 1 0 0 0 -1 1 1
+v 0 0 0 0 0 -1 0 0
+v 1 1 0 0 0 -1 1 1
+v 1 0 0 0 0 -1 1 0
+
+face east
+cullface east
+color 0.5 0.5 0.5
+v 1 1 0 1 0 0 1 1
+v 1 1 1 1 0 0 0 1
+v 1 0 1 1 0 0 0 0
+v 1 1 0 1 0 0 1 1
+v 1 0 1 1 0 0 0 0
+v 1 0 0 1 0 0 1 0
+
+face west
+cullface west
+color 0.5 0.5 0.5
+v 0 0 1 -1 0 0 0 0
+v 0 1 1 -1 0 0 0 1
+v 0 1 0 -1 0 0 1 1
+v 0 0 1 -1 0 0 0 0
+v 0 1 0 -1 0 0 1 1
+v 0 0 0 -1 0 0 1 0

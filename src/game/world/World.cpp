@@ -117,9 +117,9 @@ void	World::meshChunk(chunkPtr c)
 			neighbours[dir] = nullptr;
 	}
 
-	auto		func = [c, neighbours]()
+	auto		func = [this, c, neighbours]()
 		{
-			c->mesh(neighbours);
+			c->mesh(_blocks, neighbours);
 			c->setBusy(false);
 		};
 

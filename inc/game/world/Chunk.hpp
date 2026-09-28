@@ -2,12 +2,12 @@
 
 #include "math/math.hpp"
 #include "game/world/utils/Positions.hpp"
+#include "game/world/Block.hpp"
 #include "mbl.hpp"
 #include "game/world/generation/noise/Noise.hpp"
 
 #include <array>
 
-using BlockState = u32;
 using chunkPosHash = u64;
 using chunkPtr = std::shared_ptr<class Chunk>;
 
@@ -23,30 +23,10 @@ class	Chunk
 		};
 		struct	Vertex
 		{
-			Vertex() {}
-			Vertex(vec3f pos, vec3f normal, vec2f uv)
-			{
-				this->pos = pos;
-				this->normal = normal;
-				this->uv = uv;
-			}
 			vec3f	pos;
 			vec3f	normal;
+			vec3f	color;
 			vec2f	uv;
-		};
-
-		struct	Face
-		{
-			Face() {}
-			Face(Chunk::Vertex v1, Chunk::Vertex v2, Chunk::Vertex v3)
-			{
-				this->v1 = v1;
-				this->v2 = v2;
-				this->v3 = v3;
-			}
-			Chunk::Vertex	v1;
-			Chunk::Vertex	v2;
-			Chunk::Vertex	v3;
 		};
 	public:
 		static constexpr int SIZE = 32;
@@ -60,7 +40,8 @@ class	Chunk
 			_busy = false;
 			_blockMesh.add_vertex_layout(0, 3, GL_FLOAT, offsetof(Vertex, pos));
 			_blockMesh.add_vertex_layout(1, 3, GL_FLOAT, offsetof(Vertex, normal));
-			_blockMesh.add_vertex_layout(2, 2, GL_FLOAT, offsetof(Vertex, uv));
+			_blockMesh.add_vertex_layout(2, 3, GL_FLOAT, offsetof(Vertex, color));
+			_blockMesh.add_vertex_layout(3, 2, GL_FLOAT, offsetof(Vertex, uv));
 			_blockMesh.set_sizeof_layout(sizeof(Vertex));
 		}
 		void	clear()
@@ -98,12 +79,16 @@ class	Chunk
 					{
 						worldVec3i worldPos2 = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
 
-						if (worldPos2.y() < y)
-							_setBlockUnsafe(blockPos, 1);
+						if (worldPos2.y() == y + 1 && Noise::rand2dTo1d(vec2i(worldPos.x(), worldPos.z())) < 0.1)
+							_setBlockUnsafe(blockPos, Block::GRASS);
+						if (worldPos2.y() == y)
+							_setBlockUnsafe(blockPos, Block::GRASS_BLOCK);
+						else if (worldPos2.y() < y)
+							_setBlockUnsafe(blockPos, Block::STONE);
 					}
 				}
 		}
-		void	mesh(std::array<chunkPtr, 6> neighbours);
+		void	mesh(BlockRegistry& blocks, std::array<chunkPtr, 6> neighbours);
 
 		void	update()
 		{
@@ -144,11 +129,11 @@ class	Chunk
 		bool	need_remesh() {return (_need_remesh);}
 		void	setNeedRemesh(bool state) {_need_remesh = state;}
 
-		std::array<BlockState, Chunk::VOLUME>&	data() {return (_blocks);}
+		std::array<blockStateId, Chunk::VOLUME>&	data() {return (_blocks);}
 		bool	empty() {return (_non_air_blocks == 0);}
 	private:
-		inline BlockState	_getBlockUnsafe(const chunkLocalVec3i &pos) {return (_blocks[_blockIndex(pos)]);}
-		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, BlockState block) {_blocks[_blockIndex(pos)] = block; if (block != 0) _non_air_blocks++;}
+		inline blockStateId	_getBlockUnsafe(const chunkLocalVec3i &pos) {return (_blocks[_blockIndex(pos)]);}
+		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, blockStateId block) {_blocks[_blockIndex(pos)] = block; if (block != 0) _non_air_blocks++;}
 		inline uint16_t		_blockIndex(const chunkLocalVec3i &pos) {return (pos.x() + pos.y() * Chunk::SIZE + pos.z() * Chunk::SIZE * Chunk::SIZE);}
 		inline bool			_isInBounds(const chunkLocalVec3i &pos) {return (pos.x() >= 0 && pos.y() >= 0 && pos.z() >= 0 && pos.x() < Chunk::SIZE && pos.y() < Chunk::SIZE && pos.z() < Chunk::SIZE);}
 	private:
@@ -157,7 +142,7 @@ class	Chunk
 		static mbl::render::TextureAtlas*	_texture;
 
 		chunkWorldVec3i							_pos = {};
-		std::array<BlockState, Chunk::VOLUME>	_blocks = {};
+		std::array<blockStateId, Chunk::VOLUME>	_blocks = {};
 
 		u32	_non_air_blocks = 0;
 

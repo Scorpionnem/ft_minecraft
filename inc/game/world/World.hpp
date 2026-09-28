@@ -1,6 +1,7 @@
 #pragma once
 
 #include "game/world/Chunk.hpp"
+#include "game/world/Block.hpp"
 #include "net/LAN.hpp"
 
 #include <algorithm>
@@ -39,10 +40,18 @@ class	ChunkPool
 class	World
 {
 	public:
-		static constexpr int	MAX_CHUNK_REQUESTS = 16;
+		static constexpr int	MAX_CHUNK_REQUESTS = 64;
 	public:
 		World() {}
 		~World() {}
+
+		void	loadBlocks()
+		{
+			Block::AIR = _blocks.registerBlock("air", false)->getDefaultState().id();
+			Block::STONE = _blocks.registerBlock("stone", true, {}, "assets/models/blocks/stone_block.ftm")->getDefaultState().id();
+			Block::GRASS_BLOCK = _blocks.registerBlock("grass_block", true, {}, "assets/models/blocks/grass_block.ftm")->getDefaultState().id();
+			Block::GRASS = _blocks.registerBlock("grass", false, {}, "assets/models/blocks/grass.ftm")->getDefaultState().id();
+		}
 
 		void	setThreadPool(mbl::utils::ThreadPool* t)
 		{
@@ -82,4 +91,6 @@ class	World
 		ChunkPool										_chunkPool;
 
 		mbl::utils::ThreadPool*						_threads = nullptr;
+
+		BlockRegistry		_blocks;
 };

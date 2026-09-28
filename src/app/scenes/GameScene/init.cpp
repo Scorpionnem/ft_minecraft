@@ -27,6 +27,7 @@ void GameScene::init(Client& client)
 		_chunkThreads.add(2);
 
 	_world = {};
+	_world.loadBlocks();
 
 	_world.setThreadPool(&_chunkThreads);
 

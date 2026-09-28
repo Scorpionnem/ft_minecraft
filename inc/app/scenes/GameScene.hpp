@@ -3,6 +3,7 @@
 #include "app/scene/Scene.hpp"
 #include "app/Server.hpp"
 #include "game/world/World.hpp"
+#include "game/world/Block.hpp"
 #include "game/entity/Entities.hpp"
 
 class GameScene: public Scene
