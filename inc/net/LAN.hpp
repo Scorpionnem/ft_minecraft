@@ -56,7 +56,7 @@ namespace Packet
 		u16					id = 0;
 		u32					blocks[512] = {};
 	} __attribute__((packed));
-	#define CHUNKDATASPECIAL_TYPE 9
+	#define CHUNKDATASPECIAL_TYPE 8
 	struct	ChunkDataSpecial
 	{
 		enum class Type
@@ -70,11 +70,21 @@ namespace Packet
 		chunkWorldVec3i		chunk_pos = 0;
 		Type				type = Type::NONE;
 	} __attribute__((packed));
-	#define CHUNKREQUEST_TYPE 8
+	#define CHUNKREQUEST_TYPE 9
 	struct	ChunkRequest
 	{
 		Packet::Header	hdr = {.type = CHUNKREQUEST_TYPE};
 
 		chunkWorldVec3i		chunk_pos = 0;
+	} __attribute__((packed));
+
+	#define PLAYERPOS_TYPE 10
+	struct	PlayerPos
+	{
+		Packet::Header	hdr = {.type = PLAYERPOS_TYPE};
+
+		float	x;
+		float	y;
+		float	z;
 	} __attribute__((packed));
 };

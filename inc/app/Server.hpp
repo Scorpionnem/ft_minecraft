@@ -35,6 +35,8 @@ class	Server
 	private:
 		mbl::net::Server	_server;
 
+		std::map<int, vec3f>	_playersPos;
+
 		struct	PendingChunkSend
 		{
 			int			fd;

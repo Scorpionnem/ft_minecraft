@@ -37,19 +37,16 @@ class	Chunk
 	public:
 		Chunk()
 		{
-			_busy = false;
-			_blockMesh.add_vertex_layout(0, 3, GL_FLOAT, offsetof(Vertex, pos));
-			_blockMesh.add_vertex_layout(1, 3, GL_FLOAT, offsetof(Vertex, normal));
-			_blockMesh.add_vertex_layout(2, 3, GL_FLOAT, offsetof(Vertex, color));
-			_blockMesh.add_vertex_layout(3, 2, GL_FLOAT, offsetof(Vertex, uv));
-			_blockMesh.set_sizeof_layout(sizeof(Vertex));
 		}
 		void	clear()
 		{
-			_busy = false;
-			_non_air_blocks = 0;
 			_blockMesh.clear();
-			_blocks = {};
+			_blocks.fill(Block::AIR);
+			_non_air_blocks = 0;
+			_need_upload = false;
+			_need_remesh = false;
+			_pos = {};
+			_state = State::NONE;
 		}
 		~Chunk() {}
 
@@ -63,70 +60,19 @@ class	Chunk
 				shader->load(vert_path, frag_path);
 		}
 
-		void	generate(u32 seed/*Generator*/)
-		{
-			Noise::Perlin2D	noise;
-			noise.init(seed);
-
-			chunkLocalVec3i	blockPos;
-			for (blockPos.x() = 0; blockPos.x() < Chunk::SIZE; blockPos.x()++)
-				for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
-				{
-					worldVec3i worldPos = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-					int	y = -noise.sample_turbulence_fbm(vec2f(worldPos.x(), worldPos.z()), 0.0025, 4) * 320;
-
-					for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
-					{
-						worldVec3i worldPos2 = chunkLocalToWorld(blockPos, _pos, Chunk::SIZE);
-
-						float	noise = Noise::rand2dTo1d(vec2i(worldPos.x(), worldPos.z()));
-						if (worldPos2.y() == y + 1 && noise < 0.01)
-							_setBlockUnsafe(blockPos, Block::BLUE_ORCHID);
-						else if (worldPos2.y() == y + 1 && noise < 0.1)
-							_setBlockUnsafe(blockPos, Block::GRASS);
-						if (worldPos2.y() == y)
-							_setBlockUnsafe(blockPos, Block::GRASS_BLOCK);
-						else if (worldPos2.y() < y)
-							_setBlockUnsafe(blockPos, Block::STONE);
-					}
-				}
-		}
+		void	generate(u32 seed/*Generator*/);
 		void	mesh(BlockRegistry& blocks, std::array<chunkPtr, 6> neighbours);
 
-		void	update()
-		{
-
-		}
-		void	draw(const mbl::render::Camera& cam, bool draw_bounds = false)
-		{
-			if (_blockMesh.vertices() == 0)
-				return ;
-
-			mbl::render::Shader*		shader = _ext_shader ? _ext_shader : &_int_shader;
-
-			if (_need_upload)
-			{
-				_blockMesh.upload();
-				_need_upload = false;
-			}
-
-			shader->bind();
-			shader->setMat4("uView", cam.getViewMatrix());
-			shader->setMat4("uProj", cam.getProjectionMatrix());
-			shader->setMat4("uModel", mat4f::translate(_pos * Chunk::SIZE));
-			shader->setInt("uAtlas", 0);
-			_blockMesh.draw(GL_TRIANGLES);
-
-			if (draw_bounds)
-				mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{.pos = _pos * Chunk::SIZE, .size = vec3f(Chunk::SIZE)}, cam, vec3f(0, 1, 0));
-		}
+		void	update();
+		void	draw(const mbl::render::Camera& cam, bool draw_bounds = false);
 
 		void	setPos(const chunkWorldVec3i& pos) {_pos = pos;}
 		chunkWorldVec3i	pos() const {return (_pos);}
 
 		Chunk::State	state() {return (_state);}
+		void			setState(Chunk::State state) {_state = state;}
 
-		bool	busy() {return (_busy);}
+		bool	busy() const {return (_busy);}
 		void	setBusy(bool state) {_busy = state;}
 
 		bool	need_remesh() {return (_need_remesh);}
@@ -155,7 +101,7 @@ class	Chunk
 		std::atomic_bool				_need_remesh = false;
 
 		// is chunk in a thread
-		std::atomic_bool				_busy = false;
+		std::atomic<int>				_busy = 0;
 
 		std::atomic<Chunk::State>		_state = Chunk::State::NONE;
 };

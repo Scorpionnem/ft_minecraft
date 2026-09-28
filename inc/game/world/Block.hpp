@@ -38,6 +38,7 @@ namespace BlockProperties
 	const BlockProperty	WATERLOGGED(BlockProperty::WATERLOGGED, false, true);
 	const BlockProperty	AGE(BlockProperty::AGE, 0, 32);
 	const BlockProperty	AXIS(BlockProperty::AXIS, 0, 2); // north south east west
+	const BlockProperty	SLAB_POS(BlockProperty::AXIS, 0, 1); // top bottom
 };
 
 class	Block;
@@ -47,18 +48,30 @@ using blockStateId = u32;
 class	BlockState
 {
 	public:
-		BlockState(Block& b, blockStateHash h) : _block(b), _hash(h) {};
+		BlockState(Block& b, blockStateHash h, const std::string &model_path, mbl::render::TextureAtlas* atlas) : _block(b), _hash(h)
+		{
+			if (!model_path.empty())
+				_model.load(model_path, atlas);
+		};
 
 		Block&	getBlock() {return (_block);}
 		u8	getPropertyValue(BlockProperty::Id prop);
 
 		blockStateId	id() {return (_id);}
 		void	setId(blockStateId id) {_id = id;}
+		blockStateHash	hash() {return (_hash);}
+		BlockModel&	model() {return (_model);}
+		void	computeTextures(mbl::render::TextureAtlas* atlas)
+		{
+			_model.computeTextures(atlas);
+		}
 	private:
 		static constexpr u8	_bitMask(u8 n) {return ((1u << n) - 1u);}
 		Block&			_block;
 		blockStateHash	_hash;
 		blockStateId	_id;
+
+		BlockModel	_model;
 };
 
 class	Block
@@ -69,21 +82,20 @@ class	Block
 		static blockStateId	GRASS_BLOCK;
 		static blockStateId	GRASS;
 		static blockStateId	BLUE_ORCHID;
+		static blockStateId	STONE_SLAB;
 	public:
 		Block(const std::string &name, bool solid, const std::vector<BlockProperty>& properties, const std::string &model_path, mbl::render::TextureAtlas* atlas)
 		{
 			_name = name;
 			_solid = solid;
 
-			if (!model_path.empty())
-				_model.load(model_path, atlas);
-
 			_processLayout(properties);
-			_generateStates(properties);
+			_generateStates(properties, model_path, atlas);
 		}
 		void	computeBlock(mbl::render::TextureAtlas* atlas)
 		{
-			_model.computeTextures(atlas);
+			for (auto& s : _states)
+				s.computeTextures(atlas);
 		}
 		~Block() {}
 
@@ -95,13 +107,26 @@ class	Block
 		void	setId(u16 id) {_id = id;}
 		std::vector<BlockState>&	getStates() {return (_states);}
 		BlockState&	getDefaultState() {return (_states[0]);}
+		BlockState&	getState(const std::vector<std::pair<BlockProperty, u8>>& properties_values)
+		{
+			blockStateHash	h = 0;
+			for (auto& [bp, val] : properties_values)
+			{
+				h |= (static_cast<blockStateHash>(val) << _offsets[bp.id]);
+			}
+			for (auto& s : _states)
+			{
+				if (s.hash() == h)
+					return (s);
+			}
+			throw std::runtime_error("Block doesnt exist with these properties");
+		}
 
-		BlockModel	_model;
 		bool	solid() {return (_solid);}
 	private:
 		void	_processLayout(const std::vector<BlockProperty>& properties);
-		void	_generateStates(const std::vector<BlockProperty>& properties);
-		void	_generateStatesRec(const std::vector<BlockProperty>& properties, size_t idx, blockStateHash hash);
+		void	_generateStates(const std::vector<BlockProperty>& properties, const std::string &model_path, mbl::render::TextureAtlas* atlas);
+		void	_generateStatesRec(const std::vector<BlockProperty>& properties, size_t idx, blockStateHash hash, const std::string &model_path, mbl::render::TextureAtlas* atlas);
 	private:
 		std::string	_name;
 

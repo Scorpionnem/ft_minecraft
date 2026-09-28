@@ -6,7 +6,10 @@ void GameScene::render(Client& c)
 {
 	glEnable(GL_DEPTH_TEST);
 
-	_show_f3();
+	if (_debug)
+		_show_f3();
+	else
+		mbl::ui::text(std::to_string(_fps) + " fps", 0, ANCHOR_TOP_LEFT);
 
 	_render_buffer.bind();
 	mbl::render::FrameBuffer::clear();
@@ -22,7 +25,7 @@ void GameScene::render(Client& c)
 	    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
 	}
 
-    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam);
+    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam, _debug);
 
     _render_buffer.unbind();
     glViewport(0, 0, c.window().width(), c.window().height());

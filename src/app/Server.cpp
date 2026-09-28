@@ -32,6 +32,10 @@ void    Server::loop()
 
 		if (c.get() > (1.0f / 20.0f))
 		{
+			std::vector<chunkWorldVec3i>	positions;
+			for (auto& [fd, pos] : _playersPos)
+				positions.push_back(worldToChunkWorld(pos, Chunk::SIZE));
+			_world.clearUnused(positions, 12);
 			c.start();
 		}
 
@@ -110,6 +114,13 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 				_pendingChunkSends.push_back({fd, chunk});
 			else
 				_send_chunk(fd, chunk);
+			break ;
+		}
+		case PLAYERPOS_TYPE:
+		{
+			Packet::PlayerPos*	pos_pckt = reinterpret_cast<Packet::PlayerPos*>(data);
+
+			_playersPos[fd] = vec3f(pos_pckt->x, pos_pckt->y, pos_pckt->z);
 			break ;
 		}
 		default :

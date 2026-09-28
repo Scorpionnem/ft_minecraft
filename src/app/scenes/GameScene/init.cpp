@@ -46,7 +46,7 @@ void GameScene::init(Client& client)
     mbl::render::renderer::RayRenderer::gen_render_data();
     Chunk::load_shader();
 
-    SDL_GL_SetSwapInterval(0);
+    // SDL_GL_SetSwapInterval(0);
 
     _render_buffer.resize(client.window().width(), client.window().height());
 

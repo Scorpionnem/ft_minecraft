@@ -20,7 +20,6 @@ class	ChunkPool
 			{
 				chunkPtr c = _freeChunksPool.back();
 				_freeChunksPool.pop_back();
-				c->clear();
 				return (c);
 			}
 			chunkPtr	c = std::make_shared<Chunk>();
@@ -31,6 +30,14 @@ class	ChunkPool
 		{
 			c->clear();
 			_freeChunksPool.push_back(c);
+		}
+		u64	size()
+		{
+			return (_chunksPool.size());
+		}
+		u64	sizeFree()
+		{
+			return (_freeChunksPool.size());
 		}
 	private:
 		std::vector<chunkPtr>							_chunksPool;
@@ -52,7 +59,7 @@ class	World
 			Block::GRASS_BLOCK = _blocks.registerBlock("grass_block", true, {}, "assets/models/blocks/grass_block.ftm")->getDefaultState().id();
 			Block::GRASS = _blocks.registerBlock("grass", false, {}, "assets/models/blocks/grass.ftm")->getDefaultState().id();
 			Block::BLUE_ORCHID = _blocks.registerBlock("blue_orchid", false, {}, "assets/models/blocks/blue_orchid.ftm")->getDefaultState().id();
-
+			Block::STONE_SLAB = _blocks.registerBlock("blue_orchid", false, {BlockProperties::SLAB_POS}, "assets/models/blocks/stone_block.ftm")->getDefaultState().id();
 			_blocks.computeBlocks();
 		}
 
@@ -64,7 +71,7 @@ class	World
 
 		void	meshChunk(chunkPtr c);
 
-		void		draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam);
+		void		draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam, bool debug);
 
 		void		generateInRange(const chunkWorldVec3i& center_chunk, u16 render_distance);
 		chunkPtr	generateChunk(const chunkWorldVec3i& pos);
@@ -77,6 +84,37 @@ class	World
 
 		void	netChunkData(const Packet::ChunkData* pckt);
 		void	netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt);
+
+		void	clearUnused(const std::vector<chunkWorldVec3i>& centers, u16 render_distance)
+		{
+			render_distance /= 2;
+
+			for (auto chunkIt = _chunks.begin(); chunkIt != _chunks.end();)
+			{
+				chunkPtr	chunk = chunkIt->second;
+
+				bool	inRange = false;
+				for (const vec3i& pos : centers)
+				{
+					vec3i diff = abs(pos - chunk->pos());
+					if (diff.x() <= render_distance && diff.y() <= render_distance && diff.z() <= render_distance)
+					{
+						inRange = true;
+						break ;
+					}
+				}
+
+				if (!chunk->busy() && !_chunkRequests.contains(chunkIt->first) && !inRange)
+				{
+					_chunkPool.release(chunk);
+					chunkIt = _chunks.erase(chunkIt);
+				}
+				else
+				{
+					chunkIt++;
+				}
+			}
+		}
 
 		u32	seed() {return (_seed);}
 		void	setSeed(u32 seed) {_seed = seed;}

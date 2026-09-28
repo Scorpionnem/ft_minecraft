@@ -44,6 +44,7 @@ class GameScene: public Scene
 		float	_tp_distance = 3;
 		bool	_moving = false;
 
+		bool	_debug = false;
 		int	_fps = 0;
 		int	_rx_pckt = 0;
 		int	_tx_pckt = 0;

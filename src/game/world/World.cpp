@@ -33,7 +33,7 @@ void	World::removeChunk(const chunkWorldVec3i& pos)
 	_chunkPool.release(c);
 }
 
-void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam)
+void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam, bool debug)
 {
 	render_distance /= 2;
 
@@ -46,9 +46,9 @@ void	World::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const
 			for (pos.z() = center_chunk.z() - render_distance; pos.z() <= center_chunk.z() + render_distance; pos.z()++)
 			{
 				chunkPtr c = getChunk(pos);
-				if (c && !c->busy())
+				if (c && !c->busy() && c->state() >= Chunk::State::MESHED)
 				{
-					c->draw(cam);
+					c->draw(cam, debug);
 				}
 			}
 }
@@ -116,10 +116,11 @@ void	World::meshChunk(chunkPtr c)
 	{
 		if (!neighbours[dir])
 			continue ;
-		if (neighbours[dir]->state() < Chunk::State::GENERATED)
+		if (neighbours[dir]->busy() || neighbours[dir]->state() < Chunk::State::GENERATED)
 			neighbours[dir] = nullptr;
 	}
 
+	c->setBusy(true);
 	auto		func = [this, c, neighbours]()
 		{
 			c->mesh(_blocks, neighbours);
@@ -155,6 +156,8 @@ void	World::netChunkData(const Packet::ChunkData* pckt)
 
 	chunkPtr	c = pending.chunk;
 
+	c->setBusy(false);
+	c->setState(Chunk::State::GENERATED);
 	meshChunk(c);
 
 	_chunkRequests.erase(it);
@@ -172,6 +175,8 @@ void	World::netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt)
 
 	chunkPtr	c = pending.chunk;
 
+	c->setBusy(false);
+	c->setState(Chunk::State::GENERATED);
 	meshChunk(c);
 
 	_chunkRequests.erase(it);
