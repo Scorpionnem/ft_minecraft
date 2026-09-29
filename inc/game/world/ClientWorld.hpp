@@ -6,20 +6,9 @@
 class	ClientWorld : public World
 {
 	public:
-		void	update()
-		{
-			std::vector<chunkWorldVec3i>	removes;
-
-			for (auto& req : _chunkRequests)
-				if (req.second.time.get() > 0.5)
-				{
-					req.second.chunk->setBusy(false);
-					removes.push_back(req.second.chunk->pos());
-				}
-
-			for (auto& p : removes)
-				removeChunk(p);
-		}
+		static constexpr double	CHUNK_REQUEST_TIMEOUT = 0.75;
+	public:
+		void	update();
 		void	draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam, bool debug);
 
 		void	meshChunk(chunkPtr c);

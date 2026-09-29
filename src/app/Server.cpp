@@ -125,39 +125,6 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 	}
 }
 
-// void	Server::_send_chunk(int fd, chunkPtr chunk)
-// {
-// 	chunkWorldVec3i	pos = chunk->pos();
-
-// 	for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)
-// 	{
-// 		Packet::ChunkData	pckt = {};
-
-// 		pckt.chunk_pos = pos;
-// 		pckt.id = i;
-// 		std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
-
-// 		_server.send(fd, &pckt, sizeof(pckt));
-// 	}
-// }
-
-// void	Server::_service_pending_chunk_sends()
-// {
-// 	auto	it = _pendingChunkSends.begin();
-
-// 	while (it != _pendingChunkSends.end())
-// 	{
-// 		if (it->chunk->busy())
-// 		{
-// 			++it;
-// 			continue ;
-// 		}
-
-// 		_send_chunk(it->fd, it->chunk);
-// 		it = _pendingChunkSends.erase(it);
-// 	}
-// }
-
 void	Server::update_broadcaster()
 {
 	#define BROADCAST_DELAY (0.5)

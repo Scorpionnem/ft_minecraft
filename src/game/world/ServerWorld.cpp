@@ -17,17 +17,13 @@ chunkPtr	ServerWorld::generateChunk(const chunkWorldVec3i& pos)
 	if (gc)
 		return (gc);
 
-	chunkPosHash	h = hash(pos);
-	chunkPtr		c = _chunkPool.get();
-
-	c->setPos(pos);
+	chunkPtr		c = addChunk(pos);
 
 	c->setBusy(true);
-	u32	s = seed();
-	auto func = [this, c, s]()
+	auto func = [this, c]()
 		{
 			if (_generator)
-				_generator->generateChunk(*c, s);
+				_generator->generateChunk(*c, seed());
 			c->setBusy(false);
 		};
 
@@ -36,6 +32,5 @@ chunkPtr	ServerWorld::generateChunk(const chunkWorldVec3i& pos)
 	else
 		func();
 
-	_chunks.insert({h, c});
 	return (c);
 }
