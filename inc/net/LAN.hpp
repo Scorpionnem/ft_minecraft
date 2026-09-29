@@ -62,6 +62,7 @@ namespace Packet
 		enum class Type
 		{
 			EMPTY,
+			FAILURE,
 			NONE,
 		};
 

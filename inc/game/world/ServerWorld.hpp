@@ -1,0 +1,96 @@
+#pragma once
+
+#include "game/world/World.hpp"
+
+class	ServerWorld : public World
+{
+	public:
+		ServerWorld()
+		{
+			_generator = std::make_shared<NoiseGenerator>();
+		}
+
+		void	update(mbl::net::Server &serv)
+		{
+			_service_pending_chunk_sends(serv);
+		}
+
+		void		generateInRange(const chunkWorldVec3i& center_chunk, u16 render_distance);
+		chunkPtr	generateChunk(const chunkWorldVec3i& pos);
+
+		u32		seed() {return (_seed);}
+		void	setSeed(u32 seed) {_seed = seed;}
+
+		void	setGenerator(std::shared_ptr<ChunkGenerator> gen) {_generator = gen;}
+		std::shared_ptr<ChunkGenerator>	generator() {return (_generator);}
+
+		void	clientChunkRequest(int fd, mbl::net::Server &serv, Packet::ChunkRequest* pckt, const chunkWorldVec3i& player_pos, u16 render_distance)
+		{
+			vec3i diff = abs(player_pos - pckt->chunk_pos);
+			if (!(diff.x() <= render_distance && diff.y() <= render_distance && diff.z() <= render_distance))
+			{
+				Packet::ChunkDataSpecial	ret_err = {};
+
+				ret_err.chunk_pos = pckt->chunk_pos;
+				ret_err.type = Packet::ChunkDataSpecial::Type::FAILURE;
+				serv.send(fd, &ret_err, sizeof(ret_err));
+				return ;
+			}
+
+			chunkPtr	c = generateChunk(pckt->chunk_pos);
+
+			if (c->busy())
+				_pendingChunkSends.push_back(PendingChunkSend{.fd = fd, .chunk = c});
+			else
+				_send_chunk(fd, serv, c);
+		}
+	private:
+		std::shared_ptr<ChunkGenerator>	_generator;
+
+		struct	PendingChunkSend
+		{
+			int			fd;
+			chunkPtr	chunk;
+		};
+		std::vector<PendingChunkSend>	_pendingChunkSends;
+		void	_send_chunk(int fd, mbl::net::Server &serv, chunkPtr chunk)
+		{
+			chunkWorldVec3i	pos = chunk->pos();
+
+			if (chunk->empty())
+			{
+				Packet::ChunkDataSpecial	pckt = {};
+				pckt.chunk_pos = pos;
+				pckt.type = Packet::ChunkDataSpecial::Type::EMPTY;
+				serv.send(fd, &pckt, sizeof(pckt));
+				return ;
+			}
+
+			for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)
+			{
+				Packet::ChunkData	pckt = {};
+
+				pckt.chunk_pos = pos;
+				pckt.id = i;
+				std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
+
+				serv.send(fd, &pckt, sizeof(pckt));
+			}
+		}
+		void	_service_pending_chunk_sends(mbl::net::Server &serv)
+		{
+			auto	it = _pendingChunkSends.begin();
+
+			while (it != _pendingChunkSends.end())
+			{
+				if (it->chunk->busy())
+				{
+					++it;
+					continue ;
+				}
+
+				_send_chunk(it->fd, serv, it->chunk);
+				it = _pendingChunkSends.erase(it);
+			}
+		}
+};

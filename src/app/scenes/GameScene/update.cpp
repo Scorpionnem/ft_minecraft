@@ -66,13 +66,14 @@ void	GameScene::_tick(Client& client, const mbl::platform::Input& input)
 	_fps = 1.0 / input.delta();
 	_rx_pckt = 0; _tx_pckt = 0;
 
-	_world.clearUnused({worldToChunkWorld(_fp_cam.pos, Chunk::SIZE)}, RENDER_DISTANCE);
-	_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
-
 	Packet::PlayerPos	ppos_pckt = {};
 
 	ppos_pckt.x = _fp_cam.pos.x();
 	ppos_pckt.y = _fp_cam.pos.y();
 	ppos_pckt.z = _fp_cam.pos.z();
 	_netClient.send(&ppos_pckt, sizeof(ppos_pckt));
+
+	_world.update();
+	_world.clearUnused({worldToChunkWorld(_fp_cam.pos, Chunk::SIZE)}, RENDER_DISTANCE);
+	_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
 }

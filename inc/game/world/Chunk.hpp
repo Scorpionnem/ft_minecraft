@@ -4,7 +4,7 @@
 #include "game/world/utils/Positions.hpp"
 #include "game/world/Block.hpp"
 #include "mbl.hpp"
-#include "game/world/generation/noise/Noise.hpp"
+#include "game/world/render/mesh/ChunkMeshData.hpp"
 
 #include <array>
 
@@ -21,13 +21,7 @@ class	Chunk
 			MESHED,
 			UPLOADED,
 		};
-		struct	Vertex
-		{
-			vec3f	pos;
-			vec3f	normal;
-			vec3f	color;
-			vec2f	uv;
-		};
+		using	Vertex = ChunkVertex;
 	public:
 		static constexpr int SIZE = 32;
 		static constexpr int VOLUME = (Chunk::SIZE * Chunk::SIZE * Chunk::SIZE);
@@ -37,36 +31,42 @@ class	Chunk
 	public:
 		Chunk()
 		{
+			clear();
 		}
 		void	clear()
 		{
-			_blockMesh.clear();
+			_meshData.clear();
 			_blocks.fill(Block::AIR);
 			_non_air_blocks = 0;
 			_need_upload = false;
-			_need_remesh = false;
 			_pos = {};
 			_state = State::NONE;
 		}
 		~Chunk() {}
 
-		static void	load_shader(const char* vert_path = "assets/shaders/chunk.vert", const char* frag_path = "assets/shaders/chunk.frag",
-			mbl::render::Shader* ext_shader = nullptr)
-		{
-			_ext_shader = ext_shader;
-			mbl::render::Shader*	shader = _ext_shader ? _ext_shader : &_int_shader;
-
-			if (!_ext_shader)
-				shader->load(vert_path, frag_path);
-		}
-
 		void	generate(u32 seed/*Generator*/);
 		void	mesh(BlockRegistry& blocks, std::array<chunkPtr, 6> neighbours);
 
-		void	update();
-		void	draw(const mbl::render::Camera& cam, bool draw_bounds = false);
+		u32	process_non_air()
+		{
+			_non_air_blocks = 0;
+			for (auto& b : _blocks)
+				if (b != Block::AIR)
+					_non_air_blocks++;
+			return (_non_air_blocks);
+		}
 
-		void	setPos(const chunkWorldVec3i& pos) {_pos = pos;}
+		void	setMeshData(const ChunkMeshData& data)
+		{
+			_meshData = data;
+			_state = State::MESHED;
+			_need_upload = true;
+		}
+		ChunkMeshData&	meshData() {return (_meshData);}
+
+		void	update();
+
+		void			setPos(const chunkWorldVec3i& pos) {_pos = pos;}
 		chunkWorldVec3i	pos() const {return (_pos);}
 
 		Chunk::State	state() {return (_state);}
@@ -75,30 +75,47 @@ class	Chunk
 		bool	busy() const {return (_busy);}
 		void	setBusy(bool state) {_busy = state;}
 
-		bool	need_remesh() {return (_need_remesh);}
-		void	setNeedRemesh(bool state) {_need_remesh = state;}
-
 		std::array<blockStateId, Chunk::VOLUME>&	data() {return (_blocks);}
-		bool	empty() {return (_non_air_blocks == 0);}
-	private:
-		inline blockStateId	_getBlockUnsafe(const chunkLocalVec3i &pos) {return (_blocks[_blockIndex(pos)]);}
-		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, blockStateId block) {_blocks[_blockIndex(pos)] = block; if (block != 0) _non_air_blocks++;}
-		inline uint16_t		_blockIndex(const chunkLocalVec3i &pos) {return (pos.x() + pos.y() * Chunk::SIZE + pos.z() * Chunk::SIZE * Chunk::SIZE);}
-		inline bool			_isInBounds(const chunkLocalVec3i &pos) {return (pos.x() >= 0 && pos.y() >= 0 && pos.z() >= 0 && pos.x() < Chunk::SIZE && pos.y() < Chunk::SIZE && pos.z() < Chunk::SIZE);}
-	private:
-		static mbl::render::Shader*			_ext_shader;
-		static mbl::render::Shader			_int_shader;
-		static mbl::render::TextureAtlas*	_texture;
+		const std::array<blockStateId, Chunk::VOLUME>&	data() const {return (_blocks);}
 
+		bool	empty() const {return (_non_air_blocks == 0);}
+		u32		non_air_blocks() const {return (_non_air_blocks);}
+
+		static constexpr uint16_t	blockIndex(const chunkLocalVec3i &pos) {return (pos.x() + pos.y() * Chunk::SIZE + pos.z() * Chunk::SIZE * Chunk::SIZE);}
+		static constexpr bool		isInBounds(const chunkLocalVec3i &pos) {return (pos.x() >= 0 && pos.y() >= 0 && pos.z() >= 0 && pos.x() < Chunk::SIZE && pos.y() < Chunk::SIZE && pos.z() < Chunk::SIZE);}
+
+		inline blockStateId	getBlock(const chunkLocalVec3i &pos) const
+		{
+			if (!_isInBounds(pos))
+				return (Block::AIR);
+			return (_blocks[blockIndex(pos)]);
+		}
+		inline void			setBlock(const chunkLocalVec3i &pos, blockStateId block)
+		{
+			if (!_isInBounds(pos))
+				return ;
+			uint16_t idx = blockIndex(pos);
+			blockStateId old = _blocks[idx];
+			_blocks[idx] = block;
+			if (old == 0 && block != 0)
+				_non_air_blocks++;
+			else if (old != 0 && block == 0)
+				_non_air_blocks--;
+		}
+
+	private:
+		inline blockStateId	_getBlockUnsafe(const chunkLocalVec3i &pos) const {return (getBlock(pos));}
+		inline void			_setBlockUnsafe(const chunkLocalVec3i &pos, blockStateId block) {setBlock(pos, block);}
+		inline uint16_t		_blockIndex(const chunkLocalVec3i &pos) const {return (blockIndex(pos));}
+		inline bool			_isInBounds(const chunkLocalVec3i &pos) const {return (isInBounds(pos));}
+	private:
 		chunkWorldVec3i							_pos = {};
 		std::array<blockStateId, Chunk::VOLUME>	_blocks = {};
 
 		u32	_non_air_blocks = 0;
 
+		ChunkMeshData					_meshData;
 		bool							_need_upload = false;
-		mbl::render::Mesh				_blockMesh;
-
-		std::atomic_bool				_need_remesh = false;
 
 		// is chunk in a thread
 		std::atomic<int>				_busy = 0;

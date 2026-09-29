@@ -2,8 +2,9 @@
 
 #include "app/scene/Scene.hpp"
 #include "app/Server.hpp"
-#include "game/world/World.hpp"
+#include "game/world/ClientWorld.hpp"
 #include "game/world/Block.hpp"
+#include "game/world/render/ChunkRender.hpp"
 #include "game/entity/Entities.hpp"
 
 class GameScene: public Scene
@@ -61,7 +62,7 @@ class GameScene: public Scene
 		mbl::render::Mesh			_screen_mesh;
 		mbl::render::Shader			_post_shader;
 
-		World				_world;
+		ClientWorld				_world;
 
 		mbl::render::TextureAtlas	_atlas;
 	private:

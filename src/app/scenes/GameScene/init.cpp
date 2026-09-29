@@ -44,7 +44,7 @@ void GameScene::init(Client& client)
 
     mbl::render::renderer::AABBRenderer::gen_render_data();
     mbl::render::renderer::RayRenderer::gen_render_data();
-    Chunk::load_shader();
+    ChunkRender::load_shader();
 
     // SDL_GL_SetSwapInterval(0);
 

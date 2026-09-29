@@ -18,6 +18,7 @@ void    Server::init(int port)
 	_running = true;
 
 	_threads.add(16);
+	_world.loadBlocks();
 	_world.setThreadPool(&_threads);
 	_world.setSeed(Noise::rand1dTo1d(_server.port()) * (double)UINT32_MAX);
 }
@@ -28,14 +29,14 @@ void    Server::loop()
 	while (_running)
 	{
 		update_server();
-		_service_pending_chunk_sends();
 
 		if (c.get() > (1.0f / 20.0f))
 		{
+			_world.update(_server);
 			std::vector<chunkWorldVec3i>	positions;
 			for (auto& [fd, pos] : _playersPos)
 				positions.push_back(worldToChunkWorld(pos, Chunk::SIZE));
-			_world.clearUnused(positions, 12);
+			_world.clearUnused(positions, RENDER_DISTANCE);
 			c.start();
 		}
 
@@ -108,12 +109,8 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 		case CHUNKREQUEST_TYPE:
 		{
 			Packet::ChunkRequest*	req_pckt = reinterpret_cast<Packet::ChunkRequest*>(data);
-			chunkPtr				chunk = _world.generateChunk(req_pckt->chunk_pos);
 
-			if (chunk->busy())
-				_pendingChunkSends.push_back({fd, chunk});
-			else
-				_send_chunk(fd, chunk);
+			_world.clientChunkRequest(fd, _server, req_pckt, worldToChunkWorld(_playersPos[fd], Chunk::SIZE), RENDER_DISTANCE);
 			break ;
 		}
 		case PLAYERPOS_TYPE:
@@ -128,48 +125,38 @@ void	Server::_dispatch_packet(int fd, u8 *data, u64 size)
 	}
 }
 
-void	Server::_send_chunk(int fd, chunkPtr chunk)
-{
-	if (chunk->empty())
-	{
-		Packet::ChunkDataSpecial	sp = {};
+// void	Server::_send_chunk(int fd, chunkPtr chunk)
+// {
+// 	chunkWorldVec3i	pos = chunk->pos();
 
-		sp.type = Packet::ChunkDataSpecial::Type::EMPTY;
-		sp.chunk_pos = chunk->pos();
-		_server.send(fd, &sp, sizeof(sp));
-		return ;
-	}
+// 	for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)
+// 	{
+// 		Packet::ChunkData	pckt = {};
 
-	chunkWorldVec3i	pos = chunk->pos();
+// 		pckt.chunk_pos = pos;
+// 		pckt.id = i;
+// 		std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
 
-	for (u32 i = 0; i < Chunk::PACKET_COUNT; i++)
-	{
-		Packet::ChunkData	pckt = {};
+// 		_server.send(fd, &pckt, sizeof(pckt));
+// 	}
+// }
 
-		pckt.chunk_pos = pos;
-		pckt.id = i;
-		std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
+// void	Server::_service_pending_chunk_sends()
+// {
+// 	auto	it = _pendingChunkSends.begin();
 
-		_server.send(fd, &pckt, sizeof(pckt));
-	}
-}
+// 	while (it != _pendingChunkSends.end())
+// 	{
+// 		if (it->chunk->busy())
+// 		{
+// 			++it;
+// 			continue ;
+// 		}
 
-void	Server::_service_pending_chunk_sends()
-{
-	auto	it = _pendingChunkSends.begin();
-
-	while (it != _pendingChunkSends.end())
-	{
-		if (it->chunk->busy())
-		{
-			++it;
-			continue ;
-		}
-
-		_send_chunk(it->fd, it->chunk);
-		it = _pendingChunkSends.erase(it);
-	}
-}
+// 		_send_chunk(it->fd, it->chunk);
+// 		it = _pendingChunkSends.erase(it);
+// 	}
+// }
 
 void	Server::update_broadcaster()
 {

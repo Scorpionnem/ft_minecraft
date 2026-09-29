@@ -1,11 +1,13 @@
 #pragma once
 
 #include "mbl.hpp"
-#include "game/world/World.hpp"
+#include "game/world/ServerWorld.hpp"
 #include "game/entity/Entities.hpp"
 
 class	Server
 {
+	public:
+		static constexpr int	RENDER_DISTANCE = 12;
 	public:
 		Server()
 		{
@@ -30,8 +32,8 @@ class	Server
         void	update_broadcaster();
         void	update_server();
 		void	_dispatch_packet(int fd, u8 *data, u64 size);
-		void	_send_chunk(int fd, chunkPtr chunk);
-		void	_service_pending_chunk_sends();
+		// void	_send_chunk(int fd, chunkPtr chunk);
+		// void	_service_pending_chunk_sends();
 	private:
 		mbl::net::Server	_server;
 
@@ -50,5 +52,5 @@ class	Server
 		mbl::utils::Chrono  		broadcast_time;
 
 		mbl::utils::ThreadPool	_threads;
-		World					_world;
+		ServerWorld					_world;
 };
