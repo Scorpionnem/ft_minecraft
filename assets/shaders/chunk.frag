@@ -8,6 +8,7 @@ in vec3 vColor;
 out vec4    fragColor;
 
 uniform sampler2D uAtlas;
+uniform float	uFade;
 
 void main()
 {
@@ -19,5 +20,5 @@ void main()
 	if (color.a == 0)
 		discard ;
 
-	fragColor = vec4(color.rgb * vColor * shadowForce, 1);
+	fragColor = vec4(color.rgb * vColor * shadowForce * uFade, 1);
 }

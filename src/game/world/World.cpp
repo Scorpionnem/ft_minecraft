@@ -21,15 +21,15 @@ chunkPtr	World::addChunk(const chunkWorldVec3i& pos)
 	return (c);
 }
 
-void	World::removeChunk(const chunkWorldVec3i& pos)
+std::unordered_map<chunkPosHash, chunkPtr>::iterator	World::removeChunk(const chunkWorldVec3i& pos)
 {
 	chunkPosHash	h = hash(pos);
 	chunkPtr	c = getChunk(pos);
 	if (!c || c->busy())
-		return ;
+		return (_chunks.end());
 
-	_chunks.erase(h);
 	_chunkPool.release(c);
+	return (_chunks.erase(_chunks.find(h)));
 }
 
 void	World::clearUnused(const std::vector<chunkWorldVec3i>& centers, u16 render_distance)
@@ -52,10 +52,7 @@ void	World::clearUnused(const std::vector<chunkWorldVec3i>& centers, u16 render_
 		}
 
 		if (!chunk->busy() && !inRange)
-		{
-			_chunkPool.release(chunk);
-			chunkIt = _chunks.erase(chunkIt);
-		}
+			chunkIt = removeChunk(chunk->pos());
 		else
 		{
 			chunkIt++;

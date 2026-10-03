@@ -21,10 +21,11 @@ class	ClientWorld : public World
 
 		void	setAtlas(mbl::render::TextureAtlas* atlas) {_atlas = atlas; _blocks.setAtlas(atlas);}
 
-		void	removeChunk(const chunkWorldVec3i& pos)
+		std::unordered_map<chunkPosHash, chunkPtr>::iterator	removeChunk(const chunkWorldVec3i& pos)
 		{
 			_chunkRequests.erase(hash(pos));
-			World::removeChunk(pos);
+			_meshes.erase(hash(pos));
+			return (World::removeChunk(pos));
 		}
 	private:
 		struct	PendingChunk

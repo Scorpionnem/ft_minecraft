@@ -13,6 +13,8 @@ class	ChunkRender
 
 		void	upload(const ChunkMeshData& data)
 		{
+			_time.start();
+
 			_mesh.clear();
 			_mesh.set_sizeof_layout(sizeof(ChunkVertex));
 			_mesh.add_vertex_layout(0, 3, GL_FLOAT, offsetof(ChunkVertex, pos));
@@ -40,11 +42,17 @@ class	ChunkRender
 			if (_mesh.vertices() == 0)
 				return ;
 
+			if (_fade < 1)
+				_fade = _time.get();
+			else
+				_fade = 1;
+
 			shader->bind();
 			shader->setMat4("uView", cam.getViewMatrix());
 			shader->setMat4("uProj", cam.getProjectionMatrix());
 			shader->setMat4("uModel", mat4f::translate(_pos * Chunk::SIZE));
 			shader->setInt("uAtlas", 0);
+			shader->setFloat("uFade", _fade);
 			_mesh.draw(GL_TRIANGLES);
 
 			if (debug)
@@ -56,4 +64,7 @@ class	ChunkRender
 
 		chunkWorldVec3i		_pos;
 		mbl::render::Mesh	_mesh;
+
+		float	_fade = 0;
+		mbl::utils::Chrono	_time;
 };

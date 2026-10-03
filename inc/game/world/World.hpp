@@ -33,7 +33,7 @@ class	World
 
 		chunkPtr		getChunk(const chunkWorldVec3i& pos);
 		chunkPtr		addChunk(const chunkWorldVec3i& pos);
-		virtual void	removeChunk(const chunkWorldVec3i& pos);
+		virtual std::unordered_map<chunkPosHash, chunkPtr>::iterator	removeChunk(const chunkWorldVec3i& pos);
 
 		void		clearUnused(const std::vector<chunkWorldVec3i>& centers, u16 render_distance);
 
