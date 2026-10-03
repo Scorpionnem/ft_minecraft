@@ -42,7 +42,9 @@ namespace Packet
 		Packet::Header	hdr = {.type = ENTITYINFO_TYPE};
 
 		u64		id = 0;
-		vec3f	pos = {};
+		float	x = 0;
+		float	y = 0;
+		float	z = 0;
 		float	yaw = 0;
 		float	pitch = 0;
 	} __attribute__((packed));
@@ -52,7 +54,9 @@ namespace Packet
 	{
 		Packet::Header	hdr = {.type = CHUNKDATA_TYPE};
 
-		chunkWorldVec3i		chunk_pos = 0;
+		int		x = 0;
+		int		y = 0;
+		int		z = 0;
 		u16					id = 0;
 		u32					blocks[512] = {};
 	} __attribute__((packed));
@@ -68,7 +72,9 @@ namespace Packet
 
 		Packet::Header	hdr = {.type = CHUNKDATASPECIAL_TYPE};
 
-		chunkWorldVec3i		chunk_pos = 0;
+		int		x = 0;
+		int		y = 0;
+		int		z = 0;
 		Type				type = Type::NONE;
 	} __attribute__((packed));
 	#define CHUNKREQUEST_TYPE 9
@@ -76,7 +82,9 @@ namespace Packet
 	{
 		Packet::Header	hdr = {.type = CHUNKREQUEST_TYPE};
 
-		chunkWorldVec3i		chunk_pos = 0;
+		int		x = 0;
+		int		y = 0;
+		int		z = 0;
 	} __attribute__((packed));
 
 	#define PLAYERPOS_TYPE 10

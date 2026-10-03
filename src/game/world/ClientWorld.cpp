@@ -90,7 +90,9 @@ bool	ClientWorld::requestChunk(const chunkWorldVec3i& pos, mbl::net::Client& net
 	_chunkRequests.insert({h, PendingChunk{.chunk = c}});
 
 	Packet::ChunkRequest	crq_pckt = {};
-	crq_pckt.chunk_pos = pos;
+	crq_pckt.x = pos.x();
+	crq_pckt.y = pos.y();
+	crq_pckt.z = pos.z();
 
 	tx_pckt++;
 	net.send(&crq_pckt, sizeof(crq_pckt));
@@ -152,7 +154,7 @@ void	ClientWorld::_netChunkReceived(PendingChunk& pending)
 
 void	ClientWorld::netChunkData(const Packet::ChunkData* pckt)
 {
-	chunkWorldVec3i	pos = pckt->chunk_pos;
+	chunkWorldVec3i	pos = vec3i(pckt->x, pckt->y, pckt->z);
 	chunkPosHash	h = hash(pos);
 	auto			it = _chunkRequests.find(h);
 
@@ -165,7 +167,9 @@ void	ClientWorld::netChunkData(const Packet::ChunkData* pckt)
 	if (pending.receivedMask & bit) // duplicate packet
 		return ;
 
-	std::copy(pckt->blocks, pckt->blocks + Chunk::BLOCKS_PER_PACKET, pending.chunk->data().begin() + pckt->id * Chunk::BLOCKS_PER_PACKET);
+	for (size_t j = 0; j < Chunk::BLOCKS_PER_PACKET; ++j)
+		pending.chunk->data()[j + pckt->id * Chunk::BLOCKS_PER_PACKET] = pckt->blocks[j];
+
 	pending.receivedMask |= bit;
 
 	pending.time.start();
@@ -180,7 +184,7 @@ void	ClientWorld::netChunkData(const Packet::ChunkData* pckt)
 
 void	ClientWorld::netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt)
 {
-	chunkPosHash	h = hash(pckt->chunk_pos);
+	chunkPosHash	h = hash(vec3i(pckt->x, pckt->y, pckt->z));
 	auto			it = _chunkRequests.find(h);
 
 	if (it == _chunkRequests.end())
@@ -194,6 +198,6 @@ void	ClientWorld::netChunkDataSpecial(const Packet::ChunkDataSpecial* pckt)
 	else if (pckt->type == Packet::ChunkDataSpecial::Type::FAILURE)
 	{
 		c->setBusy(false);
-		removeChunk(pckt->chunk_pos);
+		removeChunk(vec3i(pckt->x, pckt->y, pckt->z));
 	}
 }

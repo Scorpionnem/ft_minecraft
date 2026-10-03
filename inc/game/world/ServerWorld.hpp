@@ -26,18 +26,20 @@ class	ServerWorld : public World
 
 		void	clientChunkRequest(int fd, mbl::net::Server &serv, Packet::ChunkRequest* pckt, const chunkWorldVec3i& player_pos, u16 render_distance)
 		{
-			vec3i diff = abs(player_pos - pckt->chunk_pos);
+			vec3i diff = abs(player_pos - vec3i(pckt->x, pckt->y, pckt->z));
 			if (!(diff.x() <= render_distance && diff.y() <= render_distance && diff.z() <= render_distance))
 			{
 				Packet::ChunkDataSpecial	ret_err = {};
 
-				ret_err.chunk_pos = pckt->chunk_pos;
+				ret_err.x = pckt->x;
+				ret_err.y = pckt->y;
+				ret_err.z = pckt->z;
 				ret_err.type = Packet::ChunkDataSpecial::Type::FAILURE;
 				serv.send(fd, &ret_err, sizeof(ret_err));
 				return ;
 			}
 
-			chunkPtr	c = generateChunk(pckt->chunk_pos);
+			chunkPtr	c = generateChunk(vec3i(pckt->x, pckt->y, pckt->z));
 
 			if (c->busy())
 				_pendingChunkSends.push_back(PendingChunkSend{.fd = fd, .chunk = c});
@@ -60,7 +62,9 @@ class	ServerWorld : public World
 			if (chunk->empty())
 			{
 				Packet::ChunkDataSpecial	pckt = {};
-				pckt.chunk_pos = pos;
+				pckt.x = pos.x();
+				pckt.y = pos.y();
+				pckt.z = pos.z();
 				pckt.type = Packet::ChunkDataSpecial::Type::EMPTY;
 				serv.send(fd, &pckt, sizeof(pckt));
 				return ;
@@ -70,9 +74,13 @@ class	ServerWorld : public World
 			{
 				Packet::ChunkData	pckt = {};
 
-				pckt.chunk_pos = pos;
+				pckt.x = pos.x();
+				pckt.y = pos.y();
+				pckt.z = pos.z();
 				pckt.id = i;
-				std::copy(chunk->data().begin() + i * Chunk::BLOCKS_PER_PACKET, chunk->data().begin() + (i + 1) * Chunk::BLOCKS_PER_PACKET, pckt.blocks);
+
+				for (size_t j = 0; j < Chunk::BLOCKS_PER_PACKET; ++j)
+					pckt.blocks[j] = chunk->data()[i * Chunk::BLOCKS_PER_PACKET + j];
 
 				serv.send(fd, &pckt, sizeof(pckt));
 			}
