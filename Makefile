@@ -29,7 +29,6 @@ SRCS :=	src/main.cpp									\
 		src/app/scenes/GameScene/update.cpp				\
 		src/app/scenes/GameScene/update/camera.cpp		\
 		src/app/scenes/GameScene/update/net.cpp			\
-		src/app/scenes/GameScene/update/options.cpp		\
 		src/game/world/Chunk.cpp						\
 		src/game/world/World.cpp						\
 		src/game/world/ClientWorld.cpp					\

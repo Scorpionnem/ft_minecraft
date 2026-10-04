@@ -12,4 +12,6 @@ class MainScene: public Scene
 		SceneCommand	update(Client & client, const mbl::platform::Input& input) override;
 		void			render(Client& client) override;
 		void			unload(Client& client) override;
+	private:
+	    bool    _show_options = false;
 };

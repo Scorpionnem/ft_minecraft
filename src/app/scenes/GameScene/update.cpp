@@ -27,9 +27,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 				return {.action = SceneAction::SWITCH, .targetScene = SceneTag::MAIN};
 		}
 		if (_show_options)
-		{
-			_options_screen(client, input);
-		}
+		    _show_options = update_options(client.opts());
 
 		if (_tick_timer.get() >= (1.0 / 20.0))
 		{

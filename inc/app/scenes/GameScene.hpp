@@ -21,7 +21,6 @@ class GameScene: public Scene
 		void	_show_f3();
 		void	_update_net();
 		void    _updateCamera(const mbl::platform::Input& input);
-		void	_options_screen(Client& client, const mbl::platform::Input& input);
 
 		bool	_show_options = false;
 		void	_toggle_pause(Client& client);

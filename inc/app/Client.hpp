@@ -1,7 +1,9 @@
 #pragma once
 
+#include "GameOptions.hpp"
 #include "mbl.hpp"
 #include "app/scene/SceneManager.hpp"
+#include "app/GameOptions.hpp"
 
 class   Client
 {
@@ -34,6 +36,7 @@ class   Client
         std::string&	addr() {return (_addr);}
         int&			port() {return (_port);}
         mbl::platform::Window&	window() {return (_win);}
+        GameOptions&    opts() {return (_opts);}
     private:
      	bool			_singleplayer = true;
      	std::string		_addr;
@@ -49,4 +52,6 @@ class   Client
 
 		std::string			_username;
 		std::string			_last_error;
+
+		GameOptions _opts;
 };
