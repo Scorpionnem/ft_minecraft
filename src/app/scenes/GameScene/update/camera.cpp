@@ -2,9 +2,10 @@
 #include "app/scene/SceneManager.hpp"
 #include "app/Client.hpp"
 
-void    GameScene::_updateCamera(const mbl::platform::Input& input)
+void    GameScene::_updateCamera(Client& client, const mbl::platform::Input& input)
 {
 	_fp_cam.aspect = input.aspect();
+	_fp_cam.fov = client.opts().fov;
 
 	if (_paused)
 		return ;
@@ -12,7 +13,7 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
     float   move_speed = 10 * input.delta();
     if (input.isDown(SDLK_LCTRL))
     	move_speed = 100 * input.delta();
-    float	sensitivity = 0.3;
+    float	sensitivity = 0.3 * (client.opts().mouse_sensitivity / 100.0);
 
     vec3f right = vec3f(cos(radians(_fp_cam.yaw)), 0.0f, sin(radians(_fp_cam.yaw)));
 
@@ -32,7 +33,7 @@ void    GameScene::_updateCamera(const mbl::platform::Input& input)
 
 	_fp_cam.pos += velocity;
 
-	_fp_cam.pitch += -input.mouseDY() * sensitivity;
+	_fp_cam.pitch += input.mouseDY() * (client.opts().invert_y ? 1 : -1) * sensitivity;
 	_fp_cam.yaw += input.mouseDX() * sensitivity;
 
 	_fp_cam.pitch = std::clamp(_fp_cam.pitch, -90.0f, 90.0f);

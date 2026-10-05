@@ -7,9 +7,19 @@ void GameScene::render(Client& c)
 	glEnable(GL_DEPTH_TEST);
 
 	if (_debug)
-		_show_f3();
+		_show_f3(c);
 	else
-		mbl::ui::text(std::to_string(_fps) + " fps", 0, ANCHOR_TOP_LEFT);
+	{
+		int	i = 0;
+
+		if (c.opts().show_fps)
+			mbl::ui::text(std::to_string(_fps) + " fps", vec2f(0, mbl::ui::getFontSizeY() * i++), ANCHOR_TOP_LEFT);
+		if (c.opts().show_coords)
+		{
+			std::string	pos_str = "XYZ: " + std::to_string(_fp_cam.pos.x()) + " / " + std::to_string(_fp_cam.pos.y()) + " / " + std::to_string(_fp_cam.pos.z());
+			mbl::ui::text(pos_str, vec2f(0, mbl::ui::getFontSizeY() * i++), ANCHOR_TOP_LEFT);
+		}
+	}
 
 	_render_buffer.bind();
 	mbl::render::FrameBuffer::clear();
@@ -25,7 +35,7 @@ void GameScene::render(Client& c)
 	    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
 	}
 
-    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, *_render_cam, _debug);
+    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), c.opts().render_distance, *_render_cam, c.opts().show_chunk_borders || _debug);
 
     _render_buffer.unbind();
     glViewport(0, 0, c.window().width(), c.window().height());
@@ -45,8 +55,9 @@ void GameScene::render(Client& c)
 	_screen_mesh.draw(GL_TRIANGLES);
 }
 
-void	GameScene::_show_f3()
+void	GameScene::_show_f3(Client& client)
 {
+	(void)client;
 	int		i = 0;
 	float	text_y_size = mbl::ui::getFontSizeY();
 

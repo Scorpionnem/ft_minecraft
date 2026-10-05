@@ -8,14 +8,14 @@ struct GameOptions
     int     render_distance = 12;
     bool    vsync = true;
     int     max_fps = 0;
-    bool    fullscreen = false;
+    bool    fullscreen = true;
     int     fov = 70;
     // controls
     bool    invert_y = false;
     int     mouse_sensitivity = 100;
     // audio
     // debug
-    bool    show_fps = false;
+    bool    show_fps = true;
     bool    show_chunk_borders = false;
     bool    show_coords = false;
 

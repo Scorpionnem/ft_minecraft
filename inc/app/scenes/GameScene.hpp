@@ -18,9 +18,9 @@ class GameScene: public Scene
 		void			render(Client& client) override;
 		void			unload(Client& client) override;
 	private:
-		void	_show_f3();
+		void	_show_f3(Client& client);
 		void	_update_net();
-		void    _updateCamera(const mbl::platform::Input& input);
+		void    _updateCamera(Client& client, const mbl::platform::Input& input);
 
 		bool	_show_options = false;
 		void	_toggle_pause(Client& client);

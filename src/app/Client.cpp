@@ -28,6 +28,12 @@ void    Client::loop()
 			_running = false;
 			continue;
 		}
+
+		if (_opts.fullscreen && !_win.fullscreen())
+			_win.setFullscreen(true);
+		else if (!_opts.fullscreen && _win.fullscreen())
+			_win.setFullscreen(false);
+
 		_sceneManager.render(*this);
 
 		mbl::ui::render();

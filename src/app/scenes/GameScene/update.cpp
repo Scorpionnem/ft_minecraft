@@ -35,7 +35,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 			_tick_timer.start();
 		}
 
-		_updateCamera(input);
+		_updateCamera(client, input);
 
 		_update_net();
 	} catch (const std::exception& e)
@@ -72,6 +72,6 @@ void	GameScene::_tick(Client& client, const mbl::platform::Input& input)
 	_netClient.send(&ppos_pckt, sizeof(ppos_pckt));
 
 	_world.update();
-	_world.clearUnused({worldToChunkWorld(_fp_cam.pos, Chunk::SIZE)}, RENDER_DISTANCE);
-	_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), RENDER_DISTANCE, _netClient, _tx_pckt);
+	_world.clearUnused({worldToChunkWorld(_fp_cam.pos, Chunk::SIZE)}, client.opts().render_distance);
+	_world.requestInRange(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), client.opts().render_distance, _netClient, _tx_pckt);
 }
