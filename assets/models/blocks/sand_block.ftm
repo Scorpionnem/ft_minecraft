@@ -1,0 +1,70 @@
+# face id
+# texture path
+# cullface none/up/down/north/south/east/west
+# v (pos) x y z (normal) x y z (uv) x y
+
+face top
+color 1 1 1
+cullface up
+texture assets/textures/blocks/sand.png
+v 0 1 1 0 1 0 0 1
+v 1 1 1 0 1 0 1 1
+v 0 1 0 0 1 0 0 0
+v 1 1 1 0 1 0 1 1
+v 1 1 0 0 1 0 1 0
+v 0 1 0 0 1 0 0 0
+
+face bottom
+color 1 1 1
+cullface down
+texture assets/textures/blocks/sand.png
+v 0 0 0 0 -1 0 0 1
+v 1 0 1 0 -1 0 1 0
+v 0 0 1 0 -1 0 0 0
+v 0 0 0 0 -1 0 0 1
+v 1 0 0 0 -1 0 1 1
+v 1 0 1 0 -1 0 1 0
+
+face north
+color 1 1 1
+cullface north
+texture assets/textures/blocks/sand.png
+v 0 0 1 0 0 1 0 0
+v 1 1 1 0 0 1 1 1
+v 0 1 1 0 0 1 0 1
+v 0 0 1 0 0 1 0 0
+v 1 0 1 0 0 1 1 0
+v 1 1 1 0 0 1 1 1
+
+face south
+color 1 1 1
+cullface south
+texture assets/textures/blocks/sand.png
+v 0 0 0 0 0 -1 0 0
+v 0 1 0 0 0 -1 0 1
+v 1 1 0 0 0 -1 1 1
+v 0 0 0 0 0 -1 0 0
+v 1 1 0 0 0 -1 1 1
+v 1 0 0 0 0 -1 1 0
+
+face east
+color 1 1 1
+cullface east
+texture assets/textures/blocks/sand.png
+v 1 1 0 1 0 0 1 1
+v 1 1 1 1 0 0 0 1
+v 1 0 1 1 0 0 0 0
+v 1 1 0 1 0 0 1 1
+v 1 0 1 1 0 0 0 0
+v 1 0 0 1 0 0 1 0
+
+face west
+color 1 1 1
+cullface west
+texture assets/textures/blocks/sand.png
+v 0 0 1 -1 0 0 0 0
+v 0 1 1 -1 0 0 0 1
+v 0 1 0 -1 0 0 1 1
+v 0 0 1 -1 0 0 0 0
+v 0 1 0 -1 0 0 1 1
+v 0 0 0 -1 0 0 1 0

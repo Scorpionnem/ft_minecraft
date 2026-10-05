@@ -7,7 +7,7 @@ class	ServerWorld : public World
 	public:
 		ServerWorld()
 		{
-			_generator = std::make_shared<NoiseGenerator>();
+			_generator = std::make_shared<OverworldGenerator>();
 		}
 
 		void	update(mbl::net::Server &serv)
@@ -19,7 +19,7 @@ class	ServerWorld : public World
 		chunkPtr	generateChunk(const chunkWorldVec3i& pos);
 
 		u32		seed() {return (_seed);}
-		void	setSeed(u32 seed) {_seed = seed;}
+		void	setSeed(u32 seed) {_seed = seed; _generator->init(_seed);}
 
 		void	setGenerator(std::shared_ptr<ChunkGenerator> gen) {_generator = gen;}
 		std::shared_ptr<ChunkGenerator>	generator() {return (_generator);}

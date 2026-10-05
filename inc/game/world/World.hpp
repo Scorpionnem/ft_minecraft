@@ -4,6 +4,7 @@
 #include "game/world/Block.hpp"
 #include "game/world/generation/ChunkGenerator.hpp"
 #include "game/world/generation/NoiseGenerator.hpp"
+#include "game/world/generation/OverworldGenerator.hpp"
 #include "game/world/render/mesh/ChunkMesher.hpp"
 #include "game/world/ChunkPool.hpp"
 #include "net/LAN.hpp"
@@ -16,7 +17,7 @@
 class	World
 {
 	public:
-		static constexpr int	MAX_CHUNK_REQUESTS = 64;
+		static constexpr int	MAX_CHUNK_REQUESTS = 256;
 	public:
 		virtual ~World() {}
 
@@ -28,6 +29,10 @@ class	World
 			Block::GRASS = _blocks.registerBlock("grass", false, {}, "assets/models/blocks/grass.ftm")->getDefaultState().id();
 			Block::BLUE_ORCHID = _blocks.registerBlock("blue_orchid", false, {}, "assets/models/blocks/blue_orchid.ftm")->getDefaultState().id();
 			Block::STONE_SLAB = _blocks.registerBlock("blue_orchid", false, {BlockProperties::SLAB_POS}, "assets/models/blocks/stone_block.ftm")->getDefaultState().id();
+			Block::SNOW = _blocks.registerBlock("snow", true, {}, "assets/models/blocks/snow_block.ftm")->getDefaultState().id();
+			Block::MOSS = _blocks.registerBlock("moss", true, {}, "assets/models/blocks/moss_block.ftm")->getDefaultState().id();
+			Block::COBBLESTONE = _blocks.registerBlock("cobblestone", true, {}, "assets/models/blocks/cobblestone_block.ftm")->getDefaultState().id();
+			Block::SAND = _blocks.registerBlock("sand", true, {}, "assets/models/blocks/sand_block.ftm")->getDefaultState().id();
 			_blocks.computeBlocks();
 		}
 

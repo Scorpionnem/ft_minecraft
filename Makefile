@@ -35,6 +35,7 @@ SRCS :=	src/main.cpp									\
 		src/game/world/ServerWorld.cpp					\
 		src/game/world/Block.cpp						\
 		src/game/world/generation/NoiseGenerator.cpp	\
+		src/game/world/generation/OverworldGenerator.cpp	\
 		src/game/world/render/mesh/ChunkMesher.cpp		\
 		src/game/world/render/ChunkRender.cpp			\
 

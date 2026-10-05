@@ -6,6 +6,10 @@ blockStateId	Block::GRASS_BLOCK = 0;
 blockStateId	Block::GRASS = 0;
 blockStateId	Block::BLUE_ORCHID = 0;
 blockStateId	Block::STONE_SLAB = 0;
+blockStateId	Block::SNOW;
+blockStateId	Block::SAND;
+blockStateId	Block::MOSS;
+blockStateId	Block::COBBLESTONE;
 
 u8	BlockState::getPropertyValue(BlockProperty::Id prop)
 {

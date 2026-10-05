@@ -9,4 +9,5 @@ class ChunkGenerator
 	public:
 		virtual ~ChunkGenerator() {};
 		virtual void generateChunk(Chunk& chunk, u32 seed) = 0;
+		virtual void	init(u32 seed) = 0;
 };

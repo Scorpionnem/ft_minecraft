@@ -10,4 +10,5 @@ class NoiseGenerator : public ChunkGenerator
 		~NoiseGenerator() {};
 
 		void generateChunk(Chunk& chunk, u32 seed);
+		void	init(u32 seed) {(void)seed;}
 };

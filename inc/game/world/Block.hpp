@@ -83,6 +83,10 @@ class	Block
 		static blockStateId	GRASS;
 		static blockStateId	BLUE_ORCHID;
 		static blockStateId	STONE_SLAB;
+		static blockStateId	SNOW;
+		static blockStateId	SAND;
+		static blockStateId	MOSS;
+		static blockStateId	COBBLESTONE;
 	public:
 		Block(const std::string &name, bool solid, const std::vector<BlockProperty>& properties, const std::string &model_path, mbl::render::TextureAtlas* atlas)
 		{
