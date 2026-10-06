@@ -17,6 +17,13 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		if (input.resize() && !_paused)
 			_render_buffer.resize(client.window().width(), client.window().height());
 
+		if (input.wasPressed(SDLK_UP))
+			octdepth--;
+		if (input.wasPressed(SDLK_DOWN))
+			octdepth++;
+		if (octdepth < -1)
+			octdepth = -1;
+
 		if (_paused && !_show_options)
 		{
 			if (mbl::ui::button("Back to Game", vec2f(0, -24), vec2f(200, 20), ANCHOR_CENTER))

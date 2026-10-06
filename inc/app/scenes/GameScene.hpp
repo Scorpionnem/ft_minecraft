@@ -64,5 +64,7 @@ class GameScene: public Scene
 		ClientWorld				_world;
 
 		mbl::render::TextureAtlas	_atlas;
+
+		int	octdepth = -1;
 	private:
 };

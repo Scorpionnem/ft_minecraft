@@ -16,7 +16,7 @@ void	ClientWorld::update()
 		removeChunk(p);
 }
 
-void	ClientWorld::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam, bool debug)
+void	ClientWorld::draw(const chunkWorldVec3i& center_chunk, u16 render_distance, const mbl::render::Camera& cam, bool debug, int octree_depth)
 {
 	render_distance /= 2;
 
@@ -37,13 +37,18 @@ void	ClientWorld::draw(const chunkWorldVec3i& center_chunk, u16 render_distance,
 				std::shared_ptr<ChunkRender>	chunk_render = std::make_shared<ChunkRender>(chunk->pos());
 				_meshes.insert(std::make_pair(hash(chunk->pos()), chunk_render));
 				if (chunk->non_air_blocks() != 0)
+				{
 					chunk_render->upload(chunk->meshData());
+					root->appendNode(chunk_render);
+				}
 				continue ;
 			}
 
-			find->second->draw(cam, debug);
+			// find->second->draw(cam, debug);
 		}
 	}
+
+	root->draw(cam, octree_depth);
 
 	for (auto& [h, req] : _chunkRequests)
 	{

@@ -35,7 +35,7 @@ void GameScene::render(Client& c)
 	    mbl::render::renderer::RayRenderer::draw(_fp_cam.pos, _fp_cam.pos + _fp_cam.front(), *_render_cam, vec3f(0, 0, 1));
 	}
 
-    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), c.opts().render_distance, *_render_cam, c.opts().show_chunk_borders || _debug);
+    _world.draw(worldToChunkWorld(_fp_cam.pos, Chunk::SIZE), c.opts().render_distance, *_render_cam, c.opts().show_chunk_borders || _debug, octdepth);
 
     _render_buffer.unbind();
     glViewport(0, 0, c.window().width(), c.window().height());

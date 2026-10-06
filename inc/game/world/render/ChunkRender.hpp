@@ -58,6 +58,8 @@ class	ChunkRender
 			if (debug)
 				mbl::render::renderer::AABBRenderer::draw(mbl::utils::aabb3f{.pos = _pos * Chunk::SIZE, .size = vec3f(Chunk::SIZE)}, cam, vec3f(0, 1, 0));
 		}
+
+		chunkWorldVec3i	pos() {return (_pos);};
 	private:
 		static mbl::render::Shader*			_ext_shader;
 		static mbl::render::Shader			_int_shader;
