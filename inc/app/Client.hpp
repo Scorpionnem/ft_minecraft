@@ -3,7 +3,7 @@
 #include "GameOptions.hpp"
 #include "mbl.hpp"
 #include "app/scene/SceneManager.hpp"
-#include "app/GameOptions.hpp"
+#include "platform/Audio.hpp"
 
 class   Client
 {
@@ -37,7 +37,9 @@ class   Client
         int&			port() {return (_port);}
         mbl::platform::Window&	window() {return (_win);}
         GameOptions&    opts() {return (_opts);}
-    private:
+
+
+	private:
      	bool			_singleplayer = true;
      	std::string		_addr;
       	int				_port = 0;
@@ -53,5 +55,6 @@ class   Client
 		std::string			_username;
 		std::string			_last_error;
 
-		GameOptions _opts;
+		GameOptions	_opts;
+		Audio		_audio;
 };

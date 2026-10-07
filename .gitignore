@@ -1,5 +1,6 @@
 lib/math
 lib/stb_image
+lib/SDL_mixer
 .obj/
 *.o
 ft_minecraft
