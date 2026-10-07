@@ -17,10 +17,12 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		if (input.resize() && !_paused)
 			_render_buffer.resize(client.window().width(), client.window().height());
 
+		if (input.wasPressed(SDLK_F1))
+			Audio::playDiscFrom("disc", _fp_cam.front(), _fp_cam.pos, _fp_cam.pos, 100.);
 		if (input.wasPressed(SDLK_F2))
 			Audio::playMusic("theme");
 		if (input.wasPressed(SDLK_F4))
-			Audio::playSound("click");
+			Audio::playSoundFrom("click", _fp_cam.front(), _fp_cam.pos, vec3f(0), 20.);
 
 		if (_paused && !_show_options)
 		{
@@ -36,6 +38,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 
 		if (_tick_timer.get() >= (1.0 / 20.0))
 		{
+		Audio::update_discs(_fp_cam.front(), _fp_cam.pos);
 			_tick(client, input);
 			_tick_timer.start();
 		}
