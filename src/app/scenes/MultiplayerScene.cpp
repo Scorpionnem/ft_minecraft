@@ -14,6 +14,8 @@ SceneCommand MultiplayerScene::update(Client& client, const mbl::platform::Input
 	if (input.close() || input.isDown(SDLK_ESCAPE))
 		return { .action = SceneAction::QUIT };
 
+	mbl::ui::sprite(&client.background_tex(), 0, vec2i(client.window().width(), client.window().height()), ANCHOR_TOP_LEFT, true);
+
 	mbl::ui::text("Play Multiplayer", vec2f(0, 4), vec2f(0.5, 0.0));
 
 	try

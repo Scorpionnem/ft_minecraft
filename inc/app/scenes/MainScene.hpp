@@ -14,4 +14,6 @@ class MainScene: public Scene
 		void			unload(Client& client) override;
 	private:
 	    bool    _show_options = false;
+
+		mbl::render::Texture	_title_texture;
 };

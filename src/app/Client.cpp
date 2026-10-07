@@ -8,6 +8,9 @@ void    Client::init()
 
 	mbl::ui::init("assets/textures/font/ascii.png");
 
+	mbl::loader::texture::stb::load("assets/textures/ui/dirt_background.png", _background_tex);
+	_background_tex.upload();
+
 	_running = true;
 
 	_sceneManager.switchScene(*this, SceneTag::MAIN);
@@ -28,11 +31,6 @@ void    Client::loop()
 			_running = false;
 			continue;
 		}
-
-		if (_opts.fullscreen && !_win.fullscreen())
-			_win.setFullscreen(true);
-		else if (!_opts.fullscreen && _win.fullscreen())
-			_win.setFullscreen(false);
 
 		_sceneManager.render(*this);
 

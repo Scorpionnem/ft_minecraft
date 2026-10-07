@@ -14,7 +14,7 @@ void NoiseGenerator::generateChunk(Chunk& chunk, u32 seed)
 		for (blockPos.z() = 0; blockPos.z() < Chunk::SIZE; blockPos.z()++)
 		{
 			worldVec3i worldPos = chunkLocalToWorld(blockPos, chunk.pos(), Chunk::SIZE);
-			int	y = -noise.sample_turbulence_fbm(vec2f(worldPos.x(), worldPos.z()), 0.00125, 6) * 64;
+			int	y = std::abs(noise.sample_fbm(vec2f(worldPos.x(), worldPos.z()), 0.00125, 6)) * 2048;
 
 			for (blockPos.y() = 0; blockPos.y() < Chunk::SIZE; blockPos.y()++)
 			{

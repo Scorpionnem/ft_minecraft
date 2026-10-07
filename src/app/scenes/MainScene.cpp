@@ -2,12 +2,18 @@
 #include "app/scene/SceneManager.hpp"
 #include "app/Client.hpp"
 
-void MainScene::init(Client&) {}
+void MainScene::init(Client&)
+{
+	mbl::loader::texture::stb::load("assets/textures/ui/title/ft_minecraft.png", _title_texture);
+	_title_texture.upload();
+}
 
 SceneCommand MainScene::update(Client& client, const mbl::platform::Input& input)
 {
 	if (input.close() || input.isDown(SDLK_ESCAPE))
 		return { .action = SceneAction::QUIT };
+
+	mbl::ui::sprite(&client.background_tex(), 0, vec2i(client.window().width(), client.window().height()), ANCHOR_TOP_LEFT, true);
 
 	if (_show_options)
 	{
@@ -15,6 +21,7 @@ SceneCommand MainScene::update(Client& client, const mbl::platform::Input& input
 		return {};
 	}
 
+	mbl::ui::sprite(&_title_texture, vec2i(0, -84), vec2i(256, 128), ANCHOR_CENTER);
 
 	if (mbl::ui::button("Singleplayer", vec2f(0, -24.0), vec2f(204, 20), ANCHOR_CENTER))
 	{
