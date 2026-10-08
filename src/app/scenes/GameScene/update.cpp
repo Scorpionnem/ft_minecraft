@@ -18,7 +18,7 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 			_render_buffer.resize(client.window().width(), client.window().height());
 
 		if (input.wasPressed(SDLK_F1))
-			Audio::playDiscFrom("disc", _fp_cam.front(), _fp_cam.pos, _fp_cam.pos, 100.);
+			Audio::playDiscFrom("assets/sounds/ambient_wind.wav", "disc", _fp_cam.pos, 50.);
 		if (input.wasPressed(SDLK_F2))
 			Audio::playMusic("theme");
 		if (input.wasPressed(SDLK_F4))
@@ -36,9 +36,9 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		if (_show_options)
 		    _show_options = update_options(client.opts());
 
+		Audio::update_discs(_fp_cam.front(), _fp_cam.pos, input.delta());
 		if (_tick_timer.get() >= (1.0 / 20.0))
 		{
-		Audio::update_discs(_fp_cam.front(), _fp_cam.pos);
 			_tick(client, input);
 			_tick_timer.start();
 		}

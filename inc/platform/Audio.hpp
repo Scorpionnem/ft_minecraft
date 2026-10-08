@@ -18,11 +18,15 @@
 
 # include "colors.hpp"
 
-struct Disc {
-	Mix_Chunk*			chunk;
-	std::vector<int>	chans;
-	std::vector<vec3f>	poses;
-	std::vector<float>	maxDists;
+struct discInfos {
+	int		chan;
+	vec3f	pos;
+	float	maxDist;
+};
+
+struct disc {
+	Mix_Chunk*				chunk;
+	std::vector<discInfos>	actives;
 };
 
 class Audio {
@@ -36,11 +40,13 @@ public:
 	static void loadFiles();
 	static void playSound(const std::string& name);
 	static void playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
-	static void playDiscFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
+	static void playDiscFrom(const std::string& FileName, const std::string& name, const vec3f& worldPos, float maxHearingDist);
 	static void playMusic(const std::string& name);
 	static void continuePlaylist();
 
-	static void update_discs(const vec3f& playerFront, const vec3f& playerPos);
+	static void update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
+
+	static double jukeboxMusicFadeTime;
 
 private:
 	static Mix_Chunk*	_loadWAV(const std::string& fileName, const std::string& name, const std::string& typeName);
@@ -48,12 +54,12 @@ private:
 	static void			_loadMusic(const std::string& fileName, const std::string& name);
 	static void			_loadDisc(const std::string& fileName, const std::string& name);
 
-	static void	_checkInstance();
+	static void			_checkInstance();
 
 
 	static std::unordered_map<std::string, Mix_Chunk*>	_sounds;
 	static std::unordered_map<std::string, Mix_Music*>	_musics;
-	static std::unordered_map<std::string, Disc>		_discs;
+	static std::unordered_map<std::string, disc>		_discs;
 	static std::vector<std::string>						_playlist;
 
 };

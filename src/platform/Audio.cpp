@@ -4,14 +4,18 @@
 
 #include "platform/Audio.hpp"
 
+#include <algorithm>
 #include <stdexcept>
 #include <SDL2/SDL_mixer.h>
 
 
+
 Audio	*Audio::_instance = nullptr;
+double	Audio::jukeboxMusicFadeTime = 5.;
+
 std::unordered_map<std::string, Mix_Chunk*>	Audio::_sounds	= {};
 std::unordered_map<std::string, Mix_Music*>	Audio::_musics	= {};
-std::unordered_map<std::string, Disc>		Audio::_discs	= {};
+std::unordered_map<std::string, disc>		Audio::_discs	= {};
 std::vector<std::string>					Audio::_playlist= {};
 
 
@@ -68,8 +72,6 @@ void Audio::loadFiles() {
 		_loadSound("assets/sounds/UI/click_0.wav", "click");
 
 		_loadMusic("assets/sounds/music/theme.wav", "theme");
-
-		_loadDisc("assets/sounds/music/jazz_theme.wav", "disc");
 	} catch (std::exception& e) {
 		PRERR e.what() ENDL;
 	}
@@ -112,19 +114,16 @@ void Audio::playSoundFrom(const std::string& name, const vec3f& playerFront, con
 		throw std::runtime_error("Sound: `" + name + "' error in positioning");
 }
 
-void Audio::playDiscFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist) {
+void Audio::playDiscFrom(const std::string& fileName, const std::string& name, const vec3f& worldPos, float maxHearingDist) {
 	_checkInstance();
-	if (_discs.find(name) == _discs.end())
-		throw std::runtime_error("Disc: `" + name + "' doesn't exist");
 
-	Disc& disc = _discs[name];
+	if (_discs.find(name) == _discs.end())
+		_loadDisc(fileName, name);
+
+	disc& disc = _discs[name];
 	int chan = Mix_PlayChannel( -1, disc.chunk, 0 );
 	if (chan == -1) throw std::runtime_error("Sound: `" + name + "' couldn't play");
-	disc.chans.push_back(chan);
-	disc.poses.push_back(worldPos);
-	disc.maxDists.push_back(maxHearingDist);
-
-	update_discs(playerFront, playerPos);
+	disc.actives.push_back({ chan, worldPos, maxHearingDist });
 }
 
 
@@ -149,22 +148,43 @@ void Audio::continuePlaylist() {
 	}
 }
 
-void Audio::update_discs(const vec3f &playerFront, const vec3f &playerPos) {
-	for (auto& it : _discs) {
-		Disc& disc = it.second;
-		for (size_t i = 0; i < disc.chans.size(); i++) {
-			vec3f dist = disc.poses[i] - playerPos;
-			float length = dist.length();
-			if (length >= disc.maxDists[i])
-				length = disc.maxDists[i];
-			Mix_SetPosition(disc.chans[i], getAngle(playerFront, dist),  length / disc.maxDists[i] * 255.);
-			// TODO : remove from disc when over
-			// TODO : remove mute music when in jukebox
-		}
+void Audio::update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime) {
+	bool jukeboxNearby = false;
+
+	for (auto it = _discs.begin(); it != _discs.end(); ) {
+		disc& d = it->second;
+
+		std::erase_if(d.actives, [&](const discInfos& a) {
+			// finished (or channel reused by something else) -> drop it
+			if (!Mix_Playing(a.chan) || Mix_GetChunk(a.chan) != d.chunk) {
+				PRINT "Removing a " << it->first ENDL;
+				return true;
+			}
+
+			vec3f v = a.pos - playerPos;
+			float ratio = std::min(v.length() / a.maxDist, 1.0f);
+			if (ratio != 1.f)
+				jukeboxNearby = true;
+
+			Mix_SetPosition(a.chan, static_cast<Sint16>(getAngle(playerFront, v)),
+				static_cast<Uint8>(ratio * 255.0f));
+			return false;
+		});
+
+		if (d.actives.empty()) {
+			PRINT "All " << it->first << " are done playing, removing them" ENDL;
+			Mix_FreeChunk(d.chunk);
+			it = _discs.erase(it);
+		} else
+			++it;
 	}
+
+	static double cur = jukeboxMusicFadeTime;
+	if ((!jukeboxNearby && cur >= jukeboxMusicFadeTime) || (jukeboxNearby && cur <= 0))
+		return;
+	cur = std::clamp(cur + (jukeboxNearby ? -deltaTime : deltaTime), 0., jukeboxMusicFadeTime);
+	Mix_VolumeMusic(static_cast<int>(MIX_MAX_VOLUME * (cur / jukeboxMusicFadeTime)));
 }
-
-
 /* ==================== PRIVATE METHODS ==================== */
 
 Mix_Chunk* Audio::_loadWAV(const std::string& fileName, const std::string& name, const std::string& typeName) {
@@ -193,9 +213,7 @@ void Audio::_loadMusic(const std::string& fileName, const std::string& name) {
 void Audio::_loadDisc(const std::string& fileName, const std::string& name) {
 	if (_discs.find(name) != _discs.end())
 		throw std::runtime_error("Disc: `" + name + "' already exist");
-	Disc disc;
-	disc.chunk = _loadWAV(fileName, name, "Disc");
-	_discs.emplace(name, disc);
+	_discs[name] = {.chunk = _loadWAV(fileName, name, "Disc")};
 }
 
 void Audio::_checkInstance() {
