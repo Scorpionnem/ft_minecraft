@@ -7,7 +7,7 @@ void    Client::init()
 	_win.open("ft_minecraft", 860, 520);
 
 	mbl::ui::init("assets/textures/font/ascii.png");
-	Audio::init();
+	Audio::init(_opts);
 	_running = true;
 
 	_sceneManager.switchScene(*this, SceneTag::MAIN);

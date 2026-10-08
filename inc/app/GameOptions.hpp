@@ -1,7 +1,5 @@
 #pragma once
 
-#include "mbl.hpp"
-
 struct GameOptions
 {
     // video
@@ -14,6 +12,12 @@ struct GameOptions
     bool    invert_y = false;
     int     mouse_sensitivity = 100;
     // audio
+    int     master_volume = 100;
+    int     music_volume = 100;
+    int     discs_volume = 100;
+    int     ambient_volume = 100;
+    int     hostile_npcs_volume = 100;
+    int     friendly_npcs_volume = 100;
     // debug
     bool    show_fps = true;
     bool    show_chunk_borders = false;
@@ -22,6 +26,10 @@ struct GameOptions
     enum class Page { VIDEO, CONTROLS, AUDIO, DEBUG };
     GameOptions::Page	page = GameOptions::Page::VIDEO;
 };
+
+#include "mbl.hpp"
+#include "platform/Audio.hpp"
+
 
 inline bool	update_options(GameOptions &opts)
 {
@@ -56,15 +64,28 @@ inline bool	update_options(GameOptions &opts)
     else if (opts.page == GameOptions::Page::CONTROLS)
     {
         mbl::ui::slider("sensivity_slider", opts.mouse_sensitivity, 1, 300, vec2i(-(btn_size.x() / 2 + 2), 0), btn_size, ANCHOR_CENTER);
-        std::string sensivity_text = "Sensivity: " + std::to_string(opts.mouse_sensitivity) + "%";
-        mbl::ui::text(sensivity_text, vec2i(-(btn_size.x() / 2 + 4), 0));
+        std::string sensitivity_text = "Sensivity: " + std::to_string(opts.mouse_sensitivity) + "%";
+        mbl::ui::text(sensitivity_text, vec2i(-(btn_size.x() / 2 + 4), 0));
 
         if (mbl::ui::button(opts.invert_y ? "Invert Y: ON" : "Invert Y: OFF", vec2i((btn_size.x() / 2 + 2), 0), btn_size, ANCHOR_CENTER))
             opts.invert_y = !opts.invert_y;
     }
     else if (opts.page == GameOptions::Page::AUDIO)
     {
-        mbl::ui::text("!!! nah not yet !!!", 0, ANCHOR_CENTER, vec3f(1, 1, 0), true, vec3f(1, 0, 0));
+        if (mbl::ui::slider("master_volume", opts.master_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -150), btn_size, ANCHOR_CENTER))
+            Audio::setMasterVolume();
+        mbl::ui::text("Master Volume: " + std::to_string(opts.master_volume), vec2i(-(btn_size.x() / 2 + 50), -150), ANCHOR_CENTER);
+        if (mbl::ui::slider("music_volume", opts.music_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -150), btn_size, ANCHOR_CENTER))
+            Audio::setMusicVolume();
+        mbl::ui::text("Music Volume: " + std::to_string(opts.music_volume), vec2i((btn_size.x() / 2 + 50), -150), ANCHOR_CENTER);
+        mbl::ui::slider("discs_volume", opts.discs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -125), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Discs Volume: " + std::to_string(opts.discs_volume), vec2i(-(btn_size.x() / 2 + 50), -125), ANCHOR_CENTER);
+        mbl::ui::slider("ambient_volume", opts.ambient_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -125), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Ambient Volume: " + std::to_string(opts.ambient_volume), vec2i((btn_size.x() / 2 + 50), -125), ANCHOR_CENTER);
+        mbl::ui::slider("hostile_npcs_volume", opts.hostile_npcs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -100), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Hostile Npcs Volume: " + std::to_string(opts.hostile_npcs_volume), vec2i(-(btn_size.x() / 2 + 50), -100), ANCHOR_CENTER);
+        mbl::ui::slider("friendly_npcs_volume", opts.friendly_npcs_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -100), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Friendly Npcs Volume: " + std::to_string(opts.friendly_npcs_volume), vec2i((btn_size.x() / 2 + 50), -100), ANCHOR_CENTER);
     }
     else if (opts.page == GameOptions::Page::DEBUG)
     {

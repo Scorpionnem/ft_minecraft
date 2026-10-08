@@ -5,6 +5,8 @@
 #ifndef MINECRAFT_AUDIO_HPP
 # define MINECRAFT_AUDIO_HPP
 
+struct GameOptions;
+
 # include <SDL2/SDL.h>
 # include <string>
 # include <vector>
@@ -13,9 +15,9 @@
 # include <iostream>
 # include <ostream>
 # include <stdexcept>
-# include "SDL2/SDL_mixer.h"
+# include <algorithm>
+# include <SDL2/SDL_mixer.h>
 # include "math/vec.hpp"
-
 # include "colors.hpp"
 
 struct discInfos {
@@ -31,12 +33,11 @@ struct disc {
 
 class Audio {
 public:
-	static Audio* _instance;
-
 	Audio();
 	~Audio();
 
-	static void init();
+	static void init(GameOptions& opts);
+	static void cleanup();
 	static void loadFiles();
 	static void playSound(const std::string& name);
 	static void playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
@@ -45,6 +46,10 @@ public:
 	static void continuePlaylist();
 
 	static void update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
+
+	static void setMasterVolume();
+	static void setMusicVolume();
+	static void updateMusicVolume();
 
 	static double jukeboxMusicFadeTime;
 
@@ -57,10 +62,13 @@ private:
 	static void			_checkInstance();
 
 
+	static int											_masterVolume;
 	static std::unordered_map<std::string, Mix_Chunk*>	_sounds;
 	static std::unordered_map<std::string, Mix_Music*>	_musics;
 	static std::unordered_map<std::string, disc>		_discs;
 	static std::vector<std::string>						_playlist;
+	static GameOptions*									_opts; // ptr to client.opts()
+
 
 };
 

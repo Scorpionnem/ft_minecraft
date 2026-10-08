@@ -19,6 +19,7 @@ class   Client
     	Client() {}
         ~Client()
         {
+    		Audio::cleanup();
          	_sceneManager.unload(*this);
         	mbl::ui::destroy();
         }
