@@ -6,7 +6,8 @@
 #include "app/GameOptions.hpp"
 #include <SDL2/SDL_mixer.h>
 
-#include "../../inc/app/GameOptions.hpp"
+#include "../../inc/platform/AudioShortcuts.hpp"
+#include "app/GameOptions.hpp"
 
 
 GameOptions	*Audio::_opts = nullptr;
@@ -66,9 +67,9 @@ void Audio::cleanup() {
 
 void Audio::loadFiles() {
 	try {
-		_loadSound("assets/sounds/UI/click_0.wav", "click");
+		_loadSound(getPathShortcut("click"));
 
-		_loadMusic("assets/sounds/music/theme.wav", "theme");
+		_loadMusic(getPathShortcut("theme"));
 	} catch (std::exception& e) {
 		PRERR e.what() ENDL;
 	}
@@ -76,7 +77,7 @@ void Audio::loadFiles() {
 
 static Sint16 getAngle(const vec3f& facing, const vec3f& dist) {
 	float fx = facing.x(),	fz = facing.z();
-	float rx = -fz,				rz = fx;
+	float rx = -fz,			rz = fx;
 
 	float front = dist.x() * fx + dist.z() * fz;   // how far in front
 	float right = dist.x() * rx + dist.z() * rz;   // how far to the right
@@ -111,9 +112,9 @@ void Audio::playSoundFrom(const std::string& name, const vec3f& playerFront, con
 	Mix_Volume(chan, _masterVolume * (_opts->ambient_volume / 100.));
 }
 
-void Audio::playDiscFrom(const std::string& fileName, const std::string& name, const vec3f& worldPos, float maxHearingDist) {
+void Audio::playDiscFrom(const std::string& name, const vec3f& worldPos, float maxHearingDist) {
 	if (_discs.find(name) == _discs.end())
-		_loadDisc(fileName, name);
+		_loadDisc(getPathShortcut(name));
 
 	disc& disc = _discs[name];
 	int chan = Mix_PlayChannel( -1, disc.chunk, 0 );
@@ -193,31 +194,31 @@ void Audio::setMusicVolume() {
 
 /* ==================== PRIVATE METHODS ==================== */
 
-Mix_Chunk* Audio::_loadWAV(const std::string& fileName, const std::string& name, const std::string& typeName) {
-	Mix_Chunk* sound = Mix_LoadWAV(fileName.c_str());
+Mix_Chunk* Audio::_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName) {
+	Mix_Chunk* sound = Mix_LoadWAV(shortcut.second.c_str());
 	if (sound == nullptr)
-		throw std::runtime_error(typeName + ": `" + name + "' with path `" + fileName + "' couldn't be loaded");
+		throw std::runtime_error(typeName + ": `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
 	return sound;
 }
 
-void Audio::_loadSound(const std::string& fileName, const std::string& name) {
-	if (_sounds.find(name) != _sounds.end())
-		throw std::runtime_error("Sound: `" + name + "' already exist");
-	_sounds.emplace(name, _loadWAV(fileName, name, "Sound"));
+void Audio::_loadSound(const std::pair<std::string, std::string>& shortcut) {
+	if (_sounds.find(shortcut.first) != _sounds.end())
+		throw std::runtime_error("Sound: `" + shortcut.first + "' already exist");
+	_sounds.emplace(shortcut.first, _loadWAV(shortcut, "Sound"));
 }
 
-void Audio::_loadMusic(const std::string& fileName, const std::string& name) {
-	if (_musics.find(name) != _musics.end())
-		throw std::runtime_error("Music: `" + name + "' already exist");
+void Audio::_loadMusic(const std::pair<std::string, std::string>& shortcut) {
+	if (_musics.find(shortcut.first) != _musics.end())
+		throw std::runtime_error("Music: `" + shortcut.first + "' already exist");
 
-	Mix_Music* music = Mix_LoadMUS(fileName.c_str());
+	Mix_Music* music = Mix_LoadMUS(shortcut.second.c_str());
 	if (music == nullptr)
-		throw std::runtime_error("Music: `" + name + "' with path `" + fileName + "' couldn't be loaded");
-	_musics.emplace(name, music);
+		throw std::runtime_error("Music: `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
+	_musics.emplace(shortcut.first, music);
 }
 
-void Audio::_loadDisc(const std::string& fileName, const std::string& name) {
-	if (_discs.find(name) != _discs.end())
-		throw std::runtime_error("Disc: `" + name + "' already exist");
-	_discs[name] = {.chunk = _loadWAV(fileName, name, "Disc")};
+void Audio::_loadDisc(const std::pair<std::string, std::string>& shortcut) {
+	if (_discs.find(shortcut.first) != _discs.end())
+		throw std::runtime_error("Disc: `" + shortcut.first + "' already exist");
+	_discs[shortcut.first] = {.chunk = _loadWAV(shortcut, "Disc")};
 }

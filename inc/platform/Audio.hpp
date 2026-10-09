@@ -17,7 +17,9 @@ struct GameOptions;
 # include <stdexcept>
 # include <algorithm>
 # include <SDL2/SDL_mixer.h>
+
 # include "math/vec.hpp"
+# include "platform/AudioShortcuts.hpp"
 # include "colors.hpp"
 
 struct discInfos {
@@ -41,7 +43,7 @@ public:
 	static void loadFiles();
 	static void playSound(const std::string& name);
 	static void playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
-	static void playDiscFrom(const std::string& FileName, const std::string& name, const vec3f& worldPos, float maxHearingDist);
+	static void playDiscFrom(const std::string& name, const vec3f& worldPos, float maxHearingDist);
 	static void playMusic(const std::string& name);
 	static void continuePlaylist();
 
@@ -54,10 +56,10 @@ public:
 	static double jukeboxMusicFadeTime;
 
 private:
-	static Mix_Chunk*	_loadWAV(const std::string& fileName, const std::string& name, const std::string& typeName);
-	static void			_loadSound(const std::string& fileName, const std::string& name);
-	static void			_loadMusic(const std::string& fileName, const std::string& name);
-	static void			_loadDisc(const std::string& fileName, const std::string& name);
+	static Mix_Chunk*	_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName);
+	static void			_loadSound(const std::pair<std::string, std::string>& shortcut);
+	static void			_loadMusic(const std::pair<std::string, std::string>& shortcut);
+	static void			_loadDisc(const std::pair<std::string, std::string>& shortcut);
 
 	static void			_checkInstance();
 

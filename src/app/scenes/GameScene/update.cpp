@@ -17,16 +17,14 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		if (input.resize() && !_paused)
 			_render_buffer.resize(client.window().width(), client.window().height());
 
-		if (input.wasPressed(SDLK_F1))
-			Audio::playDiscFrom("assets/sounds/music/jazz_theme.wav", "disc", _fp_cam.pos, 50.);
-		if (input.wasPressed(SDLK_F2))
+		if (input.wasPressed(SDLK_F1)) // TODO : remove
+			Audio::playDiscFrom("disc", _fp_cam.pos, 50.);
+		if (input.wasPressed(SDLK_F2)) // TODO : remove
 			Audio::playMusic("theme");
-		if (input.wasPressed(SDLK_F4))
+		if (input.wasPressed(SDLK_F4)) // TODO : remove
 			Audio::playSoundFrom("click", _fp_cam.front(), _fp_cam.pos, vec3f(0), 20.);
-		if (input.wasPressed(SDLK_F6))
+		if (input.wasPressed(SDLK_F6)) // TODO : remove
 			Audio::setMasterVolume();
-		if (input.wasPressed(SDLK_F7))
-			Audio::setMusicVolume();
 		Audio::update_discs(_fp_cam.front(), _fp_cam.pos, input.delta());
 
 		if (_paused && !_show_options)
