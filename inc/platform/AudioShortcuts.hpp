@@ -21,10 +21,13 @@ inline static std::unordered_map<std::string, std::string> shortcuts = {
 /*
  * Returns the path for a given file
  *
- * \param name, the (arbitrary) name of the sound/music/disc you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
- * \returns a pair containing name, pathToFile.
+ * @param name, the (arbitrary) name of the sound/music/disc you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
+ * @returns a pair containing name, pathToFile.
+ * @throw throw it the sound/music/disc doesn't exists.
  */
 inline std::pair<std::string, std::string> getPathShortcut(const std::string& name) {
+	if (shortcuts.find(name) == shortcuts.end())
+		throw std::runtime_error("Music: `" + name + "' does not exist");
 	return { name, shortcuts[name] };
 }
 

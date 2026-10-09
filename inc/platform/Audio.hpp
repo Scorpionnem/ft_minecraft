@@ -40,7 +40,6 @@ public:
 
 	static void init(GameOptions& opts);
 	static void cleanup();
-	static void loadFiles();
 	static void playSound(const std::string& name);
 	static void playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
 	static void playDiscFrom(const std::string& name, const vec3f& worldPos, float maxHearingDist);
@@ -56,6 +55,7 @@ public:
 	static double jukeboxMusicFadeTime;
 
 private:
+	static void			_loadFiles();
 	static Mix_Chunk*	_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName);
 	static void			_loadSound(const std::pair<std::string, std::string>& shortcut);
 	static void			_loadMusic(const std::pair<std::string, std::string>& shortcut);

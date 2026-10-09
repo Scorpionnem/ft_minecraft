@@ -72,20 +72,20 @@ inline bool	update_options(GameOptions &opts)
     }
     else if (opts.page == GameOptions::Page::AUDIO)
     {
-        if (mbl::ui::slider("master_volume", opts.master_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -150), btn_size, ANCHOR_CENTER))
+        if (mbl::ui::slider("master_volume", opts.master_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 2), -25), btn_size, ANCHOR_CENTER))
             Audio::setMasterVolume();
-        mbl::ui::text("Master Volume: " + std::to_string(opts.master_volume), vec2i(-(btn_size.x() / 2 + 50), -150), ANCHOR_CENTER);
-        if (mbl::ui::slider("music_volume", opts.music_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -150), btn_size, ANCHOR_CENTER))
+        mbl::ui::text("Master Volume: " + std::to_string(opts.master_volume), vec2i(-(btn_size.x() / 2 + 2), -25), ANCHOR_CENTER);
+        if (mbl::ui::slider("music_volume", opts.music_volume, 0, 100, vec2i((btn_size.x() / 2 + 2), -25), btn_size, ANCHOR_CENTER))
             Audio::setMusicVolume();
-        mbl::ui::text("Music Volume: " + std::to_string(opts.music_volume), vec2i((btn_size.x() / 2 + 50), -150), ANCHOR_CENTER);
-        mbl::ui::slider("discs_volume", opts.discs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -125), btn_size, ANCHOR_CENTER);
-        mbl::ui::text("Discs Volume: " + std::to_string(opts.discs_volume), vec2i(-(btn_size.x() / 2 + 50), -125), ANCHOR_CENTER);
-        mbl::ui::slider("ambient_volume", opts.ambient_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -125), btn_size, ANCHOR_CENTER);
-        mbl::ui::text("Ambient Volume: " + std::to_string(opts.ambient_volume), vec2i((btn_size.x() / 2 + 50), -125), ANCHOR_CENTER);
-        mbl::ui::slider("hostile_npcs_volume", opts.hostile_npcs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 50), -100), btn_size, ANCHOR_CENTER);
-        mbl::ui::text("Hostile Npcs Volume: " + std::to_string(opts.hostile_npcs_volume), vec2i(-(btn_size.x() / 2 + 50), -100), ANCHOR_CENTER);
-        mbl::ui::slider("friendly_npcs_volume", opts.friendly_npcs_volume, 0, 100, vec2i((btn_size.x() / 2 + 50), -100), btn_size, ANCHOR_CENTER);
-        mbl::ui::text("Friendly Npcs Volume: " + std::to_string(opts.friendly_npcs_volume), vec2i((btn_size.x() / 2 + 50), -100), ANCHOR_CENTER);
+        mbl::ui::text("Music Volume: " + std::to_string(opts.music_volume), vec2i((btn_size.x() / 2 + 2), -25), ANCHOR_CENTER);
+        mbl::ui::slider("discs_volume", opts.discs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 2), 0), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Discs Volume: " + std::to_string(opts.discs_volume), vec2i(-(btn_size.x() / 2 + 2), 0), ANCHOR_CENTER);
+        mbl::ui::slider("ambient_volume", opts.ambient_volume, 0, 100, vec2i((btn_size.x() / 2 + 2), 0), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Ambient Volume: " + std::to_string(opts.ambient_volume), vec2i((btn_size.x() / 2 + 2), 0), ANCHOR_CENTER);
+        mbl::ui::slider("hostile_npcs_volume", opts.hostile_npcs_volume, 0, 100, vec2i(-(btn_size.x() / 2 + 2), 25), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Hostile Npcs Volume: " + std::to_string(opts.hostile_npcs_volume), vec2i(-(btn_size.x() / 2 + 2), 25), ANCHOR_CENTER);
+        mbl::ui::slider("friendly_npcs_volume", opts.friendly_npcs_volume, 0, 100, vec2i((btn_size.x() / 2 + 2), 25), btn_size, ANCHOR_CENTER);
+        mbl::ui::text("Friendly Npcs Volume: " + std::to_string(opts.friendly_npcs_volume), vec2i((btn_size.x() / 2 + 2), 25), ANCHOR_CENTER);
     }
     else if (opts.page == GameOptions::Page::DEBUG)
     {
