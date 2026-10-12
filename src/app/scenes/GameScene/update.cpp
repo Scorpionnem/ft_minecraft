@@ -25,6 +25,22 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 			Audio::playSoundFrom("click", _fp_cam.front(), _fp_cam.pos, vec3f(0), 20.);
 		if (input.wasPressed(SDLK_F6)) // TODO : remove
 			Audio::addToPlaylist("jazz");
+		static bool underwater = false;
+		if (input.wasPressed(SDLK_F7)) { // TODO : remove
+			underwater = !underwater;
+			Audio::setUnderwater(underwater);
+		}
+		static bool reverb = false;
+		if (input.wasPressed(SDLK_F8)) { // TODO : remove
+			reverb = !reverb;
+			Audio::setReverb(reverb);
+		}
+		static bool delay = false;
+		if (input.wasPressed(SDLK_F9)) { // TODO : remove
+			delay = !delay;
+			Audio::setDelay(delay);
+		}
+
 		Audio::update(_fp_cam.front(), _fp_cam.pos, input.delta());
 
 		if (_paused && !_show_options)

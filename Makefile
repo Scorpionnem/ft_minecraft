@@ -43,6 +43,7 @@ SRCS :=	src/main.cpp									\
 		src/game/world/render/mesh/ChunkMesher.cpp		\
 		src/game/world/render/ChunkRender.cpp			\
 		src/platform/Audio.cpp							\
+		src/platform/AudioEffects.cpp					\
 
 OBJS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.o)
 DEPS :=	$(SRCS:%.cpp=$(OBJ_DIR)%.d)

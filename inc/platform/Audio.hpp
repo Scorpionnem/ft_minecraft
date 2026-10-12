@@ -21,6 +21,7 @@ struct GameOptions;
 
 # include "math/vec.hpp"
 # include "platform/AudioShortcuts.hpp"
+# include "platform/AudioEffects.hpp"
 # include "colors.hpp"
 
 struct discInfos {
@@ -36,8 +37,8 @@ struct disc {
 
 class Audio {
 public:
-	Audio();
-	~Audio();
+	Audio() {}
+	~Audio() {}
 
 	static void init(GameOptions& opts);
 	static void cleanup();
@@ -47,9 +48,11 @@ public:
 	static void playMusic(const std::string& name);
 	static void addToPlaylist(const std::string& name);
 
-
 	static void update(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
 
+	static void setDelay(const bool on)					{ AudioEffects::setDelay(on); }
+	static void setReverb(const bool on)				{ AudioEffects::setReverb(on); }
+	static void setUnderwater(const bool isUnderwater)	{ AudioEffects::setUnderwater(isUnderwater); }
 	static void setMasterVolume();
 	static void setMusicVolume();
 	static void updateMusicVolume();
@@ -57,6 +60,8 @@ public:
 	static double jukeboxMusicFadeTime;
 
 private:
+	static void _initUnderwaterFilter();
+	static void _muffleEffect(int, void* stream, int len, void*);
 	static void			_loadFiles();
 	static Mix_Chunk*	_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName);
 	static void			_loadSound(const std::pair<std::string, std::string>& shortcut);
@@ -75,7 +80,6 @@ private:
 	static std::unordered_map<std::string, disc>		_discs;
 	static std::vector<std::string>						_playlist;
 	static GameOptions*									_opts; // ptr to client.opts()
-
 
 };
 

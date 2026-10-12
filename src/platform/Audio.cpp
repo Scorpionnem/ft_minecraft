@@ -6,7 +6,8 @@
 #include "app/GameOptions.hpp"
 #include <SDL2/SDL_mixer.h>
 
-#include "../../inc/platform/AudioShortcuts.hpp"
+#include "../../inc/platform/AudioEffects.hpp"
+#include "platform/AudioShortcuts.hpp"
 #include "app/GameOptions.hpp"
 
 
@@ -19,16 +20,6 @@ std::atomic<bool>							Audio::_musicFinished	= true;
 std::unordered_map<std::string, disc>		Audio::_discs			= {};
 std::vector<std::string>					Audio::_playlist		= {};
 int											Audio::_masterVolume	= MIX_MAX_VOLUME;
-
-
-/* ==================== CONSTRUCTORS ==================== */
-
-
-Audio::Audio() {
-}
-
-Audio::~Audio() {
-}
 
 
 /* ==================== METHODS ==================== */
@@ -47,6 +38,7 @@ void Audio::init(GameOptions& opts) {
 	if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
 		throw std::runtime_error("OpenAudio loading failed");
 	_loadFiles();
+	AudioEffects::init();
 	Mix_HookMusicFinished(&_onMusicFinished);
 }
 
@@ -69,6 +61,7 @@ void Audio::cleanup() {
 	}
 	_discs.clear();
 
+	AudioEffects::cleanup();
 	Mix_CloseAudio();
 	PRINT BOLD "Audio Destroyed" CENDL;
 }
