@@ -13,10 +13,11 @@
 GameOptions	*Audio::_opts = nullptr;
 double		Audio::jukeboxMusicFadeTime = 5.;
 
-std::unordered_map<std::string, Mix_Chunk*>	Audio::_sounds		= {};
-std::unordered_map<std::string, Mix_Music*>	Audio::_musics		= {};
-std::unordered_map<std::string, disc>		Audio::_discs		= {};
-std::vector<std::string>					Audio::_playlist	= {};
+std::unordered_map<std::string, Mix_Chunk*>	Audio::_sounds			= {};
+std::pair<std::string, Mix_Music*>			Audio::_music			= {"", nullptr};
+std::atomic<bool>							Audio::_musicFinished	= true;
+std::unordered_map<std::string, disc>		Audio::_discs			= {};
+std::vector<std::string>					Audio::_playlist		= {};
 int											Audio::_masterVolume	= MIX_MAX_VOLUME;
 
 
@@ -45,23 +46,21 @@ void Audio::init(GameOptions& opts) {
 		throw std::runtime_error(std::string("SDL_Init: ") + SDL_GetError());
 	if( Mix_OpenAudio( 22050, MIX_DEFAULT_FORMAT, 2, 4096 ) == -1 )
 		throw std::runtime_error("OpenAudio loading failed");
-	loadFiles();
-
+	_loadFiles();
+	Mix_HookMusicFinished(&_onMusicFinished);
 }
 
 /*
  * Call once at close time to clean all the resources.
  */
 void Audio::cleanup() {
-	if(Mix_PlayingMusic())
-		Mix_HaltMusic();
 	for (auto& [name, sound]: _sounds)
 		Mix_FreeChunk(sound);
 	_sounds.clear();
 
-	for (auto& [name, music]: _musics)
-		Mix_FreeMusic(music);
-	_musics.clear();
+	Mix_HaltMusic();
+	Mix_FreeMusic(_music.second);
+	_music.second = nullptr;
 
 	for (auto& [name, disc]: _discs) {
 		for (auto& a: disc.actives)
@@ -90,11 +89,11 @@ static Sint16 getAngle(const vec3f& facing, const vec3f& dist) {
  * Plays a sound on mono.
  *
  * @param the name, the (arbitrary) name of the sound/music/disc you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
- * @throw throw it the sound isn't loaded/exists or if it couldn't play for some reason.
+ * @throw if the sound isn't loaded/exists or if it couldn't play for some reason.
  */
 void Audio::playSound(const std::string& name) {
 	if (_sounds.find(name) == _sounds.end())
-		throw std::runtime_error("Sound: `" + name + "' doesn't exist");
+		_loadSound(getPathShortcut(name));
 
 	int chan = Mix_PlayChannel( -1, _sounds[name], 0 );
 	if(chan == -1) throw std::runtime_error("Sound: `" + name + "' couldn't play");
@@ -102,19 +101,20 @@ void Audio::playSound(const std::string& name) {
 }
 
 /*
- * Plays a sound on stereo.
+ * Plays a sound on stereo based on a given position.
  *
  * @param name, the (arbitrary) name of the sound/music/disc you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
  * @param playerFront, the direction the player is looking.
  * @param playerPos, the position of the player in the world.
  * @param worldPos, the position of the sound in the world.
  * @param maxHearingDist, the maximum distance before the sound is silent.
- * @throw throw it the sound isn't loaded/exists or if it couldn't play for some reason.
+ * @throw if the sound isn't loaded/exists or if it couldn't play for some reason.
  */
 void Audio::playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos,
 	const vec3f& worldPos, float maxHearingDist) {
 	if (_sounds.find(name) == _sounds.end())
-		throw std::runtime_error("Sound: `" + name + "' doesn't exist");
+		_loadSound(getPathShortcut(name));
+
 	vec3f dist = worldPos - playerPos;
 	float length = dist.length();
 	if (length >= maxHearingDist)
@@ -133,6 +133,7 @@ void Audio::playSoundFrom(const std::string& name, const vec3f& playerFront, con
  * @param name, the (arbitrary) name of the sound/music/disc you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
  * @param worldPos, the position of the sound in the world.
  * @param maxHearingDist, the maximum distance before the sound is silent.
+ * @throw if the sound isn't loaded/exists or if it couldn't play for some reason.
  */
 void Audio::playDiscFrom(const std::string& name, const vec3f& worldPos, float maxHearingDist) {
 	if (_discs.find(name) == _discs.end())
@@ -148,35 +149,102 @@ void Audio::playDiscFrom(const std::string& name, const vec3f& worldPos, float m
  * Plays a music on mono.
  *
  * @param the name, the (arbitrary) name of the music you want to get. Look at platform/AudioShortcuts.hpp to see what name is associated with what shortcut.
- * @throw throw it the sound isn't loaded/exists or if it couldn't play for some reason.
+ * @throw if the sound isn't loaded/exists or if it couldn't play for some reason.
  */
 void Audio::playMusic(const std::string& name) {
-	if (_musics.find(name) == _musics.end())
-		throw std::runtime_error("Music: `" + name + "' doesn't exist");
+	Mix_HaltMusic();
+	if (_music.first != name) {
+		_loadMusic(getPathShortcut(name));
+	}
 
-	if(Mix_PlayMusic( _musics[name], -1 ) == -1)
+	_musicFinished = false;
+	if(Mix_PlayMusic( _music.second, 0 ) == -1)
 		throw std::runtime_error("Music: `" + name + "' couldn't play");
 }
 
-void Audio::continuePlaylist() {
-	if (_playlist.empty())
-		throw std::runtime_error("Music: no musics in playlist");
-
-	if(Mix_PlayingMusic() == 0) {
-		if( Mix_PlayMusic( _musics[_playlist[0]], -1 ) == -1 )
-			throw std::runtime_error("Music: `" + _playlist[0] + "' couldn't play");
-		_playlist.erase(_playlist.begin());
-	}
+void Audio::addToPlaylist(const std::string& name) {
+	_playlist.push_back(name);
 }
 
+
 /*
- * Call this every frame, updates the volume && position of every nearby jukebox. Also fades music in/out when you step out/in.
+ * Call this every frame. It handles the music playlist and updates the volume && position of every nearby jukebox. Also fades music in/out when you step out/in of range of a jukebox.
  *
  * @param playerFront, the direction the player is looking.
  * @param playerPos, the position of the player in the world.
  * @param deltaTime, the delta time since the last frame.
+ * @throw if the sound isn't loaded/exists or if it couldn't play for some reason.
  */
-void Audio::update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime) {
+void Audio::update(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime) {
+	_continuePlaylist();
+	_update_discs(playerFront, playerPos, deltaTime);
+}
+
+void Audio::setMasterVolume() {
+	_masterVolume = MIX_MAX_VOLUME * (std::clamp(_opts->master_volume, 0, 100) / 100.);
+	setMusicVolume();
+}
+
+void Audio::setMusicVolume() {
+	Mix_VolumeMusic(_masterVolume * (std::clamp(_opts->music_volume, 0, 100) / 100.));
+}
+
+
+/* ==================== PRIVATE METHODS ==================== */
+
+void Audio::_loadFiles() {
+	try {
+		_loadSound(getPathShortcut("click"));
+	} catch (std::exception& e) {
+		PRERR e.what() ENDL;
+	}
+}
+
+Mix_Chunk* Audio::_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName) {
+	Mix_Chunk* sound = Mix_LoadWAV(shortcut.second.c_str());
+	if (sound == nullptr)
+		throw std::runtime_error(typeName + ": `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
+	return sound;
+}
+
+void Audio::_loadSound(const std::pair<std::string, std::string>& shortcut) {
+	if (_sounds.find(shortcut.first) != _sounds.end())
+		throw std::runtime_error("Sound: `" + shortcut.first + "' already exist");
+	_sounds.emplace(shortcut.first, _loadWAV(shortcut, "Sound"));
+}
+
+void Audio::_loadMusic(const std::pair<std::string, std::string>& shortcut) {
+	if (_music.first == shortcut.first)
+		return;
+	// if (_musics.find(shortcut.first) != _musics.end())
+	// 	throw std::runtime_error("Music: `" + shortcut.first + "' already exist");
+
+	Mix_Music* music = Mix_LoadMUS(shortcut.second.c_str());
+	if (music == nullptr)
+		throw std::runtime_error("Music: `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
+	_music = std::make_pair(shortcut.first, music);
+}
+
+void Audio::_loadDisc(const std::pair<std::string, std::string>& shortcut) {
+	if (_discs.find(shortcut.first) != _discs.end())
+		throw std::runtime_error("Disc: `" + shortcut.first + "' already exist");
+	_discs[shortcut.first] = {.chunk = _loadWAV(shortcut, "Disc")};
+}
+
+void Audio::_continuePlaylist() {
+	if (!_musicFinished)
+		return ;
+	if (_music.second) {
+		Mix_FreeMusic(_music.second);
+		_music = {"", nullptr};
+	}
+	if (_playlist.empty())
+		return;
+	playMusic(_playlist[0]);
+	_playlist.erase(_playlist.begin());
+}
+
+void Audio::_update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime) {
 	bool jukeboxNearby = false;
 
 	for (auto it = _discs.begin(); it != _discs.end(); ) {
@@ -211,58 +279,7 @@ void Audio::update_discs(const vec3f& playerFront, const vec3f& playerPos, const
 
 	static double cur = jukeboxMusicFadeTime;
 	// if ((!jukeboxNearby && cur >= jukeboxMusicFadeTime) || (jukeboxNearby && cur <= 0))
-		// return;
+	// return;
 	cur = std::clamp(cur + (jukeboxNearby ? -deltaTime : deltaTime), 0., jukeboxMusicFadeTime);
 	Mix_VolumeMusic(static_cast<int>((_masterVolume * (_opts->music_volume / 100.)) * (cur / jukeboxMusicFadeTime)));
-}
-
-void Audio::setMasterVolume() {
-	_masterVolume = MIX_MAX_VOLUME * (std::clamp(_opts->master_volume, 0, 100) / 100.);
-	setMusicVolume();
-}
-
-void Audio::setMusicVolume() {
-	Mix_VolumeMusic(_masterVolume * (std::clamp(_opts->music_volume, 0, 100) / 100.));
-}
-
-
-/* ==================== PRIVATE METHODS ==================== */
-
-void Audio::_loadFiles() {
-	try {
-		_loadSound(getPathShortcut("click"));
-
-		_loadMusic(getPathShortcut("theme"));
-	} catch (std::exception& e) {
-		PRERR e.what() ENDL;
-	}
-}
-
-Mix_Chunk* Audio::_loadWAV(const std::pair<std::string, std::string>& shortcut, const std::string& typeName) {
-	Mix_Chunk* sound = Mix_LoadWAV(shortcut.second.c_str());
-	if (sound == nullptr)
-		throw std::runtime_error(typeName + ": `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
-	return sound;
-}
-
-void Audio::_loadSound(const std::pair<std::string, std::string>& shortcut) {
-	if (_sounds.find(shortcut.first) != _sounds.end())
-		throw std::runtime_error("Sound: `" + shortcut.first + "' already exist");
-	_sounds.emplace(shortcut.first, _loadWAV(shortcut, "Sound"));
-}
-
-void Audio::_loadMusic(const std::pair<std::string, std::string>& shortcut) {
-	if (_musics.find(shortcut.first) != _musics.end())
-		throw std::runtime_error("Music: `" + shortcut.first + "' already exist");
-
-	Mix_Music* music = Mix_LoadMUS(shortcut.second.c_str());
-	if (music == nullptr)
-		throw std::runtime_error("Music: `" + shortcut.first + "' with path `" + shortcut.second + "' couldn't be loaded");
-	_musics.emplace(shortcut.first, music);
-}
-
-void Audio::_loadDisc(const std::pair<std::string, std::string>& shortcut) {
-	if (_discs.find(shortcut.first) != _discs.end())
-		throw std::runtime_error("Disc: `" + shortcut.first + "' already exist");
-	_discs[shortcut.first] = {.chunk = _loadWAV(shortcut, "Disc")};
 }

@@ -14,6 +14,7 @@ inline static std::unordered_map<std::string, std::string> shortcuts = {
 	{"click", "assets/sounds/UI/click_0.wav"},
 
 	{"theme", "assets/sounds/music/theme.wav"},
+	{"jazz", "assets/sounds/music/jazz_theme.wav"},
 
 	{"disc", "assets/sounds/music/jazz_theme.wav"},
 };
@@ -27,7 +28,7 @@ inline static std::unordered_map<std::string, std::string> shortcuts = {
  */
 inline std::pair<std::string, std::string> getPathShortcut(const std::string& name) {
 	if (shortcuts.find(name) == shortcuts.end())
-		throw std::runtime_error("Music: `" + name + "' does not exist");
+		throw std::runtime_error("asset: `" + name + "' does not exist or isn't saved in platform/AudioShortcuts.hpp");
 	return { name, shortcuts[name] };
 }
 

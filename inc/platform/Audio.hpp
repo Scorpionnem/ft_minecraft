@@ -16,6 +16,7 @@ struct GameOptions;
 # include <ostream>
 # include <stdexcept>
 # include <algorithm>
+# include <atomic>
 # include <SDL2/SDL_mixer.h>
 
 # include "math/vec.hpp"
@@ -44,9 +45,10 @@ public:
 	static void playSoundFrom(const std::string& name, const vec3f& playerFront, const vec3f& playerPos, const vec3f& worldPos, float maxHearingDist);
 	static void playDiscFrom(const std::string& name, const vec3f& worldPos, float maxHearingDist);
 	static void playMusic(const std::string& name);
-	static void continuePlaylist();
+	static void addToPlaylist(const std::string& name);
 
-	static void update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
+
+	static void update(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
 
 	static void setMasterVolume();
 	static void setMusicVolume();
@@ -61,12 +63,15 @@ private:
 	static void			_loadMusic(const std::pair<std::string, std::string>& shortcut);
 	static void			_loadDisc(const std::pair<std::string, std::string>& shortcut);
 
-	static void			_checkInstance();
+	static void			_onMusicFinished() { _musicFinished = true; }
+	static void			_continuePlaylist();
+	static void			_update_discs(const vec3f& playerFront, const vec3f& playerPos, const double& deltaTime);
 
 
 	static int											_masterVolume;
 	static std::unordered_map<std::string, Mix_Chunk*>	_sounds;
-	static std::unordered_map<std::string, Mix_Music*>	_musics;
+	static std::pair<std::string, Mix_Music*>			_music;
+	static std::atomic<bool>							_musicFinished; // written by audio thread
 	static std::unordered_map<std::string, disc>		_discs;
 	static std::vector<std::string>						_playlist;
 	static GameOptions*									_opts; // ptr to client.opts()

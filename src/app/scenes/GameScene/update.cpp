@@ -20,12 +20,12 @@ SceneCommand GameScene::update(Client& client, const mbl::platform::Input& input
 		if (input.wasPressed(SDLK_F1)) // TODO : remove
 			Audio::playDiscFrom("disc", _fp_cam.pos, 50.);
 		if (input.wasPressed(SDLK_F2)) // TODO : remove
-			Audio::playMusic("theme");
+			Audio::addToPlaylist("theme");
 		if (input.wasPressed(SDLK_F4)) // TODO : remove
 			Audio::playSoundFrom("click", _fp_cam.front(), _fp_cam.pos, vec3f(0), 20.);
 		if (input.wasPressed(SDLK_F6)) // TODO : remove
-			Audio::setMasterVolume();
-		Audio::update_discs(_fp_cam.front(), _fp_cam.pos, input.delta());
+			Audio::addToPlaylist("jazz");
+		Audio::update(_fp_cam.front(), _fp_cam.pos, input.delta());
 
 		if (_paused && !_show_options)
 		{
