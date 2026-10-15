@@ -17,7 +17,6 @@ SDL_MIXER := $(SDL_MIXER_DIR)lib/libSDL2_mixer.a
 INCLUDE_DIRS := -I$(INC_DIR) -I$(LIB_DIR) -I$(LIBMBL_PATH)inc -I$(SDL_MIXER_DIR)include/
 SDL_CFLAGS   := $(shell sdl2-config --cflags)
 SDL_LIBS     := $(shell sdl2-config --libs)
-#                -Wl,-rpath,$(SDL_MIXER_DIR)lib
 LFLAGS       := -lGL $(SDL_LIBS)
 
 
@@ -40,6 +39,7 @@ SRCS :=	src/main.cpp									\
 		src/game/world/ServerWorld.cpp					\
 		src/game/world/Block.cpp						\
 		src/game/world/generation/NoiseGenerator.cpp	\
+		src/game/world/generation/noise/Worley2D.cpp	\
 		src/game/world/render/mesh/ChunkMesher.cpp		\
 		src/game/world/render/ChunkRender.cpp			\
 		src/platform/Audio.cpp							\

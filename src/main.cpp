@@ -3,24 +3,31 @@
 #include "app/Client.hpp"
 #include "app/Server.hpp"
 
+
+#include "game/world/generation/noise/Noise.hpp" // TODO : remove
 int	main(int ac, char **av)
 {
 	try
 	{
-		if (ac == 1 || (ac >= 2 && std::string(av[1]) == "client"))
-		{
-			Client	client;
+		(void)ac, (void)av;
+		Noise::Worley2D noise;
 
-			client.run();
-		}
-		else if ((ac >= 2 && std::string(av[1]) == "server"))
-		{
-			Server	server;
+		noise.printTerm({60., 35.});
 
-			int	port = ac == 3 ? std::atoi(av[2]) : 6767;
-
-			server.run(port);
-		}
+		// if (ac == 1 || (ac >= 2 && std::string(av[1]) == "client"))
+		// {
+		// 	Client	client;
+		//
+		// 	client.run();
+		// }
+		// else if ((ac >= 2 && std::string(av[1]) == "server"))
+		// {
+		// 	Server	server;
+		//
+		// 	int	port = ac == 3 ? std::atoi(av[2]) : 6767;
+		//
+		// 	server.run(port);
+		// }
 	}
 	catch (const std::exception& e)
 	{

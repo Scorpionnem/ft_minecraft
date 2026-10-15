@@ -25,6 +25,17 @@
 # define ORG RGB(255, 92, 0)
 
 
+# define DBLOCK					"▄"
+# define RGB_FG					"\033[38;2"
+# define RGB_BG					"\033[48;2"
+# define RGB_CODE_STR(str)		(";" + str + ";" + str + ";" + str + "m")
+# define RGB_CODE_INT(c)		(";" + std::to_string(c >> 16 & 0xFF) + ";" + std::to_string(c >> 8 & 0xFF) + ";" + std::to_string(c & 0xFF) + "m")
+# define RGB_FG_CODE_STR(r,g,b)	(RGB_FG ";" + r + ";" + g + ";" + b + "m")
+# define RGB_BG_CODE_STR(r,g,b)	(RGB_BG ";" + r + ";" + g + ";" + b + "m")
+# define RGB_FG_CODE(r,g,b)		(RGB_FG ";" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m")
+# define RGB_BG_CODE(r,g,b)		(RGB_BG ";" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m")
+
+
 # define AND <<
 # define PRINT std::cout AND
 # define PRERR std::cerr AND
