@@ -30,6 +30,7 @@
 # define RGB_BG					"\033[48;2"
 # define RGB_CODE_STR(str)		(";" + str + ";" + str + ";" + str + "m")
 # define RGB_CODE_INT(c)		(";" + std::to_string(c >> 16 & 0xFF) + ";" + std::to_string(c >> 8 & 0xFF) + ";" + std::to_string(c & 0xFF) + "m")
+# define RGB_CODE_VEC(v)		(";" + std::to_string(v.x()) + ";" + std::to_string(v.y()) + ";" + std::to_string(v.z()) + "m")
 # define RGB_FG_CODE_STR(r,g,b)	(RGB_FG ";" + r + ";" + g + ";" + b + "m")
 # define RGB_BG_CODE_STR(r,g,b)	(RGB_BG ";" + r + ";" + g + ";" + b + "m")
 # define RGB_FG_CODE(r,g,b)		(RGB_FG ";" + std::to_string(r) + ";" + std::to_string(g) + ";" + std::to_string(b) + "m")

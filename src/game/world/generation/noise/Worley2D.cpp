@@ -4,14 +4,12 @@
 
 #include "game/world/generation/noise/Worley2D.hpp"
 
+#include <algorithm>
 #include <array>
+#include <cmath>
+#include <unordered_map>
+#include <vector>
 
-
-constexpr std::array<BiomeT, 3> biomeList = {
-	Forest,
-	Desert,
-	Lava,
-};
 
 // double Noise::Worley2D::sample(const vec2d& pos) const {
 // 	const vec2d newPos = pos / _zoom;
@@ -26,41 +24,72 @@ constexpr std::array<BiomeT, 3> biomeList = {
 // 	return closest;
 // }
 
-BiomeT Noise::Worley2D::sample(const vec2d& pos) const {
+std::array<std::shared_ptr<ABiomeType>, 4> biomeList = {
+	std::make_shared<Forest>(),
+	std::make_shared<Desert>(),
+	std::make_shared<Lava>(),
+	std::make_shared<Ocean>(),
+};
+
+std::vector<std::pair<std::shared_ptr<ABiomeType>, double>> Noise::Worley2D::sample(const vec2d& pos) const {
 	const vec2d newPos = pos / _zoom;
 	const vec2i32 cellPos = floor(newPos);
-	double closest = std::numeric_limits<double>::max();
-	BiomeT closestBiome = BiomeT::Forest;
+	std::unordered_map<std::shared_ptr<ABiomeType>, double> biomes_map;
+	std::vector<std::pair<std::shared_ptr<ABiomeType>, double>> biomes;
+	double sumWeights = 0.;
 
 	for (const vec2i32& neighborOffset : _neighborOffsets) {
 		const vec2d cPos = _cellPoint(vec2i32(cellPos.x() + neighborOffset.x(), cellPos.y() + neighborOffset.y()));
 		const double dist = vec2d::dot(newPos - cPos, newPos - cPos);
-		if (dist < closest) {
-			closest = dist;
-			u64 randomValue = rand1dTo1d(cPos.y() * cPos.x(), _seed / 25.95301) * 1000;
-			closestBiome = biomeList[randomValue % biomeList.size()];
-		}
+		const u64 randomValue = rand1dTo1d(cPos.y() * cPos.x(), _seed / 25.95301) * 1000;
+		const auto closeBiome = biomeList[randomValue % biomeList.size()];
+		if (biomes_map.find(closeBiome) == biomes_map.end() || biomes_map[closeBiome] > dist)
+			biomes_map[closeBiome] = dist;
+		// biomes.push_back({closeBiome, dist});
 	}
-	return closestBiome;
+
+	for (const auto& [b, dist] : biomes_map)
+		biomes.push_back({b, dist});
+	std::sort(biomes.begin(), biomes.end(), [](const auto& a, const auto& b) { return (a.second < b.second); });
+	if (_k < (short)biomes.size())
+		biomes.erase(biomes.begin() + _k, biomes.end());
+	for (auto& [b, dist] : biomes) {
+		// PRINT "Biome: " << b->getName() << ", dist: " << dist ENDL;
+		double weight = (dist < 1e-9) ? 1. : 1. / std::pow(dist, _sharpness);
+		dist = weight;
+		sumWeights += weight;
+	}
+	// PRINT RED "BLEH" << RESET ENDL;
+
+	(void)_k;
+	for (auto& [b, percentage] : biomes)
+		percentage /= sumWeights;
+	return biomes;
 }
 
 void	Noise::Worley2D::printTerm(const vec2d& size) {
-	_zoom = 1.25;
+	_zoom = 2.25;
+	_sharpness = 5.;
+	_k = 4;
 	std::string str;
-	const std::function<std::string(vec2d)> getColor = [&](const vec2d &pos) -> std::string {
-		BiomeT biome = sample(pos);
-		switch(biome) {
-		case Forest: return ";50;148;52m"; break;
-		case Desert: return ";222;177;31m"; break;
-		case Lava: return ";242;64;19m"; break;
+	const std::function<vec3i(vec2d)> getColor = [&](const vec2d &pos) -> vec3i {
+		auto biomes = sample(pos);
+		vec3d total = 0;
+		for (const auto& [b, percentage] : biomes) {
+			total += b->getTermColor() * percentage;
+			// PRINT "Biome: " << b->getName() << ", percentage: \t" << percentage  << RESET ENDL;
 		}
+		// PRINT BLU "Total: " << total << RESET ENDL;
+		return (total);
 	};
 
 	(void)size;
 	for (double y = 0; y < size.y(); y += 0.2) {
 		for (double x = 0; x < size.x(); x += 0.1) {
-			str += RGB_BG + getColor({x, y});
-			str += RGB_FG + getColor({x, y + 0.1}) + DBLOCK;
+			vec3i color = getColor({x, y});
+			str += RGB_BG + RGB_CODE_VEC(color);
+			color = getColor({x, y + 0.1});
+			str += RGB_FG + RGB_CODE_VEC(color) + DBLOCK;
 		}
 		str += RESET "\n";
 	}

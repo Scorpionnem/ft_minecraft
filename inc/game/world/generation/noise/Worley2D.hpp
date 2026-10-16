@@ -10,23 +10,20 @@
 # include <array>
 # include <functional>
 # include <algorithm>
+# include <memory>
 # include "colors.hpp"
 # include "math/math.hpp"
-
-enum BiomeT {
-	Forest,
-	Desert,
-	Lava,
-}; // TODO : move away
+# include "../../../../../inc/game/world/generation/Biomes/ABiomeType.hpp"
 
 namespace Noise {
 class Worley2D {
 public:
-	Worley2D() : _zoom(1.25), _seed(666777) {}
+	Worley2D() : _seed(666777), _zoom(1.25), _sharpness(5), _k(2) {};
 	~Worley2D() = default;
 
 	// double sample(const vec2d& pos) const;
-	BiomeT	sample(const vec2d& pos) const;
+	// BiomeT	sample(const vec2d& pos) const;
+	std::vector<std::pair<std::shared_ptr<ABiomeType>, double>>	sample(const vec2d& pos) const;
 
 	void	printTerm(const vec2d& size);
 
@@ -50,8 +47,10 @@ private:
 		vec2i( 1,  1)
 	};
 
-	float	_zoom;
 	u32		_seed;
+	float	_zoom;
+	float	_sharpness;
+	short	_k;
 };
 };
 
