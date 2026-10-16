@@ -12,7 +12,7 @@ int	main(int ac, char **av)
 		(void)ac, (void)av;
 		Noise::Worley2D noise;
 
-		noise.printTerm({60., 35.});
+		noise.printTerm({23., 15.});
 
 		// if (ac == 1 || (ac >= 2 && std::string(av[1]) == "client"))
 		// {

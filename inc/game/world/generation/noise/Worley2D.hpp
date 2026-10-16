@@ -13,13 +13,20 @@
 # include "colors.hpp"
 # include "math/math.hpp"
 
+enum BiomeT {
+	Forest,
+	Desert,
+	Lava,
+}; // TODO : move away
+
 namespace Noise {
 class Worley2D {
 public:
 	Worley2D() : _zoom(1.25), _seed(666777) {}
 	~Worley2D() = default;
 
-	double sample(const vec2d& pos) const;
+	// double sample(const vec2d& pos) const;
+	BiomeT	sample(const vec2d& pos) const;
 
 	void	printTerm(const vec2d& size);
 
@@ -31,21 +38,6 @@ private:
 		return (frac(sin(value + mutator) * 148.5453));
 	}
 
-
-
-	static constexpr u64 FX_SEED = 0x517cc1b20a95ULL;
-
-	static constexpr u64 fxStep(const u64 hash, const u64 word) {
-		return (std::rotl(hash, 2) ^ word) * FX_SEED;   // u64 multiply wraps
-	}
-
-	static constexpr u64 _hashXY(const u64 seed, const vec2i32& p) {
-		u64 h = 0;
-		h = fxStep(h, seed);
-		h = fxStep(h, static_cast<u64>(static_cast<u32>(p.x())));  // via u32: zero-extend
-		h = fxStep(h, static_cast<u64>(static_cast<u32>(p.y())));
-		return h;
-	}
 	const std::array<vec2i, 9> _neighborOffsets = {
 		vec2i(-1, -1),
 		vec2i(-1, -0),
