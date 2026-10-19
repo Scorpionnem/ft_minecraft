@@ -23,13 +23,16 @@ public:
 
 	// double sample(const vec2d& pos) const;
 	// BiomeT	sample(const vec2d& pos) const;
-	std::vector<std::pair<std::shared_ptr<ABiomeType>, double>>	sample(const vec2d& pos) const;
+	std::vector<std::pair<std::shared_ptr<ABiomeType>, double>>	sampleBiomes(const vec2d& pos) const;
 
 	void	printTerm(const vec2d& size);
 
 private:
 
-	vec2d _cellPoint(const vec2i32& cellPos) const;
+	vec2d	_cellPoint(const vec2i32& cellPos) const;
+	double	_valueNoise(const vec2d& p, double seed) const;
+	double	_fbm(const vec2d& p, double seed) const;
+	vec2d	_warp(const vec2d& p) const;
 
 	double	rand1dTo1d(const double value, const double mutator = 0.546) const {
 		return (frac(sin(value + mutator) * 148.5453));
@@ -46,6 +49,10 @@ private:
 		vec2i( 1,  0),
 		vec2i( 1,  1)
 	};
+
+	double _warpStrength = 0.;   // in cells; 0 = no warp (current behavior)
+	double _warpFreq     = 0.5;  // how fast the warp varies, in cells
+	int    _warpOctaves  = 4;
 
 	u32		_seed;
 	float	_zoom;
